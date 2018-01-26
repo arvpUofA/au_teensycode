@@ -13,7 +13,7 @@ framework. Open the project using [PlatformIO](http://platformio.org).
 Libraries in PlatformIO must be placed in the project's lib/ folder with the following structure:
 lib/{library name}/src/codefile.(h, c, hpp, cpp).
 
-## LibUAVCAN
+## Libuavcan
 
 To install libuavcan, clone the branch and run `git submodule update --init --remote`.
 Make sure `lib/libuavcan` is on branch `teensy-driver` and updated to have the latest
@@ -30,7 +30,8 @@ Refer to [uavcan.org](http://uavcan.org) for details on the UAVCAN protocol.
 For creating custom data types for UAVCAN, DSDL files need to be created. These files
 must be placed in the lib/arvp/arvp/ folder. The files must be named like so:
 {data-type-ID}.{Dataname}.uavcan. Note that the first letter of the data name must
-be capitalized.
+be capitalized. Refer to the [DSDL documentation](http://uavcan.org/Specification/3._Data_structure_description_language/) for details on
+the data structure.
 
 After creating the DSDL files, run the following command in a terminal at the project
 root to generate the C code: 
