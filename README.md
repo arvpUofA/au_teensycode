@@ -5,8 +5,8 @@ This repository is to be used for Teensy 3.2 firmware development for Auri.
 ## Getting Started
 
 To start coding for a Teensy used in a specific board, clone the develop branch and 
-create a new branch with the name of the board. For consistency, use the [Arduino](https://www.arduino.cc)
-framework. Open the project using [PlatformIO](https://www.platformio.org).
+create a new branch with the name of the board. For consistency, use the [Arduino](arduino.cc)
+framework. Open the project using [PlatformIO](platformio.org).
 
 ### PlatformIO Libraries
 
@@ -23,7 +23,7 @@ Test applications for UAVCAN implementation consist of a `publisher.cpp`
 and a `subscriber.cpp`, one for publishing LogMessages and the other one subscribed to
 them dumping stuff on Serial port, each on their own branches.
 
-Refer to [uavcan.org](https://www.uavcan.org) for details on the UAVCAN protocol.
+Refer to [uavcan.org](uavcan.org) for details on the UAVCAN protocol.
 
 ### Custom UAVCAN Data Types
 
