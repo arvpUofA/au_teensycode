@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/tum-phoenix/drive_teensy_tester.svg?branch=master)](https://travis-ci.org/tum-phoenix/drive_teensy_tester)
-# au_teensycode
+## au_teensycode
+
 This repository is for Teensy 3.2 firmware development for Auri.
 
 Test applications for UAVCAN implementation consist of a `publisher.cpp`
