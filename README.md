@@ -27,7 +27,7 @@ Refer to [uavcan.org](http://uavcan.org) for details on the UAVCAN protocol.
 
 ### Custom UAVCAN Data Types
 
-For creating custom datatypes for UAVCAN, DSDL files need to be created. These files
+For creating custom data types for UAVCAN, DSDL files need to be created. These files
 must be placed in the lib/arvp/arvp/ folder. The files must be named like so:
 {data-type-ID}.{Dataname}.uavcan. Note that the first letter of the data name must
 be capitalized.
