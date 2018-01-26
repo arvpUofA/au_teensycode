@@ -6,7 +6,8 @@ This repository is to be used for Teensy 3.2 firmware development for Auri.
 
 To start coding for a Teensy used in a specific board, clone the develop branch and 
 create a new branch with the name of the board. For consistency, use the [Arduino](http://arduino.cc)
-framework. Open the project using [PlatformIO](http://platformio.org).
+framework. Open the project using [PlatformIO](http://platformio.org). Rename the src/main.cpp file to something
+more relevant and write your main program there.
 
 ### PlatformIO Libraries
 
