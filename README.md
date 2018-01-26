@@ -1,4 +1,4 @@
-## au_teensycode
+# au_teensycode
 
 This repository is to be used for Teensy 3.2 firmware development for Auri.
 
@@ -8,7 +8,7 @@ To start coding for a Teensy used in a specific board, clone the develop branch 
 create a new branch with the name of the board. For consistency, use the [Arduino]("arduino.cc")
 framework. Open the project using [PlatformIO]("http://platformio.org/").
 
-# PlatformIO Libraries
+### PlatformIO Libraries
 
 Libraries in PlatformIO must be placed in the project's lib/ folder with the following structure:
 lib/{library name}/src/codefile.(h, c, hpp, cpp).
@@ -25,7 +25,7 @@ them dumping stuff on Serial port, each on their own branches.
 
 Refer to [uavcan.org]("uavcan.org") for details on the UAVCAN protocol.
 
-# Custom UAVCAN Data Types
+### Custom UAVCAN Data Types
 
 For creating custom datatypes for UAVCAN, DSDL files need to be created. These files
 must be placed in the lib/arvp/arvp/ folder. The files must be named like so:
