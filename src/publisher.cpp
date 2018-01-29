@@ -9,7 +9,7 @@ static const unsigned NodeMemoryPoolSize = 8192;
 static constexpr uint32_t bitrate = 1000000;
 static constexpr uint32_t nodeID = 101;
 
-int blink_led = 16;
+int blink_led = 13;
 Node<NodeMemoryPoolSize> *node;
 Publisher<protocol::debug::LogMessage> *logPublisher;
 Publisher<protocol::debug::KeyValue> *keyPublisher;
