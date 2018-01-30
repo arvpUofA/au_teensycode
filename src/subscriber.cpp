@@ -1,3 +1,4 @@
+#include "Arduino.h"
 #include <UAVCAN.hpp>
 #include <uavcan/protocol/debug/LogMessage.hpp>
 #include <uavcan/protocol/debug/KeyValue.hpp>
