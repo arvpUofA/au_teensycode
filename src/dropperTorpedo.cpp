@@ -1,76 +1,74 @@
 // idea: adjust shot power of tropedo
 
-#include <arduino.h>
+//#include "arduino.h"
+#include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 
-//Servo myservo;
-int angle = 0;
+// called this way, it uses the default address 0x40
+Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
+// you can also call it with a different address you want
+//Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x41);
+// you can also call it with a different address and I2C interface
+//Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(&Wire, 0x40);
 
-int redPin =  12;
-int greenPin =  15;
-int bluePin =  14;
+// Depending on your servo make, the pulse width min and max may vary, you 
+// want these to be as small/large as possible without hitting the hard stop
+// for max range. You'll have to tweak them as necessary to match the servos you
+// have!
+#define SERVOMIN  150 // this is the 'minimum' pulse length count (out of 4096)
+#define SERVOMAX  600 // this is the 'maximum' pulse length count (out of 4096)
 
-/*void mosfetSwitch()
-{
+// our servo # counter
+uint8_t servonum = 0;
+
+void setup() {
+  Serial.begin(9600);
+  Serial.println("8 channel Servo test!");
+
+  pwm.begin();
   
-}
+  pwm.setPWMFreq(60);  // Analog servos run at ~60 Hz updates
 
-void servoAngle()
-{
-  for(angle = 10; angle < 170; angle += 1)  // goes from 10 degrees to 170 degrees 
-  {                                  
-    myservo.write(angle);              // tell servo to go to position in variable 'pos' 
-    delay(15);                       // waits 15ms for the servo to reach the position 
-  } 
-}
-void rgbControl()
-{
-
-  // not sure if this will work lol ->
-
-  // set all 3 pins to the desired intensity
-  analogWrite(redPin, redIntensity);
-  analogWrite(greenPin, 255 - redIntensity);
-  analogWrite(bluePin, 0);
-  
-  // remain at this color, but not for very long
   delay(10);
-  
-  // increase the red
-  redIntensity = redIntensity + 1;
-  
-  // since 255 is the maximum, set it back to 0
-  // when it increments beyond 255
-  if (redIntensity > 255) {
-    redIntensity = 0;
-}*/
-
-void setup() 
-{
-  // assign servo pin
-  //myservo.attach(20)
-
-  // assign color pins
-
-
-  // assign board leds
-  pinMode(16, OUTPUT); // set pin 16 to output
-  pinMode(17, OUTPUT); // set pin 16 to output
-
-  // assign rgb pins
-  pinMode(redPin, OUTPUT);
-  pinMode(greenPin, OUTPUT);
-  pinMode(bluePin, OUTPUT);
 }
 
-void loop() 
-{
- 
-  // blink board leds
-  digitalWrite(16, HIGH);
-  digitalWrite(17, HIGH);
-  delay(250);
-  digitalWrite(16, LOW);
-  digitalWrite(17, LOW);
+// you can use this function if you'd like to set the pulse length in seconds
+// e.g. setServoPulse(0, 0.001) is a ~1 millisecond pulse width. its not precise!
+void setServoPulse(uint8_t n, double pulse) {
+  double pulselength;
+  
+  pulselength = 1000000;   // 1,000,000 us per second
+  pulselength /= 50;   // 50 Hz
+  Serial.print(pulselength); Serial.println(" us per period"); 
+  pulselength /= 4096;  // 12 bits of resolution
+  Serial.print(pulselength); Serial.println(" us per bit"); 
+  pulse *= 1000000;  // convert to us
+  pulse /= pulselength;
+  Serial.println(pulse);
+  pwm.setPWM(n, 0, pulse);
+}
+
+void loop() {
+  // Drive each servo one at a time
+  /*Serial.println(servonum);
+  for (uint16_t pulselen = SERVOMIN; pulselen < SERVOMAX; pulselen++) {
+    pwm.setPWM(servonum, 0, pulselen);
+  }
+
+  delay(500);
+  for (uint16_t pulselen = SERVOMAX; pulselen > SERVOMIN; pulselen--) {
+    pwm.setPWM(servonum, 0, pulselen);
+  }
+
+  delay(500);
+
+  servonum ++;
+  if (servonum > 7) servonum = 0;*/
+
+  setServoPulse(0, 0.0016); //90 degrees
+  delay(1000);
+  setServoPulse(0, 0.0006); //0 degrees
+  delay(1000);
+  setServoPulse(0, 0.0026); //180 degrees
   delay(1000);
 }
