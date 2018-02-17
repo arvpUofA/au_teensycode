@@ -20,10 +20,10 @@ servo
 
 // #include "arduino.h"
 #include <Wire.h>
-#include <libDropperTorpedo.h>
+#include <libARVPServo.h>
 
 // called this way, it uses the default address 0x40
-Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
+Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(PCA9685_BASEADDR | PCA9685_SUBADR1);
 
 // this is the 'minimum' and 'maximum' pulse length count (out of 4096)
 #define SERVOMIN  150 /
@@ -50,7 +50,7 @@ void setup()
 }
 
 // this can set pulse length (seconds)
-void setServoPulse(uint8_t n, double pulse) 
+/*void setServoPulse(uint8_t n, double pulse) 
 {
   double pulselength;
   pulselength = 1000000;   // 1,000,000 us per second
@@ -62,7 +62,7 @@ void setServoPulse(uint8_t n, double pulse)
   pulse /= pulselength;
   Serial.println(pulse);
   pwm.setPWM(n, 0, pulse);
-}
+}*/
 
 //pinNum = assigned pin of torpedo, pulseDuration = time where solenoid is open
 void fireTorpedo(size_t pinNum, uint16_t pulseDuration) 
@@ -101,12 +101,12 @@ void loop()
   */
 
   // moves servo 90 degrees
-  setServoPulse(0, 0.0016);
+  pwm.setServoPulse(0, 0.0016);
   delay(1000);
   // 0 degrees
-  setServoPulse(0, 0.0006);
+  pwm.setServoPulse(0, 0.0006);
   delay(1000);
   // 180 degrees
-  setServoPulse(0, 0.0026);
+  pwm.setServoPulse(0, 0.0026);
   delay(1000);
 }

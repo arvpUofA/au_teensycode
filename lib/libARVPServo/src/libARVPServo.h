@@ -25,9 +25,10 @@
 #endif
 #include "Wire.h"
 
-#define PCA9685_SUBADR1 0x2
-#define PCA9685_SUBADR2 0x3
-#define PCA9685_SUBADR3 0x4
+#define PCA9685_BASEADDR 0X40
+#define PCA9685_SUBADR1 0x1
+#define PCA9685_SUBADR2 0x2
+#define PCA9685_SUBADR3 0x3
 
 #define PCA9685_MODE1 0x0
 #define PCA9685_PRESCALE 0xFE
@@ -49,13 +50,14 @@
 /**************************************************************************/
 class Adafruit_PWMServoDriver {
  public:
-  Adafruit_PWMServoDriver(uint8_t addr = 0x40);
-  Adafruit_PWMServoDriver(TwoWire *I2C, uint8_t addr = 0x40);
+  Adafruit_PWMServoDriver(uint8_t addr);
+  Adafruit_PWMServoDriver(TwoWire *I2C, uint8_t addr);
   void begin(void);
   void reset(void);
   void setPWMFreq(float freq);
   void setPWM(uint8_t num, uint16_t on, uint16_t off);
   void setPin(uint8_t num, uint16_t val, bool invert=false);
+  void setServoPulse(uint8_t n, double pulse);
 
  private:
   uint8_t _i2caddr;

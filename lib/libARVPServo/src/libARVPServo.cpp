@@ -15,7 +15,7 @@
   BSD license, all text above must be included in any redistribution
  ****************************************************/
 
-#include <libDropperTorpedo.h>
+#include <libARVPServo.h>
 #include <Wire.h>
 
 // Set to true to print some debug messages, or false to disable them.
@@ -173,6 +173,20 @@ void Adafruit_PWMServoDriver::setPin(uint8_t num, uint16_t val, bool invert)
       setPWM(num, 0, val);
     }
   }
+}
+
+void Adafruit_PWMServoDriver::setServoPulse(uint8_t n, double pulse) 
+{
+  double pulselength;
+  pulselength = 1000000;   // 1,000,000 us per second
+  pulselength /= 50;   // 50 Hz
+  Serial.print(pulselength); Serial.println(" us per period"); 
+  pulselength /= 4096;  // 12 bits of resolution
+  Serial.print(pulselength); Serial.println(" us per bit"); 
+  pulse *= 1000000;  // convert to us
+  pulse /= pulselength;
+  Serial.println(pulse);
+  this->setPWM(n, 0, pulse);
 }
 
 /*******************************************************************************************/
