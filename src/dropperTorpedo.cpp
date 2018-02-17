@@ -29,6 +29,10 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 #define SERVOMIN  150 /
 #define SERVOMAX  600 /
 
+int pulseDuration = 250;
+int TRP0 = 16;
+int TRP1 = 17;
+
 // our servo # counter
 uint8_t servonum = 0;
 
@@ -60,10 +64,27 @@ void setServoPulse(uint8_t n, double pulse)
   pwm.setPWM(n, 0, pulse);
 }
 
-// runs continuously =
-void loop() {
+//pinNum = assigned pin of torpedo, pulseDuration = time where solenoid is open
+void fireTorpedo(size_t pinNum, uint16_t pulseDuration) 
+{
+  // pin 16 and 17 are the torpedo pins 0 and 1
+
+  // set pin to output
+  pinMode(pinNum, OUTPUT);
+
+  // set pin to high to move servo to open valve for 250ms
+  digitalWrite(pinNum, HIGH);
+  delay(pulseDuration);
+  digitalWrite(pinNum, LOW);
+}
+
+// runs continuously
+void loop() 
+{
+  fireTorpedo(16, 250);
   // Drive each servo one at a time
-  /*Serial.println(servonum);
+  /*
+  Serial.println(servonum);
   for (uint16_t pulselen = SERVOMIN; pulselen < SERVOMAX; pulselen++) {
     pwm.setPWM(servonum, 0, pulselen);
   }
@@ -76,7 +97,8 @@ void loop() {
   delay(500);
 
   servonum ++;
-  if (servonum > 7) servonum = 0;*/
+  if (servonum > 7) servonum = 0;
+  */
 
   // moves servo 90 degrees
   setServoPulse(0, 0.0016);
