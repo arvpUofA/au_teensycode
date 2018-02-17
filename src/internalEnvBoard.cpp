@@ -6,6 +6,7 @@
 #define MPLADDRESS 0xC0
 unsigned char buf[5];
 unsigned char sta;
+double pressure;
 
 
 // calculates humidity from raw data
@@ -62,6 +63,20 @@ void setupMPL(){
   delay(30);
 }
 
+double readPressureMPL() {
+  Wire.beginTransmission(MPLADDRESS);
+  Wire.write(0x01); //set register to 0x01
+  Wire.endTransmission(false); //end this bit, but do not close the connection
+  Wire.requestFrom(MPLADDRESS, 3, true);
+  if (Wire.available() == 3) {
+    pressure = 0;
+    pressure += Wire.read() << 16; //registers start at MSB, CSB, then LSB, with a 20-bit value
+    pressure += Wire.read() << 8;
+    pressure += Wire.read();
+  }
+  return pressure;
+}
+
 void setup() {
   // put your setup code here, to run once:
   Wire.begin();
@@ -81,5 +96,11 @@ void loop() {
   Serial.println(humidity());
   Serial.print("Temperature: ");
   Serial.println(temp());
+
+  //pressure readings
+readPressureMPL();
+Serial.print("Pressure value: ");
+Serial.println(pressure);
+
   delay(1000);
 }
