@@ -20,7 +20,7 @@ servo
 
 // #include "arduino.h"
 #include <Wire.h>
-#include <Adafruit_PWMServoDriver.h>
+#include <libDropperTorpedo.h>
 
 // called this way, it uses the default address 0x40
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
