@@ -1,42 +1,54 @@
-// idea: adjust shot power of tropedo
+/* 
 
-//#include "arduino.h"
+shot power of torpedo controlled by opening valve for set amount of time
+maybe can adjust this?
+
+tropedo function
+    - tropedo number can be selected
+    - configure delays (paramter)
+
+rgb leds
+    - use adafruit library
+    - refer to schematic for channel numbers (pwm)
+    - take value between 0 and 100 for each rgb channel
+
+servo
+    - input is servo number (1 to 12)
+    - configure angle
+
+*/
+
+// #include "arduino.h"
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 
 // called this way, it uses the default address 0x40
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
-// you can also call it with a different address you want
-//Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x41);
-// you can also call it with a different address and I2C interface
-//Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(&Wire, 0x40);
 
-// Depending on your servo make, the pulse width min and max may vary, you 
-// want these to be as small/large as possible without hitting the hard stop
-// for max range. You'll have to tweak them as necessary to match the servos you
-// have!
-#define SERVOMIN  150 // this is the 'minimum' pulse length count (out of 4096)
-#define SERVOMAX  600 // this is the 'maximum' pulse length count (out of 4096)
+// this is the 'minimum' and 'maximum' pulse length count (out of 4096)
+#define SERVOMIN  150 /
+#define SERVOMAX  600 /
 
 // our servo # counter
 uint8_t servonum = 0;
 
-void setup() {
+// this runs once to setup everything
+void setup() 
+{
   Serial.begin(9600);
   Serial.println("8 channel Servo test!");
-
   pwm.begin();
-  
-  pwm.setPWMFreq(60);  // Analog servos run at ~60 Hz updates
+
+  // Analog servos run at ~50 Hz updates
+  pwm.setPWMFreq(50);  
 
   delay(10);
 }
 
-// you can use this function if you'd like to set the pulse length in seconds
-// e.g. setServoPulse(0, 0.001) is a ~1 millisecond pulse width. its not precise!
-void setServoPulse(uint8_t n, double pulse) {
+// this can set pulse length (seconds)
+void setServoPulse(uint8_t n, double pulse) 
+{
   double pulselength;
-  
   pulselength = 1000000;   // 1,000,000 us per second
   pulselength /= 50;   // 50 Hz
   Serial.print(pulselength); Serial.println(" us per period"); 
@@ -48,6 +60,7 @@ void setServoPulse(uint8_t n, double pulse) {
   pwm.setPWM(n, 0, pulse);
 }
 
+// runs continuously =
 void loop() {
   // Drive each servo one at a time
   /*Serial.println(servonum);
@@ -65,10 +78,13 @@ void loop() {
   servonum ++;
   if (servonum > 7) servonum = 0;*/
 
-  setServoPulse(0, 0.0016); //90 degrees
+  // moves servo 90 degrees
+  setServoPulse(0, 0.0016);
   delay(1000);
-  setServoPulse(0, 0.0006); //0 degrees
+  // 0 degrees
+  setServoPulse(0, 0.0006);
   delay(1000);
-  setServoPulse(0, 0.0026); //180 degrees
+  // 180 degrees
+  setServoPulse(0, 0.0026);
   delay(1000);
 }
