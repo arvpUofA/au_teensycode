@@ -15,8 +15,7 @@
   BSD license, all text above must be included in any redistribution
  ****************************************************/
 
-#include <libARVPServo.h>
-#include <Wire.h>
+#include <libARVPpwm.h>
 
 // Set to true to print some debug messages, or false to disable them.
 //#define ENABLE_DEBUG_OUTPUT
@@ -59,7 +58,7 @@ void Adafruit_PWMServoDriver::begin(void) {
   _i2c->begin();
   reset();
   // set a default frequency
-  setPWMFreq(1000);
+  setPWMFreq(PWM_FEQUENCY);
 }
 
 
@@ -84,6 +83,7 @@ void Adafruit_PWMServoDriver::setPWMFreq(float freq) {
   Serial.print("Attempting to set freq ");
   Serial.println(freq);
 #endif
+  pwmFreq = freq;
 
   freq *= 0.9;  // Correct for overshoot in the frequency setting (see issue #11).
   float prescaleval = 25000000;
@@ -175,19 +175,44 @@ void Adafruit_PWMServoDriver::setPin(uint8_t num, uint16_t val, bool invert)
   }
 }
 
-void Adafruit_PWMServoDriver::setServoPulse(uint8_t n, double pulse) 
+void Adafruit_PWMServoDriver::setServoPulse(uint8_t n, double pulse) //pulse width in us
 {
   double pulselength;
   pulselength = 1000000;   // 1,000,000 us per second
-  pulselength /= 50;   // 50 Hz
+  pulselength /= pwmFreq;   
   Serial.print(pulselength); Serial.println(" us per period"); 
   pulselength /= 4096;  // 12 bits of resolution
   Serial.print(pulselength); Serial.println(" us per bit"); 
-  pulse *= 1000000;  // convert to us
   pulse /= pulselength;
   Serial.println(pulse);
   this->setPWM(n, 0, pulse);
 }
+
+void Adafruit_PWMServoDriver::setServoAngle(uint8_t pwmChannel, int16_t angle, uint16_t minPulse, uint16_t maxPulse)
+{
+  if(pwmChannel < 12 & pwmChannel >= 0)
+  {
+    uint16_t pulseWidth = minPulse  + angle*(maxPulse - minPulse)/180;
+    this->setServoPulse(pwmChannel, pulseWidth);
+  }
+}
+
+void Adafruit_PWMServoDriver::setRGBChannels(uint8_t red, uint8_t green, uint8_t blue, uint8_t white)
+{
+  redChannel = red;
+  greenChannel = green;
+  blueChannel = blue;
+  whiteChannel = white;
+}
+
+void Adafruit_PWMServoDriver::setRGB(float red, float green, float blue, float white, float brightness)
+{
+  this->setPWM(redChannel, 0, red*brightness*4096);
+  this->setPWM(greenChannel, 0, green*brightness*4096);
+  this->setPWM(blueChannel, 0, blue*brightness*4096);
+  this->setPWM(whiteChannel, 0, brightness*4096);
+}
+
 
 /*******************************************************************************************/
 
@@ -206,3 +231,4 @@ void Adafruit_PWMServoDriver::write8(uint8_t addr, uint8_t d) {
   _i2c->write(d);
   _i2c->endTransmission();
 }
+

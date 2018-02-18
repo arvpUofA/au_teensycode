@@ -18,23 +18,76 @@ servo
 
 */
 
-// #include "arduino.h"
-#include <Wire.h>
-#include <libARVPServo.h>
+#include <libARVPpwm.h>
+#include <IntervalTimer.h>
+
+//pin definitions
+#define TORPEDO_0 16
+#define TORPEDO_1 17
+
+//gas canister pulse duration in us
+#define PULSE_DURATION 250000
+
+bool firingStatus0 = true;
+bool firingStatus1 = true;
 
 // called this way, it uses the default address 0x40
-Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(PCA9685_BASEADDR | PCA9685_SUBADR1);
+Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(PCA9685_BASEADDR);
 
-// this is the 'minimum' and 'maximum' pulse length count (out of 4096)
-#define SERVOMIN  150 /
-#define SERVOMAX  600 /
+IntervalTimer fireTimer0;
+IntervalTimer fireTimer1;
 
-int pulseDuration = 250;
-int TRP0 = 16;
-int TRP1 = 17;
+float sinWaveTime = 0;
+float sinWave0 = 0;
+float sinWave120 = 0;
+float sinWave240 = 0;
 
-// our servo # counter
-uint8_t servonum = 0;
+IntervalTimer sinWaveTimer;
+
+void trpControl0()
+{
+    digitalWrite(TORPEDO_0, firingStatus0);
+    firingStatus0 = false;
+}
+
+void trpControl1()
+{
+    digitalWrite(TORPEDO_1, firingStatus1);
+    firingStatus1 = false;
+}
+
+void fireTorpdeo(uint8_t trp)
+{
+    
+
+    if((trp == TORPEDO_0) & !digitalRead(TORPEDO_0) & firingStatus0)
+    {
+        fireTimer0.begin(trpControl0, PULSE_DURATION);
+    }
+    else if((trp == TORPEDO_1) & !digitalRead(TORPEDO_1) & firingStatus1)
+    {
+        fireTimer1.begin(trpControl1, PULSE_DURATION);
+    }
+    else if((trp == TORPEDO_0) & !digitalRead(TORPEDO_0) & !firingStatus0)
+    {
+      fireTimer0.end();
+    }
+    else if((trp == TORPEDO_1) & !digitalRead(TORPEDO_1) & !firingStatus1)
+    {
+      fireTimer1.end();
+    }
+    
+}
+
+void stepSinWave()
+{
+  sinWave0 = sin(sinWaveTime);
+  sinWave120 = sin(sinWaveTime + 3.14/1.5);
+  sinWave240 = sin(sinWaveTime - 3.14/1.5);
+  sinWaveTime = sinWaveTime + 0.01;
+}
+
+int t = 0;
 
 // this runs once to setup everything
 void setup() 
@@ -42,71 +95,22 @@ void setup()
   Serial.begin(9600);
   Serial.println("8 channel Servo test!");
   pwm.begin();
+  sinWaveTimer.begin(stepSinWave, 1000);
 
-  // Analog servos run at ~50 Hz updates
-  pwm.setPWMFreq(50);  
+  pinMode(TORPEDO_0, OUTPUT);
+  pinMode(TORPEDO_1, OUTPUT);
+
+  fireTorpdeo(TORPEDO_0);
+    fireTorpdeo(TORPEDO_1);
 
   delay(10);
 }
 
-// this can set pulse length (seconds)
-/*void setServoPulse(uint8_t n, double pulse) 
-{
-  double pulselength;
-  pulselength = 1000000;   // 1,000,000 us per second
-  pulselength /= 50;   // 50 Hz
-  Serial.print(pulselength); Serial.println(" us per period"); 
-  pulselength /= 4096;  // 12 bits of resolution
-  Serial.print(pulselength); Serial.println(" us per bit"); 
-  pulse *= 1000000;  // convert to us
-  pulse /= pulselength;
-  Serial.println(pulse);
-  pwm.setPWM(n, 0, pulse);
-}*/
-
-//pinNum = assigned pin of torpedo, pulseDuration = time where solenoid is open
-void fireTorpedo(size_t pinNum, uint16_t pulseDuration) 
-{
-  // pin 16 and 17 are the torpedo pins 0 and 1
-
-  // set pin to output
-  pinMode(pinNum, OUTPUT);
-
-  // set pin to high to move servo to open valve for 250ms
-  digitalWrite(pinNum, HIGH);
-  delay(pulseDuration);
-  digitalWrite(pinNum, LOW);
-}
-
-// runs continuously
 void loop() 
 {
-  fireTorpedo(16, 250);
-  // Drive each servo one at a time
-  /*
-  Serial.println(servonum);
-  for (uint16_t pulselen = SERVOMIN; pulselen < SERVOMAX; pulselen++) {
-    pwm.setPWM(servonum, 0, pulselen);
-  }
+  noInterrupts();
+  pwm.setRGB((1+sinWave0)/2, (1+sinWave120)/2, (1+sinWave240)/2, 0, 0.01);
+  interrupts();
+  delay(1);
 
-  delay(500);
-  for (uint16_t pulselen = SERVOMAX; pulselen > SERVOMIN; pulselen--) {
-    pwm.setPWM(servonum, 0, pulselen);
-  }
-
-  delay(500);
-
-  servonum ++;
-  if (servonum > 7) servonum = 0;
-  */
-
-  // moves servo 90 degrees
-  pwm.setServoPulse(0, 0.0016);
-  delay(1000);
-  // 0 degrees
-  pwm.setServoPulse(0, 0.0006);
-  delay(1000);
-  // 180 degrees
-  pwm.setServoPulse(0, 0.0026);
-  delay(1000);
 }
