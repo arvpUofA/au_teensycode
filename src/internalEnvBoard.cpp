@@ -3,10 +3,19 @@
 // humidity/temperature sensor
 #define HIH7120ADDRESS 0x27
 // pressure/temperature sensor
-#define MPLADDRESS 0xC0
+#define MPLADDRESS 0x60
 unsigned char buf[5];
 unsigned char sta;
-double pressure;
+
+//use this for reading out pressure data in two parts
+struct pressure_StructDef {
+  uint32_t whole;
+  uint8_t fractional;
+};
+
+pressure_StructDef pressure;
+
+uint8_t OUT_P_MSB, OUT_P_CSB, OUT_P_LSB;
 
 
 // calculates humidity from raw data
@@ -48,32 +57,48 @@ void measureHIH7120(){
 void setupMPL(){
   Wire.beginTransmission(MPLADDRESS);
   Wire.write(0x26);
-  Wire.write(0xB8);
+  Wire.write(0x39);
   Wire.endTransmission();
   delay(30);
   Wire.beginTransmission(MPLADDRESS);
   Wire.write(0x13);
-  Wire.write(0x07);
-  Wire.endTransmission();
-  delay(30);
-  Wire.beginTransmission(MPLADDRESS);
-  Wire.write(0x26);
-  Wire.write(0xB9);
+  Wire.write(0x0);
   Wire.endTransmission();
   delay(30);
 }
 
-double readPressureMPL() {
+pressure_StructDef readPressureMPL() {
   Wire.beginTransmission(MPLADDRESS);
-  Wire.write(0x01); //set register to 0x01
-  Wire.endTransmission(false); //end this bit, but do not close the connection
-  Wire.requestFrom(MPLADDRESS, 3, true);
-  if (Wire.available() == 3) {
-    pressure = 0;
-    pressure += Wire.read() << 16; //registers start at MSB, CSB, then LSB, with a 20-bit value
-    pressure += Wire.read() << 8;
-    pressure += Wire.read();
+  Wire.write(0);
+  Wire.requestFrom(MPLADDRESS, 4);
+  delay(30);
+  if (Wire.available()) {
+    Wire.read(); //discard the first byte, it doesn't matter
+    //readings start at 0x01
+    OUT_P_MSB = Wire.read();
+    OUT_P_CSB = Wire.read();
+    OUT_P_LSB = Wire.read();
+
+    Serial.println(OUT_P_MSB);
+    Serial.println(OUT_P_CSB);
+    Serial.println(OUT_P_LSB);
+
+    /*
+    * 20 bit value, with 18 bits + 2 bits fractional value
+    * MSB [7:0], CSB [7:0], and LSB [7:6] make up 18 bits
+    * LSB [5:4] make up the fractional component
+    */
+    pressure.whole = 0;
+    pressure.whole += (OUT_P_MSB << 10);
+    pressure.whole += (OUT_P_CSB << 2);
+    pressure.whole += (OUT_P_LSB >> 6);
+
+    pressure.fractional = 0;
+    //only bytes 4 and 5 are relevant, so bitshift 4 right
+    //then clear everything other than 4 and 5
+    pressure.fractional = ((OUT_P_LSB >> 4) & 0b00000011) / 4;
   }
+  Wire.endTransmission();
   return pressure;
 }
 
@@ -100,7 +125,9 @@ void loop() {
   //pressure readings
 readPressureMPL();
 Serial.print("Pressure value: ");
-Serial.println(pressure);
+Serial.print(pressure.whole);
+Serial.print(".");
+Serial.println(pressure.fractional);
 
   delay(1000);
 }
