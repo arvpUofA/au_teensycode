@@ -1,4 +1,3 @@
-#include <Arduino.h>
 //
 //   SDL_Arduino_INA3221 Library Test Code
 //   SDL_Arduino_INA3221.cpp Arduino code - runs in continuous mode
@@ -8,223 +7,71 @@
 //
 // This was designed for SunAirPlus - Solar Power Controller - www.switchdoc.com
 //
- 
+
+#include <Arduino.h> 
 #include <i2c_t3.h>
 #include "SDL_Arduino_INA3221.h"
 
-SDL_Arduino_INA3221 ina3221;
-SDL_Arduino_INA3221_2 ina3221_2;
-SDL_Arduino_INA3221_3 ina3221_3;
-SDL_Arduino_INA3221_4 ina3221_4;
+#define RATE 100
+#define REDC_5V  (2.1/3.1) //Correction for 5V rail
+#define REDC_12V (1.3/2)   //Correction for 12V rail
 
-// the three channels of the INA3221 named for SunAirPlus Solar Power Controller channels (www.switchdoc.com)
-#define LIPO_BATTERY_CHANNEL 1
-#define SOLAR_CELL_CHANNEL 2
-#define OUTPUT_CHANNEL 3
- 
+SDL_Arduino_INA3221 *battery1_2;
+SDL_Arduino_INA3221 *battery3_4;
+SDL_Arduino_INA3221 *power_rails;
+const int rate_delay = 1000 / RATE;
+
 void setup(void)
 {
   Serial.begin(9600);
   Serial.println("SDA_Arduino_INA3221_Test");
 
   Serial.println("Measuring voltage and current with ina3221 ...");
-  ina3221.begin();
-  ina3221_2.begin(); 
+  
+  battery1_2 = new SDL_Arduino_INA3221(INA3221_ADDRESS_1, SHUNT_RESISTOR_VALUE_1, RATE);
+  battery3_4 = new SDL_Arduino_INA3221(INA3221_ADDRESS_2, SHUNT_RESISTOR_VALUE_2, RATE);
+  power_rails = new SDL_Arduino_INA3221(INA3221_ADDRESS_4, SHUNT_RESISTOR_VALUE_4, RATE);
+
+  power_rails->setReduction(2, REDC_5V);
+  power_rails->setReduction(3, REDC_12V);
+
+  battery1_2->begin();
+  battery3_4->begin();
+  power_rails->begin();
 }
 
 void loop(void)
 {
-//INA 1 (Battery Monitoring Board)
-  float shuntvoltage1 = 0;
-  float busvoltage1 = 0;
-  float current_mA1 = 0;
-  float loadvoltage1 = 0;
 
-  busvoltage1 = ina3221.getBusVoltage_V(LIPO_BATTERY_CHANNEL);
-  shuntvoltage1 = ina3221.getShuntVoltage_mV(LIPO_BATTERY_CHANNEL);
-  current_mA1 = -ina3221.getCurrent_mA(LIPO_BATTERY_CHANNEL);  // minus is to get the "sense" right.   - means the battery is charging, + that it is discharging
-  loadvoltage1 = busvoltage1 + (shuntvoltage1 / 1000);
+  long start = millis();
 
-  float shuntvoltage2 = 0;
-  float busvoltage2 = 0;
-  float current_mA2 = 0;
-  float loadvoltage2 = 0;
+  battery1_2->tick(1); battery1_2->tick(2);
+  battery3_4->tick(1); battery3_4->tick(2);
+  power_rails->tick(1); power_rails->tick(2); power_rails->tick(3);
 
-  busvoltage2 = ina3221.getBusVoltage_V(SOLAR_CELL_CHANNEL);
-  shuntvoltage2 = ina3221.getShuntVoltage_mV(SOLAR_CELL_CHANNEL);
-  current_mA2 = -ina3221.getCurrent_mA(SOLAR_CELL_CHANNEL);
-  loadvoltage2 = busvoltage2 + (shuntvoltage2 / 1000);
+  //INA 1 (Battery Monitoring Board)
+  Serial.print("INA3221_1\n");
+  Serial.print("Battery 1: ");
+  battery1_2->print(1);
+  Serial.print("Battery 2: ");
+  battery1_2->print(2);
 
-  float shuntvoltage3 = 0;
-  float busvoltage3 = 0;
-  float current_mA3 = 0;
-  float loadvoltage3 = 0;
+  //INA 2 (Battery Monitoring Board)
+  Serial.print("Battery 3: ");
+  battery3_4->print(1);
+  Serial.print("Battery 4: ");
+  battery3_4->print(2);
 
-  busvoltage3 = ina3221.getBusVoltage_V(OUTPUT_CHANNEL);
-  shuntvoltage3 = ina3221.getShuntVoltage_mV(OUTPUT_CHANNEL);
-  current_mA3 = ina3221.getCurrent_mA(OUTPUT_CHANNEL);
-  loadvoltage3 = busvoltage3 + (shuntvoltage3 / 1000);
+  //INA 4 (Power Monitoring Board)
+    
+  Serial.print("INA3221_4\n");
+  Serial.print("3.3V  Rail: ");
+  power_rails->print(1);
+  Serial.print("5.0V  Rail: ");
+  power_rails->print(2);       
+  Serial.print("12.0V Rail: ");
+  power_rails->print(3);
 
-Serial.print("INA3221_1\n");
-Serial.print("Battery 1:");
-  Serial.print(busvoltage1);  Serial.print(",");
-  Serial.print(shuntvoltage1); Serial.print(",");
-  Serial.print(loadvoltage1); Serial.print(",");
-  Serial.print(current_mA1);  Serial.print(",");
-Serial.print("\n Battery 2:");
-  Serial.print(busvoltage2);  Serial.print(",");
-  Serial.print(shuntvoltage2); Serial.print(",");
-  Serial.print(loadvoltage2);  Serial.print(",");
-  Serial.print(current_mA2); Serial.print(",");
-  //Serial.print(busvoltage3); Serial.print(",");
-  //Serial.print(shuntvoltage3); Serial.print(",");
-  //Serial.print(loadvoltage3); Serial.print(",");
-  //Serial.print(current_mA3); Serial.print(",");
-  //Serial.println("");
-
-//INA 2 (Battery Monitoring Board)
-  float shuntvoltage1_2 = 0;
-  float busvoltage1_2 = 0;
-  float current_mA1_2 = 0;
-  float loadvoltage1_2 = 0;
-
-  busvoltage1_2 = ina3221_2.getBusVoltage_V(LIPO_BATTERY_CHANNEL);
-  shuntvoltage1_2 = ina3221_2.getShuntVoltage_mV(LIPO_BATTERY_CHANNEL);
-  current_mA1_2 = -ina3221_2.getCurrent_mA(LIPO_BATTERY_CHANNEL);  // minus is to get the "sense" right.   - means the battery is charging, + that it is discharging
-  loadvoltage1_2 = busvoltage1_2 + (shuntvoltage1_2 / 1000);
-
-  float shuntvoltage2_2 = 0;
-  float busvoltage2_2 = 0;
-  float current_mA2_2 = 0;
-  float loadvoltage2_2 = 0;
-
-  busvoltage2_2 = ina3221_2.getBusVoltage_V(SOLAR_CELL_CHANNEL);
-  shuntvoltage2_2 = ina3221_2.getShuntVoltage_mV(SOLAR_CELL_CHANNEL);
-  current_mA2_2 = -ina3221_2.getCurrent_mA(SOLAR_CELL_CHANNEL);
-  loadvoltage2_2 = busvoltage2_2 + (shuntvoltage2_2 / 1000);
-
-  float shuntvoltage3_2 = 0;
-  float busvoltage3_2 = 0;
-  float current_mA3_2 = 0;
-  float loadvoltage3_2 = 0;
-
-  busvoltage3_2 = ina3221_2.getBusVoltage_V(OUTPUT_CHANNEL);
-  shuntvoltage3_2 = ina3221_2.getShuntVoltage_mV(OUTPUT_CHANNEL);
-  current_mA3_2 = ina3221_2.getCurrent_mA(OUTPUT_CHANNEL);
-  loadvoltage3_2 = busvoltage3_2 + (shuntvoltage3_2 / 1000);
-  
-Serial.print("INA3221_2\n");
-Serial.print("Battery 3:");
-  Serial.print(busvoltage1_2);  Serial.print(",");
-  Serial.print(shuntvoltage1_2); Serial.print(",");
-  Serial.print(loadvoltage1_2); Serial.print(",");
-  Serial.print(current_mA1_2);  Serial.print(",");
-Serial.print("\n Battery 4:");
-  Serial.print(busvoltage2_2);  Serial.print(",");
-  Serial.print(shuntvoltage2_2); Serial.print(",");
-  Serial.print(loadvoltage2_2);  Serial.print(",");
-  Serial.print(current_mA2_2); Serial.print(",");
-  //Serial.print(busvoltage3_2); Serial.print(",");
-  //Serial.print(shuntvoltage3_2); Serial.print(",");
-  //Serial.print(loadvoltage3_2); Serial.print(",");
-  //Serial.print(current_mA3_2); Serial.print(",");
-  //Serial.println("");
-
-//INA 3 (Power Monitoring Board)
-float shuntvoltage1_3 = 0;
-  float busvoltage1_3 = 0;
-  float current_mA1_3 = 0;
-  float loadvoltage1_3 = 0;
-
-  busvoltage1_3 = ina3221_3.getBusVoltage_V(LIPO_BATTERY_CHANNEL);
-  shuntvoltage1_3 = ina3221_3.getShuntVoltage_mV(LIPO_BATTERY_CHANNEL);
-  current_mA1_3 = -ina3221_3.getCurrent_mA(LIPO_BATTERY_CHANNEL);  // minus is to get the "sense" right.   - means the battery is charging, + that it is discharging
-  loadvoltage1_3 = busvoltage1_3 + (shuntvoltage1_3 / 1000);
-
-  float shuntvoltage2_3 = 0;
-  float busvoltage2_3 = 0;
-  float current_mA2_3 = 0;
-  float loadvoltage2_3 = 0;
-
-  busvoltage2_3 = ina3221_3.getBusVoltage_V(SOLAR_CELL_CHANNEL);
-  shuntvoltage2_3 = ina3221_3.getShuntVoltage_mV(SOLAR_CELL_CHANNEL);
-  current_mA2_3 = -ina3221_3.getCurrent_mA(SOLAR_CELL_CHANNEL);
-  loadvoltage2_3 = busvoltage2_3 + (shuntvoltage2_3 / 1000);
-
-  float shuntvoltage3_3 = 0;
-  float busvoltage3_3 = 0;
-  float current_mA3_3 = 0;
-  float loadvoltage3_3 = 0;
-
-  busvoltage3_3 = ina3221_3.getBusVoltage_V(OUTPUT_CHANNEL);
-  shuntvoltage3_3 = ina3221_3.getShuntVoltage_mV(OUTPUT_CHANNEL);
-  current_mA3_3 = ina3221_3.getCurrent_mA(OUTPUT_CHANNEL);
-  loadvoltage3_3 = busvoltage3_3 + (shuntvoltage3_3 / 1000);
-  
-Serial.print("INA3221_3\n");
-Serial.print("INA3 Channel 1:");
-  Serial.print(busvoltage1_3);  Serial.print(",");
-  Serial.print(shuntvoltage1_3); Serial.print(",");
-  Serial.print(loadvoltage1_3); Serial.print(",");
-  Serial.print(current_mA1_3);  Serial.print(",");
-Serial.print("\n INA 3 Channel 2:");
-  Serial.print(busvoltage2_3);  Serial.print(",");
-  Serial.print(shuntvoltage2_3); Serial.print(",");
-  Serial.print(loadvoltage2_3);  Serial.print(",");
-  Serial.print(current_mA2_3); Serial.print(",");
-Serial.print("\n INA 3 Channel 3:");
-  Serial.print(busvoltage3_3); Serial.print(",");
-  Serial.print(shuntvoltage3_3); Serial.print(",");
-  Serial.print(loadvoltage3_3); Serial.print(",");
-  Serial.print(current_mA3_3); Serial.print(",");
-  Serial.println("");
-
-//INA 4 (Power Monitoring Board)
-float shuntvoltage1_4 = 0;
-  float busvoltage1_4 = 0;
-  float current_mA1_4 = 0;
-  float loadvoltage1_4 = 0;
-
-  busvoltage1_4 = ina3221_4.getBusVoltage_V(LIPO_BATTERY_CHANNEL);
-  shuntvoltage1_4 = ina3221_4.getShuntVoltage_mV(LIPO_BATTERY_CHANNEL);
-  current_mA1_4 = -ina3221_4.getCurrent_mA(LIPO_BATTERY_CHANNEL);  // minus is to get the "sense" right.   - means the battery is charging, + that it is discharging
-  loadvoltage1_4 = busvoltage1_4 + (shuntvoltage1_4 / 1000);
-
-  float shuntvoltage2_4 = 0;
-  float busvoltage2_4 = 0;
-  float current_mA2_4 = 0;
-  float loadvoltage2_4 = 0;
-
-  busvoltage2_4 = ina3221_4.getBusVoltage_V(SOLAR_CELL_CHANNEL);
-  shuntvoltage2_4 = ina3221_4.getShuntVoltage_mV(SOLAR_CELL_CHANNEL);
-  current_mA2_4 = -ina3221_4.getCurrent_mA(SOLAR_CELL_CHANNEL);
-  loadvoltage2_4 = busvoltage2_4 + (shuntvoltage2_4 / 1000);
-
-  float shuntvoltage3_4 = 0;
-  float busvoltage3_4 = 0;
-  float current_mA3_4 = 0;
-  float loadvoltage3_4 = 0;
-
-  busvoltage3_4 = ina3221_4.getBusVoltage_V(OUTPUT_CHANNEL);
-  shuntvoltage3_4 = ina3221_4.getShuntVoltage_mV(OUTPUT_CHANNEL);
-  current_mA3_4 = ina3221_4.getCurrent_mA(OUTPUT_CHANNEL);
-  loadvoltage3_4 = busvoltage3_4 + (shuntvoltage3_4 / 1000);
-  
-Serial.print("INA3221_4\n");
-Serial.print("INA 4 Channel 1:");
-  Serial.print(busvoltage1_4);  Serial.print(",");
-  Serial.print(shuntvoltage1_4); Serial.print(",");
-  Serial.print(loadvoltage1_4); Serial.print(",");
-  Serial.print(current_mA1_4);  Serial.print(",");
-Serial.print("\n INA 4 Channel 2:");
-  Serial.print(busvoltage2_4);  Serial.print(",");
-  Serial.print(shuntvoltage2_4); Serial.print(",");
-  Serial.print(loadvoltage2_4);  Serial.print(",");
-  Serial.print(current_mA2_4); Serial.print(",");
-Serial.print("\n INA 4 Channel 3:");
-  Serial.print(busvoltage3_4); Serial.print(",");
-  Serial.print(shuntvoltage3_4); Serial.print(",");
-  Serial.print(loadvoltage3_4); Serial.print(",");
-  Serial.print(current_mA3_4); Serial.print(",");
-  Serial.println("");
+  // long d = max(rate_delay - (millis() - start), 0);
+ delay(100);
 }
