@@ -57,12 +57,7 @@ void measureHIH7120(){
 void setupMPL(){
   Wire.beginTransmission(MPLADDRESS);
   Wire.write(0x26);
-  Wire.write(0x39);
-  Wire.endTransmission();
-  delay(30);
-  Wire.beginTransmission(MPLADDRESS);
-  Wire.write(0x13);
-  Wire.write(0x0);
+  Wire.write(0x39); //Turn on and enable oversampling
   Wire.endTransmission();
   delay(30);
 }
@@ -78,11 +73,6 @@ pressure_StructDef readPressureMPL() {
     OUT_P_MSB = Wire.read();
     OUT_P_CSB = Wire.read();
     OUT_P_LSB = Wire.read();
-
-    Serial.println(OUT_P_MSB);
-    Serial.println(OUT_P_CSB);
-    Serial.println(OUT_P_LSB);
-
     /*
     * 20 bit value, with 18 bits + 2 bits fractional value
     * MSB [7:0], CSB [7:0], and LSB [7:6] make up 18 bits
@@ -123,11 +113,11 @@ void loop() {
   Serial.println(temp());
 
   //pressure readings
-readPressureMPL();
-Serial.print("Pressure value: ");
-Serial.print(pressure.whole);
-Serial.print(".");
-Serial.println(pressure.fractional);
+  readPressureMPL();
+  Serial.print("Pressure value: ");
+  Serial.print(pressure.whole);
+  Serial.print(".");
+  Serial.println(pressure.fractional);
 
   delay(1000);
 }
