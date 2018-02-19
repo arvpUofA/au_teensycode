@@ -14,21 +14,15 @@
   Written by Limor Fried/Ladyada for Adafruit Industries.  
   BSD license, all text above must be included in any redistribution
  ****************************************************/
+#ifndef LIB_ARVP_PWM_H
+#define LIB_ARVP_PWM_H
 
-#ifndef _ADAFRUIT_PWMServoDriver_H
-#define _ADAFRUIT_PWMServoDriver_H
-
-#if ARDUINO >= 100
- #include "Arduino.h"
-#else
- #include "WProgram.h"
-#endif
-#include "Wire.h"
+#include <Wire.h>
 
 #define PCA9685_BASEADDR 0X40
-#define PCA9685_SUBADR1 0x1
-#define PCA9685_SUBADR2 0x2
-#define PCA9685_SUBADR3 0x3
+#define PCA9685_SUBADDR1 0x1
+#define PCA9685_SUBADDR2 0x2
+#define PCA9685_SUBADDR3 0x3
 
 #define PCA9685_MODE1 0x0
 #define PCA9685_PRESCALE 0xFE
@@ -43,12 +37,35 @@
 #define ALLLED_OFF_L 0xFC
 #define ALLLED_OFF_H 0xFD
 
+#define PWM_FEQUENCY 100 //Hz
+
+//Servo limits in us
+#define SERVOMIN  1000
+#define SERVOMAX  2600
+
+enum angleUnits {UNIT_RADIANS, UNIT_DEGREES};
+
 /**************************************************************************/
 /*! 
     @brief  Class that stores state and functions for interacting with PCA9685 PWM chip
 */
 /**************************************************************************/
 class Adafruit_PWMServoDriver {
+ private:
+  uint8_t _i2caddr;
+
+  //default channels for REG LED strip
+  uint8_t redChannel = 13;
+  uint8_t greenChannel = 14;
+  uint8_t blueChannel = 15;
+  uint8_t whiteChannel = 12;
+
+  float pwmFreq;
+  TwoWire *_i2c;
+
+  uint8_t read8(uint8_t addr);
+  void write8(uint8_t addr, uint8_t d);
+
  public:
   Adafruit_PWMServoDriver(uint8_t addr);
   Adafruit_PWMServoDriver(TwoWire *I2C, uint8_t addr);
@@ -58,14 +75,9 @@ class Adafruit_PWMServoDriver {
   void setPWM(uint8_t num, uint16_t on, uint16_t off);
   void setPin(uint8_t num, uint16_t val, bool invert=false);
   void setServoPulse(uint8_t n, double pulse);
-
- private:
-  uint8_t _i2caddr;
-  
-  TwoWire *_i2c;
-
-  uint8_t read8(uint8_t addr);
-  void write8(uint8_t addr, uint8_t d);
+  void setServoAngle(uint8_t pwmChannel, float angle, uint16_t minPulse, uint16_t maxPulse, angleUnits angleUnit);
+  void setRGBChannels(uint8_t red, uint8_t green, uint8_t blue, uint8_t white);
+  void setRGB(float red, float green, float blue, float white, float brightness); 
 };
 
 #endif
