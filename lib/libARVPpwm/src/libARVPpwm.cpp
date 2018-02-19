@@ -175,6 +175,7 @@ void Adafruit_PWMServoDriver::setPin(uint8_t num, uint16_t val, bool invert)
   }
 }
 
+//Sets high pulse duration in us
 void Adafruit_PWMServoDriver::setServoPulse(uint8_t n, double pulse) //pulse width in us
 {
   double pulselength;
@@ -188,6 +189,7 @@ void Adafruit_PWMServoDriver::setServoPulse(uint8_t n, double pulse) //pulse wid
   this->setPWM(n, 0, pulse);
 }
 
+//Sets angle of servo on selected PCA9685 channel, within min and max pulse length, and using degrees or radians.
 void Adafruit_PWMServoDriver::setServoAngle(uint8_t pwmChannel, float angle, uint16_t minPulse, uint16_t maxPulse, angleUnits angleUnit)
 {
   if(angleUnit == UNIT_DEGREES)
@@ -202,6 +204,7 @@ void Adafruit_PWMServoDriver::setServoAngle(uint8_t pwmChannel, float angle, uin
   }
 }
 
+//Configures PCA9685 channels of RGBW strip
 void Adafruit_PWMServoDriver::setRGBChannels(uint8_t red, uint8_t green, uint8_t blue, uint8_t white)
 {
   redChannel = red;
@@ -210,12 +213,13 @@ void Adafruit_PWMServoDriver::setRGBChannels(uint8_t red, uint8_t green, uint8_t
   whiteChannel = white;
 }
 
+//Sets brightness of each LED colour channel
 void Adafruit_PWMServoDriver::setRGB(float red, float green, float blue, float white, float brightness)
 {
   this->setPWM(redChannel, 0, red*brightness*4096);
   this->setPWM(greenChannel, 0, green*brightness*4096);
   this->setPWM(blueChannel, 0, blue*brightness*4096);
-  this->setPWM(whiteChannel, 0, brightness*4096);
+  this->setPWM(whiteChannel, 0, white*brightness*4096);
 }
 
 

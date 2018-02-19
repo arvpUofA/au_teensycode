@@ -77,9 +77,7 @@ class Adafruit_PWMServoDriver {
   void setServoPulse(uint8_t n, double pulse);
   void setServoAngle(uint8_t pwmChannel, float angle, uint16_t minPulse, uint16_t maxPulse, angleUnits angleUnit);
   void setRGBChannels(uint8_t red, uint8_t green, uint8_t blue, uint8_t white);
-  void setRGB(float red, float green, float blue, float white, float brightness);
-
- 
+  void setRGB(float red, float green, float blue, float white, float brightness); 
 };
 
 #endif

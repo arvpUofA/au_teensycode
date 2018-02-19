@@ -26,8 +26,10 @@ servo
 //#include <publisher.hpp>
 #include <subscriber.hpp>
 
+#include <uavcanNodeIDs.h>
+
 // UAVCAN Node settings
-static constexpr uint32_t nodeID = 11;
+static constexpr uint32_t nodeID = UAVCAN_NODE_ID_TORPEDO_BOARD;
 static constexpr uint8_t swVersion = 1;
 static constexpr uint8_t hwVersion = 1;
 static const char* nodeName = "org.arvp.dropperTorpedo";
@@ -35,7 +37,8 @@ static const char* nodeName = "org.arvp.dropperTorpedo";
 // UAVCAN application settings
 static constexpr float framerate = 100;
 
-
+//PCA9685 object, uses default address 0x40
+Adafruit_PWMServoDriver pwmDriver = Adafruit_PWMServoDriver(PCA9685_BASEADDR);
 
 float sinWaveTime = 0;
 float sinWave0 = 0;
@@ -57,13 +60,15 @@ void setup()
 {
   Serial.begin(9600);
   Serial.println("8 channel Servo test!");
-  pwm.begin();
+  pwmDriver.begin();
   sinWaveTimer.begin(stepSinWave, 1000);
 
   initTorpedos();
+ 
 
   //--UAVCAN init--//
-
+  // Send address of servo driver object to subsciber
+  getPWMObject(&pwmDriver);
   // init LEDs
   initLeds();
 
@@ -88,7 +93,7 @@ void setup()
 void loop() 
 {
   noInterrupts();
-  pwm.setRGB((1+sinWave0)/2, (1+sinWave120)/2, (1+sinWave240)/2, 0, 0.01);
+  pwmDriver.setRGB((1+sinWave0)/2, (1+sinWave120)/2, (1+sinWave240)/2, 0, 0.01);
   interrupts();
   
   torpedoRoutine();
