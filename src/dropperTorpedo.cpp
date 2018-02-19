@@ -20,23 +20,10 @@ servo
 
 #include <libARVPpwm.h>
 #include <IntervalTimer.h>
-//test comment
-
-//pin definitions
-#define TORPEDO_0 16
-#define TORPEDO_1 17
-
-//gas canister pulse duration in us
-#define PULSE_DURATION 250000
-
-bool firingStatus0 = true;
-bool firingStatus1 = true;
+#include <torpedoControl.h>
 
 // called this way, it uses the default address 0x40
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(PCA9685_BASEADDR);
-
-IntervalTimer fireTimer0;
-IntervalTimer fireTimer1;
 
 float sinWaveTime = 0;
 float sinWave0 = 0;
@@ -45,40 +32,7 @@ float sinWave240 = 0;
 
 IntervalTimer sinWaveTimer;
 
-void trpControl0()
-{
-    digitalWrite(TORPEDO_0, firingStatus0);
-    firingStatus0 = false;
-}
 
-void trpControl1()
-{
-    digitalWrite(TORPEDO_1, firingStatus1);
-    firingStatus1 = false;
-}
-
-void fireTorpdeo(uint8_t trp)
-{
-    
-
-    if((trp == TORPEDO_0) & !digitalRead(TORPEDO_0) & firingStatus0)
-    {
-        fireTimer0.begin(trpControl0, PULSE_DURATION);
-    }
-    else if((trp == TORPEDO_1) & !digitalRead(TORPEDO_1) & firingStatus1)
-    {
-        fireTimer1.begin(trpControl1, PULSE_DURATION);
-    }
-    else if((trp == TORPEDO_0) & !digitalRead(TORPEDO_0) & !firingStatus0)
-    {
-      fireTimer0.end();
-    }
-    else if((trp == TORPEDO_1) & !digitalRead(TORPEDO_1) & !firingStatus1)
-    {
-      fireTimer1.end();
-    }
-    
-}
 
 void stepSinWave()
 {
@@ -87,8 +41,6 @@ void stepSinWave()
   sinWave240 = sin(sinWaveTime - 3.14/1.5);
   sinWaveTime = sinWaveTime + 0.01;
 }
-
-int t = 0;
 
 // this runs once to setup everything
 void setup() 
