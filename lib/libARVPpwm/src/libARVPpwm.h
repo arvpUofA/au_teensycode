@@ -14,6 +14,8 @@
   Written by Limor Fried/Ladyada for Adafruit Industries.  
   BSD license, all text above must be included in any redistribution
  ****************************************************/
+#ifndef LIB_ARVP_PWM_H
+#define LIB_ARVP_PWM_H
 
 #include <Wire.h>
 
@@ -41,25 +43,14 @@
 #define SERVOMIN  1000
 #define SERVOMAX  2600
 
+enum angleUnits {UNIT_RADIANS, UNIT_DEGREES};
+
 /**************************************************************************/
 /*! 
     @brief  Class that stores state and functions for interacting with PCA9685 PWM chip
 */
 /**************************************************************************/
 class Adafruit_PWMServoDriver {
- public:
-  Adafruit_PWMServoDriver(uint8_t addr);
-  Adafruit_PWMServoDriver(TwoWire *I2C, uint8_t addr);
-  void begin(void);
-  void reset(void);
-  void setPWMFreq(float freq);
-  void setPWM(uint8_t num, uint16_t on, uint16_t off);
-  void setPin(uint8_t num, uint16_t val, bool invert=false);
-  void setServoPulse(uint8_t n, double pulse);
-  void setServoAngle(uint8_t pwmChannel, int16_t angle, uint16_t minPulse, uint16_t maxPulse);
-  void setRGBChannels(uint8_t red, uint8_t green, uint8_t blue, uint8_t white);
-  void setRGB(float red, float green, float blue, float white, float brightness);
-
  private:
   uint8_t _i2caddr;
 
@@ -69,11 +60,26 @@ class Adafruit_PWMServoDriver {
   uint8_t blueChannel = 15;
   uint8_t whiteChannel = 12;
 
-
-
   float pwmFreq;
   TwoWire *_i2c;
 
   uint8_t read8(uint8_t addr);
   void write8(uint8_t addr, uint8_t d);
+
+ public:
+  Adafruit_PWMServoDriver(uint8_t addr);
+  Adafruit_PWMServoDriver(TwoWire *I2C, uint8_t addr);
+  void begin(void);
+  void reset(void);
+  void setPWMFreq(float freq);
+  void setPWM(uint8_t num, uint16_t on, uint16_t off);
+  void setPin(uint8_t num, uint16_t val, bool invert=false);
+  void setServoPulse(uint8_t n, double pulse);
+  void setServoAngle(uint8_t pwmChannel, float angle, uint16_t minPulse, uint16_t maxPulse, angleUnits angleUnit);
+  void setRGBChannels(uint8_t red, uint8_t green, uint8_t blue, uint8_t white);
+  void setRGB(float red, float green, float blue, float white, float brightness);
+
+ 
 };
+
+#endif

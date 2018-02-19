@@ -1,4 +1,4 @@
-#include "Arduino.h"
+/*#include "Arduino.h"
 #include "teensy_uavcan.hpp"
 #include "publisher.hpp"
 #include "subscriber.hpp"
@@ -57,4 +57,4 @@ void loop()
 
   // toggle heartbeat
   toggleHeartBeat();
-}
+}*/

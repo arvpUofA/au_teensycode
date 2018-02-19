@@ -4,6 +4,7 @@
 #include <UAVCAN.hpp>
 #include <uavcan/protocol/debug/LogMessage.hpp>
 #include <uavcan/protocol/debug/KeyValue.hpp>
+#include <torpedoControl.hpp>
 
 using namespace uavcan;
 

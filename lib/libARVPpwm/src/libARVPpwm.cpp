@@ -188,11 +188,16 @@ void Adafruit_PWMServoDriver::setServoPulse(uint8_t n, double pulse) //pulse wid
   this->setPWM(n, 0, pulse);
 }
 
-void Adafruit_PWMServoDriver::setServoAngle(uint8_t pwmChannel, int16_t angle, uint16_t minPulse, uint16_t maxPulse)
+void Adafruit_PWMServoDriver::setServoAngle(uint8_t pwmChannel, float angle, uint16_t minPulse, uint16_t maxPulse, angleUnits angleUnit)
 {
-  if(pwmChannel < 12 & pwmChannel >= 0)
+  if(angleUnit == UNIT_DEGREES)
   {
     uint16_t pulseWidth = minPulse  + angle*(maxPulse - minPulse)/180;
+    this->setServoPulse(pwmChannel, pulseWidth);
+  }
+  if(angleUnit == UNIT_RADIANS)
+  {
+    uint16_t pulseWidth = minPulse  + angle*(maxPulse - minPulse)/3.14159;
     this->setServoPulse(pwmChannel, pulseWidth);
   }
 }

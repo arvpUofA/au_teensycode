@@ -12,6 +12,8 @@ using namespace uavcan;
   #define GIT_HASH 0
 #endif
 
+#define TEENSY_LED_PIN 13
+
 // some other parameter
 static constexpr uint32_t bitrate = 1000000;      // bit rate of can bus
 static const unsigned NodeMemoryPoolSize = 8192;  // size of node memory
@@ -22,16 +24,16 @@ Node<NodeMemoryPoolSize> *node;
 
 // heartbeat LED
 bool heartBeatLed = false;
-int heartBeatLedPin = 16;
+int heartBeatLedPin = TEENSY_LED_PIN;
 MonotonicTime lastBeat = MonotonicTime::fromMSec(0);
 int heartBeatFreq = 2;
 
 // traffic (or general purpose) LED
-int trafficLedPin = 17;
+int trafficLedPin = TEENSY_LED_PIN;
 bool trafficLed = false;
 
 // teensy LED
-int teensyLedPin = 13;
+int teensyLedPin = TEENSY_LED_PIN;
 bool teensyLed = false;
 
 // interfaces to systemclock and canDriver

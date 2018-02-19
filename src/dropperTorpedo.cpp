@@ -20,10 +20,22 @@ servo
 
 #include <libARVPpwm.h>
 #include <IntervalTimer.h>
-#include <torpedoControl.h>
+#include <torpedoControl.hpp>
 
-// called this way, it uses the default address 0x40
-Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(PCA9685_BASEADDR);
+#include <teensy_uavcan.hpp>
+//#include <publisher.hpp>
+#include <subscriber.hpp>
+
+// UAVCAN Node settings
+static constexpr uint32_t nodeID = 11;
+static constexpr uint8_t swVersion = 1;
+static constexpr uint8_t hwVersion = 1;
+static const char* nodeName = "org.arvp.dropperTorpedo";
+
+// UAVCAN application settings
+static constexpr float framerate = 100;
+
+
 
 float sinWaveTime = 0;
 float sinWave0 = 0;
@@ -31,8 +43,6 @@ float sinWave120 = 0;
 float sinWave240 = 0;
 
 IntervalTimer sinWaveTimer;
-
-
 
 void stepSinWave()
 {
@@ -50,11 +60,25 @@ void setup()
   pwm.begin();
   sinWaveTimer.begin(stepSinWave, 1000);
 
-  pinMode(TORPEDO_0, OUTPUT);
-  pinMode(TORPEDO_1, OUTPUT);
+  //--UAVCAN init--//
 
-  fireTorpdeo(TORPEDO_0);
-    fireTorpdeo(TORPEDO_1);
+  // init LEDs
+  initLeds();
+
+  // Create a node
+  systemClock = &getSystemClock();
+  canDriver = &getCanDriver();
+  node = new Node<NodeMemoryPoolSize>(*canDriver, *systemClock);
+  initNode(node, nodeID, nodeName, swVersion, hwVersion);
+
+  // init publisher
+  //initPublisher(node);
+
+  // init subscriber
+  initSubscriber(node);
+
+  // start up node
+  node->setModeOperational();
 
   delay(10);
 }
@@ -64,6 +88,21 @@ void loop()
   noInterrupts();
   pwm.setRGB((1+sinWave0)/2, (1+sinWave120)/2, (1+sinWave240)/2, 0, 0.01);
   interrupts();
-  delay(1);
+  
+  torpedoRoutine();
+
+  //--UAVCAN cycles--//
+
+  // wait in cycle
+  cycleWait(framerate);
+
+  // do some CAN stuff
+  cycleNode(node);
+
+  // publish messages
+  //cyclePublisher();
+
+  // toggle heartbeat
+  toggleHeartBeat();
 
 }
