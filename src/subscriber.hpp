@@ -39,6 +39,17 @@ Adafruit_PWMServoDriver *pwm;
 
 bool enableExternalLEDActions = true; //Boolean used for allowing external control of LED strip 
 
+//Functions to enable/disable external LED control
+void disableExternalLEDControl()
+{
+  enableExternalLEDActions = false;
+}
+
+void enableExternalLEDControl()
+{
+  enableExternalLEDActions = true;
+}
+
 //Initialization function for assigning a PCA9685 interface object to be used by subscriber callbacks
 void getPWMObject(Adafruit_PWMServoDriver *ptr)
 {

@@ -87,14 +87,16 @@ void setup()
   // start up node
   node->setModeOperational();
 
+  //disableExternalLEDControl();
+
   delay(10);
 }
 
 void loop() 
 {
-  noInterrupts();
+  /*noInterrupts();
   pwmDriver.setRGB((1+sinWave0)/2, (1+sinWave120)/2, (1+sinWave240)/2, 0, 0.01);
-  interrupts();
+  interrupts();*/
   
   torpedoRoutine();
 
