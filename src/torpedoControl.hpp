@@ -4,23 +4,33 @@
 #include <Arduino.h>
 #include <IntervalTimer.h>
 
-//pin definitions
+//Pin definitions
 #define TORPEDO_0 16
 #define TORPEDO_1 17
 
-//gas canister pulse duration in us
+//Solenoid pulse duration in us
 #define PULSE_DURATION 250000
 
+//Set to true when torpedo firing request is initiated
 bool launchRequest0 = false;
 bool launchRequest1 = false;
 
+//Interval timers for solenoid control. Uses ISRs for highly accurate timing control.
 IntervalTimer fireTimer0;
 IntervalTimer fireTimer1;
 
+//Torpedo state definitions
 enum torpedoState {READY, ARMED, FIRING, DISCHARGED};
 
 torpedoState torpedoState0 = READY;
 torpedoState torpedoState1 = READY;
+
+//Call this function in setup()
+void initTorpedos()
+{
+    pinMode(TORPEDO_0, OUTPUT);
+    pinMode(TORPEDO_1, OUTPUT);
+}
 
 //ISR functions. Can't pass parameters to this type of function, so one unique function per torpedo is required.
 void trpControl0()
@@ -53,14 +63,13 @@ bool fireTorpdeo(uint8_t trp)
 {  
     if((trp == TORPEDO_0) & !digitalRead(TORPEDO_0) & launchRequest0)
     {
-        pinMode(TORPEDO_0, OUTPUT);
+        
         fireTimer0.begin(trpControl0, PULSE_DURATION);
         Serial.println("Torpedo 0 pulse timer started");
         return true;
     }
     else if((trp == TORPEDO_1) & !digitalRead(TORPEDO_1) & launchRequest1)
     {
-        pinMode(TORPEDO_1, OUTPUT);
         fireTimer1.begin(trpControl1, PULSE_DURATION);
         Serial.println("Torpedo 0 pulse timer started");
         return true;

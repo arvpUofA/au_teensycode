@@ -60,6 +60,8 @@ void setup()
   pwm.begin();
   sinWaveTimer.begin(stepSinWave, 1000);
 
+  initTorpedos();
+
   //--UAVCAN init--//
 
   // init LEDs

@@ -66,7 +66,7 @@ void keyMessageCallback(const uavcan::protocol::debug::KeyValue& msg)
 void actuatorMessageCallback(const uavcan::equipment::actuator::ArrayCommand& actuatorCommands)
 {
   Serial.println("Received actuator command array");
-  for(int i = 0; i < sizeof(actuatorCommands.commands)/sizeof(uavcan::equipment::actuator::Command); i++)
+  for(uint8_t i = 0; i < sizeof(actuatorCommands.commands)/sizeof(uavcan::equipment::actuator::Command); i++)
   {
     switch(actuatorCommands.commands[i].actuator_id)
     {
