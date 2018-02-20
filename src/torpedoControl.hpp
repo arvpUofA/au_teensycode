@@ -30,6 +30,8 @@ void initTorpedos()
 {
     pinMode(TORPEDO_0, OUTPUT);
     pinMode(TORPEDO_1, OUTPUT);
+    digitalWrite(TORPEDO_0, LOW);
+    digitalWrite(TORPEDO_1, LOW);
 }
 
 //ISR functions. Can't pass parameters to this type of function, so one unique function per torpedo is required.
@@ -45,14 +47,14 @@ void trpControl1()
     launchRequest1 = false;
 }
 
-//Call this function to trigger firing of torpedo
+//Call this function to trigger firing of torpedo. Torpedo must be in ARMED state to fire.
 void requestLaunch(uint8_t trp)
 {
-    if((trp == TORPEDO_0) & !digitalRead(TORPEDO_0) & (torpedoState0 == READY))
+    if((trp == TORPEDO_0) & !digitalRead(TORPEDO_0) & (torpedoState0 == ARMED))
     {
         launchRequest0 = true;
     }
-    if((trp == TORPEDO_1) & !digitalRead(TORPEDO_1) & (torpedoState1 == READY))
+    if((trp == TORPEDO_1) & !digitalRead(TORPEDO_1) & (torpedoState1 == ARMED))
     {
         launchRequest1 = true;
     }
@@ -96,18 +98,18 @@ bool cleanUpTorpedoTimer(uint8_t trp)
     return false;
 }
 
-//Torpedos are locked-out after firing until this function is called.
-void resetTorpedoStatus(uint8_t trp)
+//Torpedos are locked-out after firing and upon power-up until this function is called.
+void armTorpedo(uint8_t trp)
 {
-    if ((trp == TORPEDO_0)&(torpedoState0 == DISCHARGED))
+    if ((trp == TORPEDO_0)&((torpedoState0 == DISCHARGED)|(torpedoState0 == READY)))
     {
-        torpedoState0 = READY;
-        Serial.println("Torpedo 1 state reset to READY");
+        torpedoState0 = ARMED;
+        Serial.println("Torpedo 1 ARMED");
     }
-    else if ((trp == TORPEDO_1)&(torpedoState1 == DISCHARGED))
+    else if ((trp == TORPEDO_1)&((torpedoState1 == DISCHARGED)|(torpedoState1 == READY)))
     {
-        torpedoState0 = READY;
-        Serial.println("Torpedo 1 state reset to READY");
+        torpedoState1 = ARMED;
+        Serial.println("Torpedo 1 ARMED");
     }
 }
 
@@ -119,15 +121,17 @@ void torpedoRoutine()
         case READY:
             if(launchRequest0)
             {
-                torpedoState0 = ARMED;
-                Serial.println("Torpedo 0 ARMED");
+                Serial.println("Unable to fire. Torpedo 0 not yet ARMED");
             }
             break;
 
         case ARMED:
-            fireTorpdeo(TORPEDO_0);
-            Serial.println("Torpedo 0 FIRING");
-            torpedoState0 = FIRING;
+            if(launchRequest0)
+            {
+                fireTorpdeo(TORPEDO_0);
+                Serial.println("Torpedo 0 FIRING");
+                torpedoState0 = FIRING;
+            }
             break;
 
         case FIRING:
@@ -152,15 +156,17 @@ void torpedoRoutine()
         case READY:
             if(launchRequest1)
             {
-                torpedoState1 = ARMED;
-                Serial.println("Torpedo 1 ARMED");
+                Serial.println("Unable to fire. Torpedo 1 not yet ARMED");
             }
             break;
 
         case ARMED:
-            fireTorpdeo(TORPEDO_1);
-            Serial.println("Torpedo 1 FIRING");
-            torpedoState1 = FIRING;
+            if(launchRequest1)
+            {
+                fireTorpdeo(TORPEDO_1);
+                Serial.println("Torpedo 1 FIRING");
+                torpedoState1 = FIRING;
+            }
             break;
 
         case FIRING:

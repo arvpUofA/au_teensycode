@@ -21,4 +21,18 @@
 #define ACTUATOR_ID_SERVO_10 12
 #define ACTUATOR_ID_SERVO_11 13
 
+//PWM channel definitions for PCA9685 chip on torpedo board
+#define PWM_CHANNEL_SERVO_0 0
+#define PWM_CHANNEL_SERVO_1 1
+#define PWM_CHANNEL_SERVO_2 2
+#define PWM_CHANNEL_SERVO_3 3
+#define PWM_CHANNEL_SERVO_4 4
+#define PWM_CHANNEL_SERVO_5 5
+#define PWM_CHANNEL_SERVO_6 6
+#define PWM_CHANNEL_SERVO_7 7
+#define PWM_CHANNEL_SERVO_8 8
+#define PWM_CHANNEL_SERVO_9 9
+#define PWM_CHANNEL_SERVO_10 10
+#define PWM_CHANNEL_SERVO_11 11
+
 #endif

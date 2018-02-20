@@ -39,9 +39,7 @@
 
 #define PWM_FEQUENCY 100 //Hz
 
-//Servo limits in us
-#define SERVOMIN  1000
-#define SERVOMAX  2600
+
 
 enum angleUnits {UNIT_RADIANS, UNIT_DEGREES};
 
