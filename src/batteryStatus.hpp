@@ -8,7 +8,7 @@
 
 #define NUMBER_OF_BATTERIES 4
 
-float batteryVoltage[NUMBER_OF_BATTERIES] = {0, 0, 0, 0};
+float batteryVoltage[NUMBER_OF_BATTERIES] = {14.9, 14.95, 14.9, 14.9};
 
 enum voltageState {GOOD, POOR, DANGER};
 
@@ -27,7 +27,10 @@ voltageState checkVoltages(float lowVolt, float criticalVolt)
         {
             return DANGER;
         }
-        else if(batteryVoltage[i] <= lowVolt)
+    }
+    for(uint8_t i = 0; i < sizeof(batteryVoltage)/sizeof(float); i++)
+    {
+        if(batteryVoltage[i] <= lowVolt)
         {
             return POOR;
         }

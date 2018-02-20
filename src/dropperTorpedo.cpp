@@ -82,70 +82,58 @@ void stepSinWave()
   ++sinWaveTime %= numberOfSinTableEntries;
 }
 
-int indicatorState = 0;
-
 void indicatorRoutine() //Add this function to loop() to allow for indication of torpedo and battery status
 {
-  if((torpedoState0 == ARMED) | (torpedoState1 == ARMED))
+  Serial.println("indicator");
+  if(checkVoltages(13.25, 12.75) == POOR)
   {
-    if(indicatorState != 1)
-    {
+      Serial.println("POOR");
       disableExternalLEDControl();
-      sinWaveTimer.begin(stepSinWave, 1000*baseSinFrq);
-      indicatorState = 1;
-    }
+      sinWaveTimer.begin(stepSinWave, 2000);
+      pwmDriver.setRGB(1, 0, 0, 0, 0.25*sinWave0/sinWaveAmplitude);
+      return;
   }
-  else if((torpedoState0 == FIRING) | (torpedoState1 == FIRING))
+  if(checkVoltages(13.25, 12.75) == DANGER)
   {
-    if(indicatorState != 2)
-    {
+      Serial.println("DANGER");
       disableExternalLEDControl();
-      sinWaveTimer.begin(stepSinWave, 1000*baseSinFrq);
-      indicatorState = 2;
-    }
+      sinWaveTimer.begin(stepSinWave, 210); //4 times base frequency
+      pwmDriver.setRGB(1, 0, 0, 0, 0.25*sinWave0/sinWaveAmplitude);
+      return;
   }
-  else if(checkVoltages(13.25, 12.75) == POOR)
+  if((torpedoState0 == FIRING) | (torpedoState1 == FIRING))
   {
-    if(indicatorState != 3)
-    {
       disableExternalLEDControl();
-      sinWaveTimer.begin(stepSinWave, 1000*baseSinFrq);
-      indicatorState = 3;
-    }
+      sinWaveTimer.begin(stepSinWave, 210*baseSinFrq);
+      pwmDriver.setRGB(1, 0, 0, 0, 0.5);
+      return;
   }
-  else if(checkVoltages(13.25, 12.75) == DANGER)
+  if((torpedoState0 == ARMED) & (torpedoState1 == ARMED))
   {
-    if(indicatorState != 4)
-    {
       disableExternalLEDControl();
-      sinWaveTimer.begin(stepSinWave, 1000*baseSinFrq/4); //4 times base frequency
-      indicatorState = 4;
-    }
+      sinWaveTimer.begin(stepSinWave, 1000);
+      pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0.1*sinWave180/sinWaveAmplitude, 0.1*sinWave180/sinWaveAmplitude, 0, 0.15);
+      return;
   }
+  if(torpedoState0 == ARMED)
+  {
+      disableExternalLEDControl();
+      sinWaveTimer.begin(stepSinWave, 1000);
+      pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0.1*sinWave180/sinWaveAmplitude, 0, 0, 0.15);
+      return;
+  }
+  if(torpedoState1 == ARMED)
+  {
+      disableExternalLEDControl();
+      sinWaveTimer.begin(stepSinWave, 1000);
+      pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0, 0.1*sinWave180/sinWaveAmplitude, 0, 0.15);
+      return;
+  }
+  
   else
   {
     sinWaveTimer.end();
     enableExternalLEDControl();
-    indicatorState = 0;
-  }
-
-  switch(indicatorState) //Change LED colour after checking states to avoid cycling through different patterns needlessly
-  {
-    case 1:
-      pwmDriver.setRGB(1, 1, 0, 0, 0.5*sinWave0/sinWaveAmplitude);
-      break;
-
-    case 2:
-      pwmDriver.setRGB(1, 0, 0, 0, 0.5);
-      break;
-
-    case 3:
-      pwmDriver.setRGB(1, 1, 0, 0, 0.25*sinWave0/sinWaveAmplitude);
-      break;
-
-    case 4:
-      pwmDriver.setRGB(1, 0, 0, 0, 0.25*sinWave0/sinWaveAmplitude);
-      break;
   }
 }
 
@@ -175,13 +163,16 @@ void setup()
 
   // start up node
   node->setModeOperational();
-
-  delay(10);
+  Serial.println("Setup Complete");
+  armTorpedo(TORPEDO_1);
+  armTorpedo(TORPEDO_0);
+  //delay(5000);
 }
 
 //Runs continuously
 void loop() 
 {
+  
   torpedoRoutine();
   indicatorRoutine();
 
