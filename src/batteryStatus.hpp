@@ -8,7 +8,7 @@
 
 #define NUMBER_OF_BATTERIES 4
 
-float batteryVoltage[NUMBER_OF_BATTERIES];
+float batteryVoltage[NUMBER_OF_BATTERIES] = {0, 0, 0, 0};
 
 enum voltageState {GOOD, POOR, DANGER};
 
