@@ -50,11 +50,11 @@ void trpControl1()
 //Call this function to trigger firing of torpedo. Torpedo must be in ARMED state to fire.
 void requestLaunch(uint8_t trp)
 {
-    if((trp == TORPEDO_0) & !digitalRead(TORPEDO_0) & (torpedoState0 == ARMED))
+    if((trp == TORPEDO_0) && !digitalRead(TORPEDO_0) && (torpedoState0 == ARMED))
     {
         launchRequest0 = true;
     }
-    if((trp == TORPEDO_1) & !digitalRead(TORPEDO_1) & (torpedoState1 == ARMED))
+    if((trp == TORPEDO_1) && !digitalRead(TORPEDO_1) && (torpedoState1 == ARMED))
     {
         launchRequest1 = true;
     }
@@ -63,14 +63,14 @@ void requestLaunch(uint8_t trp)
 //Starts interval timer for a selected torpedo according to specified solenoid pulse duration
 bool fireTorpdeo(uint8_t trp)
 {  
-    if((trp == TORPEDO_0) & !digitalRead(TORPEDO_0) & launchRequest0)
+    if((trp == TORPEDO_0) && !digitalRead(TORPEDO_0) && launchRequest0)
     {
         
         fireTimer0.begin(trpControl0, PULSE_DURATION);
         Serial.println("Torpedo 0 pulse timer started");
         return true;
     }
-    else if((trp == TORPEDO_1) & !digitalRead(TORPEDO_1) & launchRequest1)
+    else if((trp == TORPEDO_1) && !digitalRead(TORPEDO_1) && launchRequest1)
     {
         fireTimer1.begin(trpControl1, PULSE_DURATION);
         Serial.println("Torpedo 0 pulse timer started");
@@ -83,13 +83,13 @@ bool fireTorpdeo(uint8_t trp)
 //Only cleans up when torpedo pins are LOW.
 bool cleanUpTorpedoTimer(uint8_t trp)
 {
-    if((trp == TORPEDO_0) & !digitalRead(TORPEDO_0) & !launchRequest0)
+    if((trp == TORPEDO_0) && !digitalRead(TORPEDO_0) && !launchRequest0)
     {
       fireTimer0.end();
       Serial.println("Torpedo 0 pulse timer cleaned up");
       return true;
     }
-    else if((trp == TORPEDO_1) & !digitalRead(TORPEDO_1) & !launchRequest1)
+    else if((trp == TORPEDO_1) && !digitalRead(TORPEDO_1) && !launchRequest1)
     {
       fireTimer1.end();
       Serial.println("Torpedo 1 pulse timer cleaned up");
@@ -101,12 +101,12 @@ bool cleanUpTorpedoTimer(uint8_t trp)
 //Torpedos are locked-out after firing and upon power-up until this function is called.
 void armTorpedo(uint8_t trp)
 {
-    if ((trp == TORPEDO_0)&((torpedoState0 == DISCHARGED)|(torpedoState0 == READY)))
+    if ((trp == TORPEDO_0) && ((torpedoState0 == DISCHARGED) || (torpedoState0 == READY)))
     {
         torpedoState0 = ARMED;
-        Serial.println("Torpedo 1 ARMED");
+        Serial.println("Torpedo 0 ARMED");
     }
-    else if ((trp == TORPEDO_1)&((torpedoState1 == DISCHARGED)|(torpedoState1 == READY)))
+    else if ((trp == TORPEDO_1) && ((torpedoState1 == DISCHARGED) || (torpedoState1 == READY)))
     {
         torpedoState1 = ARMED;
         Serial.println("Torpedo 1 ARMED");

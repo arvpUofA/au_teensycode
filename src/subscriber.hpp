@@ -42,9 +42,10 @@ void enableExternalLEDControl()
 /*Callback function for uavcan actuator command array. Checks all array elements for IDs and executes torpedo or servo functions accordingly.*/
 void actuatorControlCallback(const uavcan::equipment::actuator::ArrayCommand& actuatorCommands)
 {
-  Serial.println("Received actuator command array");
-  for(uint8_t i = 0; i < sizeof(actuatorCommands.commands)/sizeof(uavcan::equipment::actuator::Command); i++)
+  //Serial.println("Received actuator command array");
+  for(uint8_t i = 0; i < actuatorCommands.commands.size(); i++)
   {
+    //Serial.println(i);
     switch(actuatorCommands.commands[i].actuator_id)
     {
       case ACTUATOR_ID_TORPEDO_0:
@@ -52,6 +53,7 @@ void actuatorControlCallback(const uavcan::equipment::actuator::ArrayCommand& ac
         if(actuatorCommands.commands[i].command_value == 1)requestLaunch(TORPEDO_0); 
         //Torpedo is armed when command value equals -1
         else if(actuatorCommands.commands[i].command_value == -1)armTorpedo(TORPEDO_0);
+        //Serial.println("case 1 complete");
         break;
 
       case ACTUATOR_ID_TORPEDO_1:
@@ -108,16 +110,18 @@ void actuatorControlCallback(const uavcan::equipment::actuator::ArrayCommand& ac
         actuateServo(PWM_CHANNEL_SERVO_11, actuatorCommands.commands[i].command_value);
         break;
     }
+    //Serial.println("switch done");
   }
+  //Serial.println("for complete");
 }
 
 /*Callback function for uavcan led command array. Checks all array elements for IDs and executes LED functions accordingly.*/
 void lightsControlCallback(const uavcan::equipment::indication::LightsCommand& lightCommand)
 {
-  Serial.println("Received lights command array");
+  //Serial.println("Received lights command array");
   if(enableExternalLEDActions)
   {
-    for(uint8_t i = 0; i < sizeof(lightCommand.commands)/sizeof(uavcan::equipment::indication::SingleLightCommand); i++)
+    for(uint8_t i = 0; i < lightCommand.commands.size(); i++)
     {
       switch(lightCommand.commands[i].light_id)
       {
@@ -132,10 +136,11 @@ void lightsControlCallback(const uavcan::equipment::indication::LightsCommand& l
     Serial.println("LED external control disabled");
   }
 }
+
 /*Callback function for uavcan battery info messages. Stores values into storage array */
 void batteryInfoCallback(const uavcan::equipment::power::BatteryInfo& batteryData)
 {
-  Serial.println("Received lights command array");
+  //Serial.println("Received lights command array");
   storeVoltageInfo(batteryData.battery_id, batteryData.voltage);
 }
 

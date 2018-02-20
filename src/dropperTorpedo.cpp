@@ -84,7 +84,7 @@ void stepSinWave()
 
 void indicatorRoutine() //Add this function to loop() to allow for indication of torpedo and battery status
 {
-  Serial.println("indicator");
+  //Serial.println("indicator");
   if(checkVoltages(13.25, 12.75) == POOR)
   {
       Serial.println("POOR");
@@ -97,18 +97,17 @@ void indicatorRoutine() //Add this function to loop() to allow for indication of
   {
       Serial.println("DANGER");
       disableExternalLEDControl();
-      sinWaveTimer.begin(stepSinWave, 210); //4 times base frequency
+      sinWaveTimer.begin(stepSinWave, 210);
       pwmDriver.setRGB(1, 0, 0, 0, 0.25*sinWave0/sinWaveAmplitude);
       return;
   }
-  if((torpedoState0 == FIRING) | (torpedoState1 == FIRING))
+  if((torpedoState0 == FIRING) || (torpedoState1 == FIRING))
   {
       disableExternalLEDControl();
-      sinWaveTimer.begin(stepSinWave, 210*baseSinFrq);
       pwmDriver.setRGB(1, 0, 0, 0, 0.5);
       return;
   }
-  if((torpedoState0 == ARMED) & (torpedoState1 == ARMED))
+  if((torpedoState0 == ARMED) && (torpedoState1 == ARMED))
   {
       disableExternalLEDControl();
       sinWaveTimer.begin(stepSinWave, 1000);
@@ -132,8 +131,9 @@ void indicatorRoutine() //Add this function to loop() to allow for indication of
   
   else
   {
-    sinWaveTimer.end();
-    enableExternalLEDControl();
+      pwmDriver.setRGB(0, 0, 0, 0, 0);
+      sinWaveTimer.end();
+      enableExternalLEDControl();
   }
 }
 
@@ -141,7 +141,8 @@ void indicatorRoutine() //Add this function to loop() to allow for indication of
 void setup() 
 {
   Serial.begin(9600);
-
+  delay(2000);
+  Serial.println("setup start");
   pwmDriver.begin();
 
   initTorpedos();
@@ -164,15 +165,15 @@ void setup()
   // start up node
   node->setModeOperational();
   Serial.println("Setup Complete");
-  armTorpedo(TORPEDO_1);
-  armTorpedo(TORPEDO_0);
-  //delay(5000);
+  //armTorpedo(TORPEDO_1);
+  //armTorpedo(TORPEDO_0);
+  
 }
 
 //Runs continuously
 void loop() 
 {
-  
+  //Serial.println("loop");
   torpedoRoutine();
   indicatorRoutine();
 
