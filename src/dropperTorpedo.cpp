@@ -128,12 +128,13 @@ void indicatorRoutine() //Add this function to loop() to allow for indication of
       pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0, 0.1*sinWave180/sinWaveAmplitude, 0, 0.15);
       return;
   }
-  
   else
   {
-      pwmDriver.setRGB(0, 0, 0, 0, 0);
-      sinWaveTimer.end();
-      enableExternalLEDControl();
+      if(enableExternalLEDControl())
+      {
+        pwmDriver.setRGB(0, 0, 0, 0, 0);
+        sinWaveTimer.end();   
+      }
   }
 }
 
@@ -174,8 +175,9 @@ void setup()
 void loop() 
 {
   //Serial.println("loop");
-  torpedoRoutine();
   indicatorRoutine();
+  torpedoRoutine();
+  
 
   //--UAVCAN cycles--//
 

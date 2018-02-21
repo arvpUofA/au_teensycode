@@ -27,14 +27,24 @@ Subscriber<equipment::power::BatteryInfo> *batterySubscriber;
 bool enableExternalLEDActions = true; //Boolean used for allowing external control of LED strip 
 
 //Functions to enable/disable external LED control
-void disableExternalLEDControl()
+bool disableExternalLEDControl()
 {
+  if(!enableExternalLEDActions)
+  {
+    return false;
+  }
   enableExternalLEDActions = false;
+  return true;
 }
 
-void enableExternalLEDControl()
+bool enableExternalLEDControl()
 {
+  if(enableExternalLEDActions)
+  {
+    return false;
+  }
   enableExternalLEDActions = true;
+  return true;
 }
 
 

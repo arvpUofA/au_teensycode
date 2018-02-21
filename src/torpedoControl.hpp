@@ -139,6 +139,7 @@ void torpedoRoutine()
             {
                 torpedoState0 = DISCHARGED;
                 Serial.println("Torpedo 0 DISCHARGED");
+                
             }
             break;
         
