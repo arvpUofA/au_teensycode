@@ -1,6 +1,9 @@
 #ifndef	SUBSCRIBER_HPP
 #define	SUBSCRIBER_HPP
 
+#define TORPEDO_ARM_ACTUATOR_VALUE -1
+#define TORPEDO_FIRE_ACTUATOR_VALUE 1
+
 #include <UAVCAN.hpp>
 #include <uavcan/equipment/actuator/ArrayCommand.hpp>
 #include <uavcan/equipment/indication/LightsCommand.hpp>
@@ -22,11 +25,9 @@ Subscriber<equipment::actuator::ArrayCommand> *actuatorSubscriber;
 Subscriber<equipment::indication::LightsCommand> *lightsSubscriber;
 Subscriber<equipment::power::BatteryInfo> *batterySubscriber;
 
-
-
 bool enableExternalLEDActions = true; //Boolean used for allowing external control of LED strip 
 
-//Functions to enable/disable external LED control
+//Functions to enable/disable external LED control. Only changes state boolean if current state is different.
 bool disableExternalLEDControl()
 {
   if(!enableExternalLEDActions)
@@ -47,28 +48,23 @@ bool enableExternalLEDControl()
   return true;
 }
 
-
-
 /*Callback function for uavcan actuator command array. Checks all array elements for IDs and executes torpedo or servo functions accordingly.*/
 void actuatorControlCallback(const uavcan::equipment::actuator::ArrayCommand& actuatorCommands)
 {
-  //Serial.println("Received actuator command array");
   for(uint8_t i = 0; i < actuatorCommands.commands.size(); i++)
   {
-    //Serial.println(i);
     switch(actuatorCommands.commands[i].actuator_id)
     {
       case ACTUATOR_ID_TORPEDO_0:
         //Torpedo fires when command value equals 1
-        if(actuatorCommands.commands[i].command_value == 1)requestLaunch(TORPEDO_0); 
+        if(actuatorCommands.commands[i].command_value == TORPEDO_FIRE_ACTUATOR_VALUE)requestLaunch(TORPEDO_0); 
         //Torpedo is armed when command value equals -1
-        else if(actuatorCommands.commands[i].command_value == -1)armTorpedo(TORPEDO_0);
-        //Serial.println("case 1 complete");
+        else if(actuatorCommands.commands[i].command_value == TORPEDO_ARM_ACTUATOR_VALUE)armTorpedo(TORPEDO_0);
         break;
 
       case ACTUATOR_ID_TORPEDO_1:
-        if(actuatorCommands.commands[i].command_value == 1)requestLaunch(TORPEDO_1);
-        else if(actuatorCommands.commands[i].command_value == -1)armTorpedo(TORPEDO_1);
+        if(actuatorCommands.commands[i].command_value == TORPEDO_FIRE_ACTUATOR_VALUE)requestLaunch(TORPEDO_1);
+        else if(actuatorCommands.commands[i].command_value == TORPEDO_ARM_ACTUATOR_VALUE)armTorpedo(TORPEDO_1);
         break;
 
       case ACTUATOR_ID_SERVO_0:
@@ -120,15 +116,12 @@ void actuatorControlCallback(const uavcan::equipment::actuator::ArrayCommand& ac
         actuateServo(PWM_CHANNEL_SERVO_11, actuatorCommands.commands[i].command_value);
         break;
     }
-    //Serial.println("switch done");
   }
-  //Serial.println("for complete");
 }
 
 /*Callback function for uavcan led command array. Checks all array elements for IDs and executes LED functions accordingly.*/
 void lightsControlCallback(const uavcan::equipment::indication::LightsCommand& lightCommand)
 {
-  //Serial.println("Received lights command array");
   if(enableExternalLEDActions)
   {
     for(uint8_t i = 0; i < lightCommand.commands.size(); i++)
@@ -150,7 +143,6 @@ void lightsControlCallback(const uavcan::equipment::indication::LightsCommand& l
 /*Callback function for uavcan battery info messages. Stores values into storage array */
 void batteryInfoCallback(const uavcan::equipment::power::BatteryInfo& batteryData)
 {
-  //Serial.println("Received lights command array");
   storeVoltageInfo(batteryData.battery_id, batteryData.voltage);
 }
 

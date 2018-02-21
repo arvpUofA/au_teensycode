@@ -39,8 +39,6 @@
 
 #define PWM_FEQUENCY 75 //Hz
 
-
-
 enum angleUnits {UNIT_RADIANS, UNIT_DEGREES};
 
 /**************************************************************************/

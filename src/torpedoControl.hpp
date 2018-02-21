@@ -65,7 +65,6 @@ bool fireTorpdeo(uint8_t trp)
 {  
     if((trp == TORPEDO_0) && !digitalRead(TORPEDO_0) && launchRequest0)
     {
-        
         fireTimer0.begin(trpControl0, PULSE_DURATION);
         Serial.println("Torpedo 0 pulse timer started");
         return true;

@@ -8,7 +8,7 @@
 
 #define NUMBER_OF_BATTERIES 4
 
-float batteryVoltage[NUMBER_OF_BATTERIES] = {14.9, 14.95, 14.9, 14.9};
+float batteryVoltage[NUMBER_OF_BATTERIES] = {15, 15, 15, 15}; //default set to 15 volts to avoid 
 
 enum voltageState {GOOD, POOR, DANGER};
 

@@ -9,6 +9,8 @@
 #include <subscriber.hpp>
 #include <uavcanNodeIDs.h>
 
+#define BATTERY_VOLTAGE_POOR_VALUE 13.25
+#define BATTERY_VOLTAGE_DANGER_VALUE 12.75
 
 // UAVCAN Node settings
 static constexpr uint32_t nodeID = UAVCAN_NODE_ID_TORPEDO_BOARD;
@@ -29,7 +31,7 @@ int baseSinFrq = 1; //Hz
 
 static int sinWaveTable[numberOfSinTableEntries] = 
 {
-		2048,2060,2073,2086,2099,2112,2125,2138,2150,2163,2176,2189,2202,2215,2227,2240,2253,2266,2279,2291,2304,2317,2330,2342,2355,2368,2380,
+	2048,2060,2073,2086,2099,2112,2125,2138,2150,2163,2176,2189,2202,2215,2227,2240,2253,2266,2279,2291,2304,2317,2330,2342,2355,2368,2380,
     2393,2406,2419,2431,2444,2456,2469,2482,2494,2507,2519,2532,2544,2557,2569,2582,2594,2606,2619,2631,2643,2656,2668,2680,2692,2705,2717,
     2729,2741,2753,2765,2777,2789,2801,2813,2825,2837,2849,2861,2872,2884,2896,2908,2919,2931,2942,2954,2966,2977,2988,3000,3011,3023,3034,
     3045,3056,3068,3079,3090,3101,3112,3123,3134,3145,3155,3166,3177,3188,3198,3209,3220,3230,3241,3251,3261,3272,3282,3292,3302,3313,3323,
@@ -75,17 +77,16 @@ IntervalTimer sinWaveTimer;
 
 void stepSinWave()
 {
-  sinWave0 = sinWaveTable[sinWaveTime];
-  sinWave120 = sinWaveTable[(sinWaveTime+333)%numberOfSinTableEntries];
-  sinWave180 = sinWaveTable[(sinWaveTime+500)%numberOfSinTableEntries];
-  sinWave240 = sinWaveTable[(sinWaveTime+667)%numberOfSinTableEntries];
+  sinWave0 = sinWaveTable[sinWaveTime]; //0 degree phase shift
+  sinWave120 = sinWaveTable[(sinWaveTime+333)%numberOfSinTableEntries]; //120 degree phase shift
+  sinWave180 = sinWaveTable[(sinWaveTime+500)%numberOfSinTableEntries]; //180 degree phase shift
+  sinWave240 = sinWaveTable[(sinWaveTime+667)%numberOfSinTableEntries]; //240 degree phase shift
   ++sinWaveTime %= numberOfSinTableEntries;
 }
 
 void indicatorRoutine() //Add this function to loop() to allow for indication of torpedo and battery status
 {
-  //Serial.println("indicator");
-  if(checkVoltages(13.25, 12.75) == POOR)
+  if(checkVoltages(BATTERY_VOLTAGE_POOR_VALUE, BATTERY_VOLTAGE_DANGER_VALUE) == POOR)
   {
       Serial.println("POOR");
       disableExternalLEDControl();
@@ -93,7 +94,7 @@ void indicatorRoutine() //Add this function to loop() to allow for indication of
       pwmDriver.setRGB(1, 0, 0, 0, 0.25*sinWave0/sinWaveAmplitude);
       return;
   }
-  if(checkVoltages(13.25, 12.75) == DANGER)
+  if(checkVoltages(BATTERY_VOLTAGE_POOR_VALUE, BATTERY_VOLTAGE_DANGER_VALUE) == DANGER)
   {
       Serial.println("DANGER");
       disableExternalLEDControl();
@@ -111,26 +112,26 @@ void indicatorRoutine() //Add this function to loop() to allow for indication of
   {
       disableExternalLEDControl();
       sinWaveTimer.begin(stepSinWave, 1000);
-      pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0.1*sinWave180/sinWaveAmplitude, 0.1*sinWave180/sinWaveAmplitude, 0, 0.15);
+      pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0.1*sinWave180/sinWaveAmplitude, 0.1*sinWave180/sinWaveAmplitude, 0, 0.2);
       return;
   }
   if(torpedoState0 == ARMED)
   {
       disableExternalLEDControl();
       sinWaveTimer.begin(stepSinWave, 1000);
-      pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0.1*sinWave180/sinWaveAmplitude, 0, 0, 0.15);
+      pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0.1*sinWave180/sinWaveAmplitude, 0, 0, 0.2);
       return;
   }
   if(torpedoState1 == ARMED)
   {
       disableExternalLEDControl();
       sinWaveTimer.begin(stepSinWave, 1000);
-      pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0, 0.1*sinWave180/sinWaveAmplitude, 0, 0.15);
+      pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0, 0.1*sinWave180/sinWaveAmplitude, 0, 0.2);
       return;
   }
   else
   {
-      if(enableExternalLEDControl())
+      if(enableExternalLEDControl()) //Only turn off LED if external LED control is disabled
       {
         pwmDriver.setRGB(0, 0, 0, 0, 0);
         sinWaveTimer.end();   
@@ -166,21 +167,15 @@ void setup()
   // start up node
   node->setModeOperational();
   Serial.println("Setup Complete");
-  //armTorpedo(TORPEDO_1);
-  //armTorpedo(TORPEDO_0);
-  
 }
 
 //Runs continuously
 void loop() 
 {
-  //Serial.println("loop");
   indicatorRoutine();
   torpedoRoutine();
-  
 
   //--UAVCAN cycles--//
-
   // wait in cycle
   cycleWait(framerate);
 
@@ -189,5 +184,4 @@ void loop()
 
   // toggle heartbeat
   toggleHeartBeat();
-
 }
