@@ -37,7 +37,7 @@
 #define ALLLED_OFF_L 0xFC
 #define ALLLED_OFF_H 0xFD
 
-#define PWM_FEQUENCY 100 //Hz
+#define PWM_FEQUENCY 75 //Hz
 
 
 

@@ -5,7 +5,7 @@
 #include <actuatorID.h>
 
 //Servo limits in us
-#define SERVOMIN  1000
+#define SERVOMIN  600
 #define SERVOMAX  2600
 
 Adafruit_PWMServoDriver *pwmServo;
