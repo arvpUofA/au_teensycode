@@ -4,13 +4,15 @@
 #include <batteryStatus.hpp>
 #include <servoControl.hpp>
 #include <ledIndicationControl.hpp>
-
+#include <Metro.h>
 #include <teensy_uavcan.hpp>
 #include <subscriber.hpp>
 #include <uavcanNodeIDs.h>
 
 #define BATTERY_VOLTAGE_POOR_VALUE 13.25
 #define BATTERY_VOLTAGE_DANGER_VALUE 12.75
+
+#define DEFAULT_STROBE_INTERVAL 250
 
 // UAVCAN Node settings
 static constexpr uint32_t nodeID = UAVCAN_NODE_ID_TORPEDO_BOARD;
@@ -24,10 +26,15 @@ static constexpr float framerate = 100;
 //PCA9685 object, uses default address 0x40
 Adafruit_PWMServoDriver pwmDriver = Adafruit_PWMServoDriver(PCA9685_BASEADDR);
 
+//strobe light timer
+Metro strobeLightTimer = Metro(DEFAULT_STROBE_INTERVAL);
+
 //Sin wave generator definitions
 const int numberOfSinTableEntries = 1000;
 const int sinWaveAmplitude = 4096;
 int baseSinFrq = 1; //Hz
+
+bool demoMode = true;
 
 static int sinWaveTable[numberOfSinTableEntries] = 
 {
@@ -86,6 +93,13 @@ void stepSinWave()
 
 void indicatorRoutine() //Add this function to loop() to allow for indication of torpedo and battery status
 {
+  if(demoMode)
+  {
+      disableExternalLEDControl();
+      sinWaveTimer.begin(stepSinWave, 2000);
+      pwmDriver.setRGB(sinWave0/sinWaveAmplitude, sinWave120/sinWaveAmplitude, sinWave240/sinWaveAmplitude, 0, 0.15);
+      return;
+  }
   if(checkVoltages(BATTERY_VOLTAGE_POOR_VALUE, BATTERY_VOLTAGE_DANGER_VALUE) == POOR)
   {
       Serial.println("POOR");
@@ -136,6 +150,11 @@ void indicatorRoutine() //Add this function to loop() to allow for indication of
         pwmDriver.setRGB(0, 0, 0, 0, 0);
         sinWaveTimer.end();   
       }
+      if(strobeActivated && strobeLightTimer.check())
+      {
+          pwmDriver.setRGB(0, 0, 0, 0, 0);
+          strobeActivated = false;
+      }
   }
 }
 
@@ -149,7 +168,7 @@ void setup()
 
   initTorpedos();
   initServoControl(&pwmDriver);
-  initLEDControl(&pwmDriver);
+  initLEDControl(&pwmDriver, &strobeLightTimer);
 
   //--UAVCAN init--//
   // init LEDs

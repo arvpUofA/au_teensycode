@@ -115,6 +115,10 @@ void actuatorControlCallback(const uavcan::equipment::actuator::ArrayCommand& ac
       case ACTUATOR_ID_SERVO_11:
         actuateServo(PWM_CHANNEL_SERVO_11, actuatorCommands.commands[i].command_value);
         break;
+
+      case ACTUATOR_ID_INTERVAL:
+        changeInterval(actuatorCommands.commands[i].command_value);
+        break;
     }
   }
 }
@@ -130,6 +134,10 @@ void lightsControlCallback(const uavcan::equipment::indication::LightsCommand& l
       {
         case LIGHT_ID_RGB_STRIP_0:
           setLEDColour(lightCommand.commands[i].color.red, lightCommand.commands[i].color.green, lightCommand.commands[i].color.blue);
+          break;
+
+        case LIGHT_ID_RGB_STROBE:
+          activateStrobe(lightCommand.commands[i].color.red, lightCommand.commands[i].color.green, lightCommand.commands[i].color.blue);
           break;
       }
     }

@@ -9,7 +9,7 @@
 #define TORPEDO_1 17
 
 //Solenoid pulse duration in us
-#define PULSE_DURATION 250000
+double pulseDuration = 250000;
 
 //Set to true when torpedo firing request is initiated
 bool launchRequest0 = false;
@@ -47,6 +47,11 @@ void trpControl1()
     launchRequest1 = false;
 }
 
+void changeInterval(double inter)
+{
+    pulseDuration = inter;
+}
+
 //Call this function to trigger firing of torpedo. Torpedo must be in ARMED state to fire.
 void requestLaunch(uint8_t trp)
 {
@@ -65,13 +70,13 @@ bool fireTorpdeo(uint8_t trp)
 {  
     if((trp == TORPEDO_0) && !digitalRead(TORPEDO_0) && launchRequest0)
     {
-        fireTimer0.begin(trpControl0, PULSE_DURATION);
+        fireTimer0.begin(trpControl0, pulseDuration);
         Serial.println("Torpedo 0 pulse timer started");
         return true;
     }
     else if((trp == TORPEDO_1) && !digitalRead(TORPEDO_1) && launchRequest1)
     {
-        fireTimer1.begin(trpControl1, PULSE_DURATION);
+        fireTimer1.begin(trpControl1, pulseDuration);
         Serial.println("Torpedo 0 pulse timer started");
         return true;
     }
