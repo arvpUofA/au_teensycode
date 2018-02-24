@@ -34,7 +34,7 @@ const int numberOfSinTableEntries = 1000;
 const int sinWaveAmplitude = 4096;
 int baseSinFrq = 1; //Hz
 
-bool demoMode = true;
+bool demoMode = false;
 
 static int sinWaveTable[numberOfSinTableEntries] = 
 {
@@ -93,13 +93,6 @@ void stepSinWave()
 
 void indicatorRoutine() //Add this function to loop() to allow for indication of torpedo and battery status
 {
-  if(demoMode)
-  {
-      disableExternalLEDControl();
-      sinWaveTimer.begin(stepSinWave, 2000);
-      pwmDriver.setRGB(sinWave0/sinWaveAmplitude, sinWave120/sinWaveAmplitude, sinWave240/sinWaveAmplitude, 0, 0.15);
-      return;
-  }
   if(checkVoltages(BATTERY_VOLTAGE_POOR_VALUE, BATTERY_VOLTAGE_DANGER_VALUE) == POOR)
   {
       Serial.println("POOR");
@@ -141,6 +134,13 @@ void indicatorRoutine() //Add this function to loop() to allow for indication of
       disableExternalLEDControl();
       sinWaveTimer.begin(stepSinWave, 1000);
       pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0, 0.1*sinWave180/sinWaveAmplitude, 0, 0.2);
+      return;
+  }
+  if(demoMode)
+  {
+      disableExternalLEDControl();
+      sinWaveTimer.begin(stepSinWave, 2000);
+      pwmDriver.setRGB(sinWave0/sinWaveAmplitude, sinWave120/sinWaveAmplitude, sinWave240/sinWaveAmplitude, 0, 0.15);
       return;
   }
   else

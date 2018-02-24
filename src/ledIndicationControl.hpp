@@ -19,6 +19,7 @@ void initLEDControl(Adafruit_PWMServoDriver *ptr, Metro *ptr2)
 {
     pwmLED = ptr;
     strobeTimer = ptr2;
+    pwmLED->setRGB(0,0,0,0,0);
 }
 
 //Provides simplified LED control interface for UAVCAN callbacks
