@@ -3,6 +3,8 @@
 
 #include <Arduino.h>
 #include <IntervalTimer.h>
+#include <ledIndicationControl.hpp>
+
 
 //Pin definitions
 #define TORPEDO_0 16
@@ -50,6 +52,7 @@ void trpControl1()
 void changeInterval(double inter)
 {
     pulseDuration = inter;
+    pulseLED(0, 0, 0.2, pulseDuration);
 }
 
 //Call this function to trigger firing of torpedo. Torpedo must be in ARMED state to fire.
