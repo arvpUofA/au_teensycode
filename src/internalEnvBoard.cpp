@@ -1,5 +1,20 @@
 #include "Arduino.h"
 #include <Wire.h>
+
+#include <teensy_uavcan.hpp>
+#include <publisher.hpp>
+#include <uavcanNodeIDs.h>
+#include "internalEnvBoard.h"
+
+// UAVCAN Node settings
+static constexpr uint32_t nodeID = UAVCAN_NODE_ID_INTERNAL_SENSOR_BOARD;
+static constexpr uint8_t swVersion = 1;
+static constexpr uint8_t hwVersion = 1;
+static const char *nodeName = "org.arvp.internalSensor";
+
+// UAVCAN application settings
+static constexpr float framerate = 100;
+
 // humidity/temperature sensor
 #define HIH7120ADDRESS 0x27
 // pressure/temperature sensor
@@ -92,17 +107,44 @@ pressure_StructDef readPressureMPL() {
   return pressure;
 }
 
+float publishTemp() {
+    return temp();
+}
+
+float publishPress() {
+    readPressureMPL();
+    return pressure.whole;
+}
+
 void setup() {
   // put your setup code here, to run once:
   Wire.begin();
+
+  initLeds();
+
   Serial.begin(9600);
-  delay(3000);
-  Serial.println("Setup");
+  delay(5000);
+  Serial.println("Setup start");
+  
   setupMPL();
 
+  // Create a node
+  systemClock = &getSystemClock();
+  canDriver = &getCanDriver();
+  node = new Node<NodeMemoryPoolSize>(*canDriver, *systemClock);
+  initNode(node, nodeID, nodeName, swVersion, hwVersion);
+
+  // init subscriber
+  initPublisher(node);
+
+  // start up node
+  node->setModeOperational();
+  Serial.println("Setup complete");
 }
 
 void loop() {
+  digitalWrite(13, HIGH);
+  delay(500);
   hum_measurement_req();
   Wire.requestFrom(HIH7120ADDRESS, 4);
   measureHIH7120();
@@ -119,5 +161,18 @@ void loop() {
   Serial.print(".");
   Serial.println(pressure.fractional);
 
-  delay(1000);
+  //--UAVCAN cycles--//
+  // wait in cycle
+  cycleWait(framerate);
+
+  // do some CAN stuff
+  cycleNode(node);
+
+  cyclePublisher();
+
+  // toggle heartbeat
+  toggleHeartBeat();
+
+  digitalWrite(13, LOW);
+  delay(500);
 }
