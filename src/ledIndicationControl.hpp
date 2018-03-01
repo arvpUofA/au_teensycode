@@ -6,7 +6,7 @@
 #include <Metro.h>
 
 #define MAX_RED_INPUT 31
-#define MAX_GREEN_INPUT 63
+#define MAX_GREEN_INPUT 31
 #define MAX_BLUE_INPUT 31
 
 bool strobeActivated = false;
@@ -25,21 +25,21 @@ void initLEDControl(Adafruit_PWMServoDriver *ptr, Metro *ptr2)
 //Provides simplified LED control interface for UAVCAN callbacks
 void setLEDColour(float red, float green, float blue)
 {
-    pwmLED->setRGB(red/MAX_RED_INPUT, green/MAX_GREEN_INPUT, blue/MAX_BLUE_INPUT, 0, 0.5);
+    pwmLED->setRGB(red/MAX_RED_INPUT, green/MAX_GREEN_INPUT, blue/MAX_BLUE_INPUT, 0, 1);
 }
 
 void activateStrobe(float red, float green, float blue)
 {
     strobeTimer->reset();
-    pwmLED->setRGB(red/MAX_RED_INPUT, green/MAX_GREEN_INPUT, blue/MAX_BLUE_INPUT, 0, 0.5);
+    pwmLED->setRGB(red/MAX_RED_INPUT, green/MAX_GREEN_INPUT, blue/MAX_BLUE_INPUT, 0, 1);
     strobeActivated = true;
 }
 
 void pulseLED(float red, float green, float blue, double interval)
 {
     strobeTimer->reset();
-    strobeTimer->interval(interval);
-    pwmLED->setRGB(red/MAX_RED_INPUT, green/MAX_GREEN_INPUT, blue/MAX_BLUE_INPUT, 0, 0.5);
+    strobeTimer->interval(interval/1000);
+    pwmLED->setRGB(red/MAX_RED_INPUT, green/MAX_GREEN_INPUT, blue/MAX_BLUE_INPUT, 0, 1);
     strobeActivated = true;
 }
 

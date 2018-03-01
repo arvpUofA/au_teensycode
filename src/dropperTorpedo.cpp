@@ -7,6 +7,7 @@
 #include <Metro.h>
 #include <teensy_uavcan.hpp>
 #include <subscriber.hpp>
+#include <parameter.hpp>
 #include <uavcanNodeIDs.h>
 
 #define BATTERY_VOLTAGE_POOR_VALUE 13.25
@@ -36,7 +37,7 @@ int baseSinFrq = 1; //Hz
 
 bool demoMode = false;
 
-static int sinWaveTable[numberOfSinTableEntries] = 
+static const int sinWaveTable[numberOfSinTableEntries] = 
 {
 	2048,2060,2073,2086,2099,2112,2125,2138,2150,2163,2176,2189,2202,2215,2227,2240,2253,2266,2279,2291,2304,2317,2330,2342,2355,2368,2380,
     2393,2406,2419,2431,2444,2456,2469,2482,2494,2507,2519,2532,2544,2557,2569,2582,2594,2606,2619,2631,2643,2656,2668,2680,2692,2705,2717,
@@ -140,7 +141,7 @@ void indicatorRoutine() //Add this function to loop() to allow for indication of
   {
       disableExternalLEDControl();
       sinWaveTimer.begin(stepSinWave, 2000);
-      pwmDriver.setRGB(sinWave0/sinWaveAmplitude, sinWave120/sinWaveAmplitude, sinWave240/sinWaveAmplitude, 0, 0.15);
+      pwmDriver.setRGB(3*sinWave0/sinWaveAmplitude, sinWave120/sinWaveAmplitude, sinWave240/sinWaveAmplitude, 0, 0.1);
       return;
   }
   else
@@ -161,31 +162,36 @@ void indicatorRoutine() //Add this function to loop() to allow for indication of
 // this runs once to setup everything
 void setup() 
 {
-  Serial.begin(9600);
-  delay(2000);
-  Serial.println("setup start");
-  pwmDriver.begin();
+    Serial.begin(9600);
+    delay(3000);
+    Serial.println("Setup start");
 
-  initTorpedos();
-  initServoControl(&pwmDriver);
-  initLEDControl(&pwmDriver, &strobeLightTimer);
+    pwmDriver.begin();
 
-  //--UAVCAN init--//
-  // init LEDs
-  initLeds();
+    initTorpedos();
+    initServoControl(&pwmDriver);
+    initLEDControl(&pwmDriver, &strobeLightTimer);
 
-  // Create a node
-  systemClock = &getSystemClock();
-  canDriver = &getCanDriver();
-  node = new Node<NodeMemoryPoolSize>(*canDriver, *systemClock);
-  initNode(node, nodeID, nodeName, swVersion, hwVersion);
+    //--UAVCAN init--//
+    // init LEDs
+    initLeds();
 
-  // init subscriber
-  initSubscriber(node);
+    // Create a node
+    systemClock = &getSystemClock();
+    canDriver = &getCanDriver();
+    node = new Node<NodeMemoryPoolSize>(*canDriver, *systemClock);
+    initNode(node, nodeID, nodeName, swVersion, hwVersion);
 
-  // start up node
-  node->setModeOperational();
-  Serial.println("Setup Complete");
+    // init subscriber
+    initSubscriber(node);
+
+    // start up node
+    node->setModeOperational();
+
+    // start parameter server
+    initParameter(node);
+
+    Serial.println("Setup Complete");
 }
 
 //Runs continuously

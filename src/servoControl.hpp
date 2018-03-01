@@ -4,6 +4,8 @@
 #include <libARVPpwm.h>
 #include <actuatorID.h>
 
+#include <parameter.hpp>
+
 //Servo limits in us
 #define SERVOMIN  600
 #define SERVOMAX  2600

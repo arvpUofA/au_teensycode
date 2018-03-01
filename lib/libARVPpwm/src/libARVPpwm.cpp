@@ -216,10 +216,10 @@ void Adafruit_PWMServoDriver::setRGBChannels(uint8_t red, uint8_t green, uint8_t
 //Sets brightness of each LED colour channel
 void Adafruit_PWMServoDriver::setRGB(float red, float green, float blue, float white, float brightness)
 {
-  this->setPWM(redChannel, 0, red*brightness*4096);
-  this->setPWM(greenChannel, 0, green*brightness*4096);
-  this->setPWM(blueChannel, 0, blue*brightness*4096);
-  this->setPWM(whiteChannel, 0, white*brightness*4096);
+  this->setPWM(redChannel, 0, red*brightness*4095);
+  this->setPWM(greenChannel, 0, green*brightness*4095);
+  this->setPWM(blueChannel, 0, blue*brightness*4095);
+  this->setPWM(whiteChannel, 0, white*brightness*4095);
 }
 
 

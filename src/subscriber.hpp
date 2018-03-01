@@ -2,12 +2,15 @@
 #define	SUBSCRIBER_HPP
 
 #define TORPEDO_ARM_ACTUATOR_VALUE -1
+#define TORPEDO_DISARM_ACTUATOR_VALUE -2
 #define TORPEDO_FIRE_ACTUATOR_VALUE 1
 
 #include <UAVCAN.hpp>
 #include <uavcan/equipment/actuator/ArrayCommand.hpp>
 #include <uavcan/equipment/indication/LightsCommand.hpp>
 #include <uavcan/equipment/power/BatteryInfo.hpp>
+
+#include <parameter.hpp>
 
 #include <Arduino.h>
 #include <torpedoControl.hpp>
@@ -60,11 +63,14 @@ void actuatorControlCallback(const uavcan::equipment::actuator::ArrayCommand& ac
         if(actuatorCommands.commands[i].command_value == TORPEDO_FIRE_ACTUATOR_VALUE)requestLaunch(TORPEDO_0); 
         //Torpedo is armed when command value equals -1
         else if(actuatorCommands.commands[i].command_value == TORPEDO_ARM_ACTUATOR_VALUE)armTorpedo(TORPEDO_0);
+        //Torpedo is disarmed when command value equals -2
+        else if(actuatorCommands.commands[i].command_value == TORPEDO_DISARM_ACTUATOR_VALUE)disarmTorpedo(TORPEDO_0);
         break;
 
       case ACTUATOR_ID_TORPEDO_1:
         if(actuatorCommands.commands[i].command_value == TORPEDO_FIRE_ACTUATOR_VALUE)requestLaunch(TORPEDO_1);
         else if(actuatorCommands.commands[i].command_value == TORPEDO_ARM_ACTUATOR_VALUE)armTorpedo(TORPEDO_1);
+        else if(actuatorCommands.commands[i].command_value == TORPEDO_DISARM_ACTUATOR_VALUE)disarmTorpedo(TORPEDO_1);
         break;
 
       case ACTUATOR_ID_SERVO_0:
