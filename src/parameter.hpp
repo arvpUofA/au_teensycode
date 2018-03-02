@@ -12,13 +12,35 @@
 #define NUMBER_OF_PARAMETERS 21
 #define MAX_NUMBER_OF_PARAMETERS 64 //based on sizeof(genericParam) (32 bytes) and 2048 byte EEPROM capacity in Teensy 3.2
 
+#define PARAM_INDEX_TORPEDO_PULSE 0
+#define PARAM_INDEX_MIN_SERVO_PULSE 1
+#define PARAM_INDEX_MAX_SERVO_PULSE 2
+#define PARAM_INDEX_ACT_ID_TORP_0 3
+#define PARAM_INDEX_ACT_ID_TORP_1 4
+#define PARAM_INDEX_ACT_ID_SERVO_0 5
+#define PARAM_INDEX_ACT_ID_SERVO_1 6
+#define PARAM_INDEX_ACT_ID_SERVO_2 7
+#define PARAM_INDEX_ACT_ID_SERVO_3 8
+#define PARAM_INDEX_ACT_ID_SERVO_4 9
+#define PARAM_INDEX_ACT_ID_SERVO_5 10
+#define PARAM_INDEX_ACT_ID_SERVO_6 11
+#define PARAM_INDEX_ACT_ID_SERVO_7 12
+#define PARAM_INDEX_ACT_ID_SERVO_8 13
+#define PARAM_INDEX_ACT_ID_SERVO_9 14
+#define PARAM_INDEX_ACT_ID_SERVO_10 15
+#define PARAM_INDEX_ACT_ID_SERVO_11 16
+#define PARAM_INDEX_LIGHT_ID_STRIP_0 17
+#define PARAM_INDEX_LIGHT_ID_STRIP_0_STROBE 18
+#define PARAM_INDEX_STROBE_INTERVAL 19
+#define PARAM_INDEX_DEMO_MODE 20
+
 using namespace uavcan;
 
 // To ease parameter management, all names and default values of parameters are stored in this array as strings.
 const char *defaultParameterArray[NUMBER_OF_PARAMETERS][2] =
 {
     {"torpedoPulseInterval", "250"}, // in ms
-    {"minServoPulse", "1000"}, // in us
+    {"minServoPulse", "900"}, // in us
     {"maxServoPulse", "2000"}, // in us
     {"actuatorIDTorpedo0", "0"},
     {"actuatorIDTorpedo1", "1"},
@@ -50,7 +72,7 @@ struct genericParam
     char paramName[24]; //Up to 23 characters + 1 null character
     double paramValue; //Be sure to cast to appropriate type when retreiving this value in main program.
 }
-boardConfig[NUMBER_OF_PARAMETERS];
+boardConfig[MAX_NUMBER_OF_PARAMETERS];
 
 //Store default parameter names and values into boardConfig struct array.
 void initParameters()
@@ -60,6 +82,35 @@ void initParameters()
         strcpy(boardConfig[i].paramName, defaultParameterArray[i][0]);
         boardConfig[i].paramValue = atof(defaultParameterArray[i][1]);
     }
+}
+
+void printParameters()
+{
+    Serial.println("");
+    Serial.println("--Printing Parameters--");
+    Serial.println("");
+    for(uint8_t i = 0; i < NUMBER_OF_PARAMETERS && i < MAX_NUMBER_OF_PARAMETERS; i++)
+    {   
+        Serial.print(boardConfig[i].paramName);
+        Serial.print(": ");
+        Serial.println(boardConfig[i].paramValue);
+    }
+    Serial.println("");
+    Serial.println("----");
+    Serial.println("");
+}
+
+void saveConfig()
+{
+    Serial.println("Save parameters to EEPROM");
+    EEPROM.put(0, boardConfig);
+}
+
+void resetConfig()
+{
+    Serial.println("Reset all params to default values.");
+    initParameters();
+    EEPROM.put(0, boardConfig);
 }
 
 /*
@@ -104,15 +155,13 @@ class : public uavcan::IParamManager
 
     int saveAllParams() override
     {
-        Serial.println("Save to EEPROM");
-        EEPROM.put(0, boardConfig);
+        saveConfig();
         return 0;     // Zero means that everything is fine.
     }
 
     int eraseAllParams() override
     {
-        Serial.println("Erase - all params reset to default values stored in EEPROM");
-        initParameters();
+        resetConfig();
         return 0;
     }
 
@@ -123,7 +172,9 @@ uavcan::ParamServer* server;
 void initParameter(Node<NodeMemoryPoolSize> *node)
 {
     initParameters(); //Prepare boardConfig array
+    //saveConfig(); //Run this here if saving new parameters for first time.
     EEPROM.get(0, boardConfig); //Load previously saved array
+    printParameters();
     server = new uavcan::ParamServer(*node);
     const int server_start_res = server->start(&param_manager);
     if (server_start_res < 0)

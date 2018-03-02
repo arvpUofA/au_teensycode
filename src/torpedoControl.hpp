@@ -4,13 +4,14 @@
 #include <Arduino.h>
 #include <IntervalTimer.h>
 #include <ledIndicationControl.hpp>
+#include <parameter.hpp>
 
 //Pin definitions
 #define TORPEDO_0 16
 #define TORPEDO_1 17
 
 //Solenoid pulse duration in us
-double pulseDuration = 300000;
+double pulseDuration = 250000;
 
 //Set to true when torpedo firing request is initiated
 bool launchRequest0 = false;
@@ -51,7 +52,7 @@ void trpControl1()
 void changeInterval(double inter)
 {
     pulseDuration = inter;
-    pulseLED(0, 0, 0.2, pulseDuration);
+    pulseLED(0, 0, 0.2, boardConfig[PARAM_INDEX_TORPEDO_PULSE].paramValue);
 }
 
 //Call this function to trigger firing of torpedo. Torpedo must be in ARMED state to fire.
@@ -67,14 +68,14 @@ void requestLaunch(uint8_t trp)
     }
 }
 
-//Starts interval timer for a selected torpedo according to specified solenoid pulse duration
+//Fires torpedo and starts interval timer for a selected torpedo according to specified solenoid pulse duration
 bool fireTorpdeo(uint8_t trp)
 {  
     if((trp == TORPEDO_0) && !digitalRead(TORPEDO_0) && launchRequest0)
     {
         digitalWrite(TORPEDO_0, HIGH);
         launchRequest0 = false;
-        fireTimer0.begin(trpControl0, pulseDuration);
+        fireTimer0.begin(trpControl0, boardConfig[PARAM_INDEX_TORPEDO_PULSE].paramValue*1000); //ms to us
         Serial.println("Torpedo 0 pulse timer started");
         return true;
     }
@@ -82,7 +83,7 @@ bool fireTorpdeo(uint8_t trp)
     {
         digitalWrite(TORPEDO_1, HIGH);
         launchRequest1 = false;
-        fireTimer1.begin(trpControl1, pulseDuration);
+        fireTimer1.begin(trpControl1, boardConfig[PARAM_INDEX_TORPEDO_PULSE].paramValue*1000);
         Serial.println("Torpedo 1 pulse timer started");
         return true;
     }
