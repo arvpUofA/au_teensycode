@@ -137,7 +137,7 @@ void indicatorRoutine() //Add this function to loop() to allow for indication of
       pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0, 0.1*sinWave180/sinWaveAmplitude, 0, 0.2);
       return;
   }
-  if(demoMode)
+  if((int)boardConfig[PARAM_INDEX_DEMO_MODE].paramValue)
   {
       disableExternalLEDControl();
       sinWaveTimer.begin(stepSinWave, 2000);

@@ -38,7 +38,7 @@ void activateStrobe(float red, float green, float blue)
 void pulseLED(float red, float green, float blue, double interval)
 {
     strobeTimer->reset();
-    strobeTimer->interval(interval/1000);
+    strobeTimer->interval(interval);
     pwmLED->setRGB(red/MAX_RED_INPUT, green/MAX_GREEN_INPUT, blue/MAX_BLUE_INPUT, 0, 1);
     strobeActivated = true;
 }

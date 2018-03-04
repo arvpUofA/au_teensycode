@@ -58,12 +58,12 @@ const char *defaultParameterArray[NUMBER_OF_PARAMETERS][2] =
     {"actuatorIDServo9", "11"},
 
     {"actuatorIDServo10", "12"},
-    {"actuatorIDServo11", "12"},
+    {"actuatorIDServo11", "13"},
     {"lightIDRGBStrip0", "0"},
     {"lightIDRGBStrip0_strobe", "248"},
     {"strobeInterval", "500"}, // in ms
 
-    {"demoMode", "1"}
+    {"demoMode", "0"}
 };
 //--- Update NUMBER_OF_PARAMETERS when adding new parameters.
 
@@ -173,7 +173,7 @@ void initParameter(Node<NodeMemoryPoolSize> *node)
 {
     initParameters(); //Prepare boardConfig array
     //saveConfig(); //Run this here if saving new parameters for first time.
-    EEPROM.get(0, boardConfig); //Load previously saved array
+    EEPROM.get(0, boardConfig); //Load saved array
     printParameters();
     server = new uavcan::ParamServer(*node);
     const int server_start_res = server->start(&param_manager);
@@ -183,7 +183,7 @@ void initParameter(Node<NodeMemoryPoolSize> *node)
     }
     else
     {
-        Serial.println("Started Parameterserver successfully!");
+        Serial.println("Started Parameter server successfully!");
     }
 }
 

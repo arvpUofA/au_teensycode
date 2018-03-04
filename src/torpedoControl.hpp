@@ -124,14 +124,15 @@ void armTorpedo(uint8_t trp)
     }
 }
 
+//Sets torpedo state to READY
 void disarmTorpedo(uint8_t trp)
 {
-    if((trp == TORPEDO_0) && ((torpedoState0 == ARMED)))
+    if((trp == TORPEDO_0) && (torpedoState0 == ARMED))
     {
         torpedoState0 = READY;
         Serial.println("Torpedo 0 disarmed");
     }
-    else if((trp == TORPEDO_1) && ((torpedoState1 == ARMED)))
+    else if((trp == TORPEDO_1) && (torpedoState1 == ARMED))
     {
         torpedoState1 = READY;
         Serial.println("Torpedo 1 disarmed");

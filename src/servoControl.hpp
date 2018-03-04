@@ -21,7 +21,7 @@ void initServoControl(Adafruit_PWMServoDriver *ptr)
 //Provides simplified servo control interface for UAVCAN callbacks
 void actuateServo(uint8_t pwmChannel, float angle)
 {
-    pwmServo->setServoAngle(pwmChannel, angle, SERVOMIN, SERVOMAX, UNIT_RADIANS);
+    pwmServo->setServoAngle(pwmChannel, angle, (uint16_t)boardConfig[PARAM_INDEX_MIN_SERVO_PULSE].paramValue, (uint16_t)boardConfig[PARAM_INDEX_MAX_SERVO_PULSE].paramValue, UNIT_RADIANS);
 }
 
 #endif
