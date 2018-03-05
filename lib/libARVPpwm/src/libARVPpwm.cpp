@@ -192,16 +192,18 @@ void Adafruit_PWMServoDriver::setServoPulse(uint8_t n, double pulse) //pulse wid
 //Sets angle of servo on selected PCA9685 channel, within min and max pulse length, and using degrees or radians.
 void Adafruit_PWMServoDriver::setServoAngle(uint8_t pwmChannel, float angle, uint16_t minPulse, uint16_t maxPulse, angleUnits angleUnit)
 {
+  uint16_t pulseWidth = minPulse;
   if(angleUnit == UNIT_DEGREES)
   {
-    uint16_t pulseWidth = minPulse  + angle*(maxPulse - minPulse)/180;
-    this->setServoPulse(pwmChannel, pulseWidth);
+    pulseWidth = minPulse  + angle*(maxPulse - minPulse)/180;
   }
   if(angleUnit == UNIT_RADIANS)
   {
-    uint16_t pulseWidth = minPulse  + angle*(maxPulse - minPulse)/3.14159;
-    this->setServoPulse(pwmChannel, pulseWidth);
+    pulseWidth = minPulse  + angle*(maxPulse - minPulse)/3.14159;
   }
+  if(pulseWidth > maxPulse) pulseWidth = maxPulse;
+  if(pulseWidth < minPulse) pulseWidth = minPulse;
+  this->setServoPulse(pwmChannel, pulseWidth);
 }
 
 //Configures PCA9685 channels of RGBW strip
