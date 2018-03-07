@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include <Wire.h>
+#include <Metro.h>
 
 #include <teensy_uavcan.hpp>
 #include <publisher.hpp>
@@ -21,6 +22,10 @@ static constexpr float framerate = 100;
 #define MPLADDRESS 0x60
 unsigned char buf[5];
 unsigned char sta;
+
+// instantiate the timers for publishing message
+Metro timer1 = Metro(1000);
+Metro timer2 = Metro(500);
 
 //use this for reading out pressure data in two parts
 struct pressure_StructDef {
@@ -143,36 +148,43 @@ void setup() {
 }
 
 void loop() {
-  digitalWrite(13, HIGH);
-  delay(500);
-  hum_measurement_req();
-  Wire.requestFrom(HIH7120ADDRESS, 4);
-  measureHIH7120();
-  Serial.println("Reading");
-  Serial.print("Humidity: ");
-  Serial.println(humidity());
-  Serial.print("Temperature: ");
-  Serial.println(temp());
 
-  //pressure readings
-  readPressureMPL();
-  Serial.print("Pressure value: ");
-  Serial.print(pressure.whole);
-  Serial.print(".");
-  Serial.println(pressure.fractional);
+    hum_measurement_req();
+    Wire.requestFrom(HIH7120ADDRESS, 4);
+    measureHIH7120();
+    Serial.println("Reading");
+    Serial.print("Humidity: ");
+    Serial.println(humidity());
+    Serial.print("Temperature: ");
+    Serial.println(temp());
 
-  //--UAVCAN cycles--//
-  // wait in cycle
-  cycleWait(framerate);
+    //pressure readings
+    readPressureMPL();
+    Serial.print("Pressure value: ");
+    Serial.print(pressure.whole);
+    Serial.print(".");
+    Serial.println(pressure.fractional);
 
-  // do some CAN stuff
-  cycleNode(node);
+    //--UAVCAN cycles--//
+    // wait in cycle
+    cycleWait(framerate);
 
-  cyclePublisher();
+    // do some CAN stuff
+    cycleNode(node);
 
-  // toggle heartbeat
-  toggleHeartBeat();
+    cyclePublisher();
 
-  digitalWrite(13, LOW);
-  delay(500);
+    // toggle heartbeat
+    toggleHeartBeat();
+
+  if(timer1.check() == 1) {
+    // the LED will light up for 500 ms for every published message
+    digitalWrite(13, HIGH);
+    timer1.reset();
+    timer2.reset();
+  }
+
+  if(timer2.check() == 1) {
+    digitalWrite(13, LOW);
+  }
 }
