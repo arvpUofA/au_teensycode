@@ -9,6 +9,7 @@
 #include <subscriber.hpp>
 #include <parameter.hpp>
 #include <uavcanNodeIDs.h>
+#include <watchdog.h>
 
 #define BATTERY_VOLTAGE_POOR_VALUE 13.25
 #define BATTERY_VOLTAGE_DANGER_VALUE 12.75
@@ -85,85 +86,85 @@ IntervalTimer sinWaveTimer;
 
 void stepSinWave()
 {
-  sinWave0 = sinWaveTable[sinWaveTime]; //0 degree phase shift
-  sinWave120 = sinWaveTable[(sinWaveTime+333)%numberOfSinTableEntries]; //120 degree phase shift
-  sinWave180 = sinWaveTable[(sinWaveTime+500)%numberOfSinTableEntries]; //180 degree phase shift
-  sinWave240 = sinWaveTable[(sinWaveTime+667)%numberOfSinTableEntries]; //240 degree phase shift
-  ++sinWaveTime %= numberOfSinTableEntries;
+    sinWave0 = sinWaveTable[sinWaveTime]; //0 degree phase shift
+    sinWave120 = sinWaveTable[(sinWaveTime+333)%numberOfSinTableEntries]; //120 degree phase shift
+    sinWave180 = sinWaveTable[(sinWaveTime+500)%numberOfSinTableEntries]; //180 degree phase shift
+    sinWave240 = sinWaveTable[(sinWaveTime+667)%numberOfSinTableEntries]; //240 degree phase shift
+    ++sinWaveTime %= numberOfSinTableEntries;
 }
 
 void indicatorRoutine() //Add this function to loop() to allow for indication of torpedo and battery status
 {
-  if(checkVoltages(BATTERY_VOLTAGE_POOR_VALUE, BATTERY_VOLTAGE_DANGER_VALUE) == POOR)
-  {
-      Serial.println("POOR");
-      disableExternalLEDControl();
-      sinWaveTimer.begin(stepSinWave, 2000);
-      pwmDriver.setRGB(1, 0, 0, 0, 0.25*sinWave0/sinWaveAmplitude);
-      return;
-  }
-  if(checkVoltages(BATTERY_VOLTAGE_POOR_VALUE, BATTERY_VOLTAGE_DANGER_VALUE) == DANGER)
-  {
-      Serial.println("DANGER");
-      disableExternalLEDControl();
-      sinWaveTimer.begin(stepSinWave, 210);
-      pwmDriver.setRGB(1, 0, 0, 0, 0.25*sinWave0/sinWaveAmplitude);
-      return;
-  }
-  if((torpedoState0 == FIRING) || (torpedoState1 == FIRING))
-  {
-      disableExternalLEDControl();
-      pwmDriver.setRGB(1, 0, 0, 0, 0.5);
-      return;
-  }
-  if((torpedoState0 == ARMED) && (torpedoState1 == ARMED))
-  {
-      disableExternalLEDControl();
-      sinWaveTimer.begin(stepSinWave, 1000);
-      pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0.1*sinWave180/sinWaveAmplitude, 0.1*sinWave180/sinWaveAmplitude, 0, 0.2);
-      return;
-  }
-  if(torpedoState0 == ARMED)
-  {
-      disableExternalLEDControl();
-      sinWaveTimer.begin(stepSinWave, 1000);
-      pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0.1*sinWave180/sinWaveAmplitude, 0, 0, 0.2);
-      return;
-  }
-  if(torpedoState1 == ARMED)
-  {
-      disableExternalLEDControl();
-      sinWaveTimer.begin(stepSinWave, 1000);
-      pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0, 0.1*sinWave180/sinWaveAmplitude, 0, 0.2);
-      return;
-  }
-  if((int)boardConfig[PARAM_INDEX_DEMO_MODE].paramValue)
-  {
-      disableExternalLEDControl();
-      sinWaveTimer.begin(stepSinWave, 2000);
-      pwmDriver.setRGB(3*sinWave0/sinWaveAmplitude, sinWave120/sinWaveAmplitude, sinWave240/sinWaveAmplitude, 0, 0.1);
-      return;
-  }
-  else
-  {
-      if(enableExternalLEDControl()) //Only turn off LED if external LED control is disabled
-      {
-        pwmDriver.setRGB(0, 0, 0, 0, 0);
-        sinWaveTimer.end();   
-      }
-      if(strobeActivated && strobeLightTimer.check())
-      {
-          pwmDriver.setRGB(0, 0, 0, 0, 0);
-          strobeActivated = false;
-      }
-  }
+    if(checkVoltages(BATTERY_VOLTAGE_POOR_VALUE, BATTERY_VOLTAGE_DANGER_VALUE) == POOR)
+    {
+        Serial.println("POOR");
+        disableExternalLEDControl();
+        sinWaveTimer.begin(stepSinWave, 2000);
+        pwmDriver.setRGB(1, 0, 0, 0, 0.25*sinWave0/sinWaveAmplitude);
+        return;
+    }
+    if(checkVoltages(BATTERY_VOLTAGE_POOR_VALUE, BATTERY_VOLTAGE_DANGER_VALUE) == DANGER)
+    {
+        Serial.println("DANGER");
+        disableExternalLEDControl();
+        sinWaveTimer.begin(stepSinWave, 210);
+        pwmDriver.setRGB(1, 0, 0, 0, 0.25*sinWave0/sinWaveAmplitude);
+        return;
+    }
+    if((torpedoState0 == FIRING) || (torpedoState1 == FIRING))
+    {
+        disableExternalLEDControl();
+        pwmDriver.setRGB(1, 0, 0, 0, 0.5);
+        return;
+    }
+    if((torpedoState0 == ARMED) && (torpedoState1 == ARMED))
+    {
+        disableExternalLEDControl();
+        sinWaveTimer.begin(stepSinWave, 1000);
+        pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0.1*sinWave180/sinWaveAmplitude, 0.1*sinWave180/sinWaveAmplitude, 0, 0.2);
+        return;
+    }
+    if(torpedoState0 == ARMED)
+    {
+        disableExternalLEDControl();
+        sinWaveTimer.begin(stepSinWave, 1000);
+        pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0.1*sinWave180/sinWaveAmplitude, 0, 0, 0.2);
+        return;
+    }
+    if(torpedoState1 == ARMED)
+    {
+        disableExternalLEDControl();
+        sinWaveTimer.begin(stepSinWave, 1000);
+        pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0, 0.1*sinWave180/sinWaveAmplitude, 0, 0.2);
+        return;
+    }
+    if((int)boardConfig[PARAM_INDEX_DEMO_MODE].paramValue)
+    {
+        disableExternalLEDControl();
+        sinWaveTimer.begin(stepSinWave, 2000);
+        pwmDriver.setRGB(3*sinWave0/sinWaveAmplitude, sinWave120/sinWaveAmplitude, sinWave240/sinWaveAmplitude, 0, 0.1);
+        return;
+    }
+    else
+    {
+        if(enableExternalLEDControl()) //Only turn off LED if external LED control is disabled
+        {
+            pwmDriver.setRGB(0, 0, 0, 0, 0);
+            sinWaveTimer.end();   
+        }
+        if(strobeActivated && strobeLightTimer.check())
+        {
+            pwmDriver.setRGB(0, 0, 0, 0, 0);
+            strobeActivated = false;
+        }
+    }
 }
 
 // this runs once to setup everything
 void setup() 
 {
+    KickDog();
     Serial.begin(9600);
-    delay(3000);
     Serial.println("Setup start");
 
     pwmDriver.begin();
@@ -197,16 +198,17 @@ void setup()
 //Runs continuously
 void loop() 
 {
-  indicatorRoutine();
-  torpedoRoutine();
+    KickDog();
+    indicatorRoutine();
+    torpedoRoutine();
 
-  //--UAVCAN cycles--//
-  // wait in cycle
-  cycleWait(framerate);
+    //--UAVCAN cycles--//
+    // wait in cycle
+    cycleWait(framerate);
 
-  // do some CAN stuff
-  cycleNode(node);
+    // do some CAN stuff
+    cycleNode(node);
 
-  // toggle heartbeat
-  toggleHeartBeat();
+    // toggle heartbeat
+    toggleHeartBeat();
 }
