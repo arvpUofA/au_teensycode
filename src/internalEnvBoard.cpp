@@ -23,9 +23,8 @@ static constexpr float framerate = 100;
 unsigned char buf[5];
 unsigned char sta;
 
-// instantiate the timers for publishing message
-Metro timer1 = Metro(1000);
-Metro timer2 = Metro(500);
+// instantiate the timer for publishing message
+Metro timer = Metro(1000);
 
 //use this for reading out pressure data in two parts
 struct pressure_StructDef {
@@ -172,19 +171,13 @@ void loop() {
     // do some CAN stuff
     cycleNode(node);
 
-    cyclePublisher();
-
     // toggle heartbeat
     toggleHeartBeat();
 
-  if(timer1.check() == 1) {
-    // the LED will light up for 500 ms for every published message
-    digitalWrite(13, HIGH);
-    timer1.reset();
-    timer2.reset();
+  if(timer.check() == 1) {
+    cyclePublisher();
+    timer.reset();
   }
 
-  if(timer2.check() == 1) {
-    digitalWrite(13, LOW);
-  }
+
 }
