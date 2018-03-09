@@ -115,13 +115,25 @@ void serialPrintParams(int arg_cnt, char **args)
     printParameters();
 }
 
+void serialResetToDefaultParams(int arg_cnt, char **args)
+{
+    resetConfig();
+}
+
+void serialSaveParams(int arg_cnt, char **args)
+{
+    saveConfig();
+}
+
 void serialCMDInitCommands()
 {
-    cmdAdd("arm", serialArmTorpedo);
-    cmdAdd("disarm", serialDisarmTorpedo);
-    cmdAdd("fire", serialFireTorpedo);
-    cmdAdd("setdemo", serialSetDemo);
-    cmdAdd("printparam", serialPrintParams);
+    cmdAdd("arm", serialArmTorpedo); //arm [0 or 1]
+    cmdAdd("disarm", serialDisarmTorpedo); //disarm [0 or 1]
+    cmdAdd("fire", serialFireTorpedo); //fire [0 or 1]
+    cmdAdd("setdemo", serialSetDemo); //setdemo [0 or 1]
+    cmdAdd("printparam", serialPrintParams); //no arguments
+    cmdAdd("restoreparam", serialResetToDefaultParams); //no arguments
+    cmdAdd("saveparam", serialSaveParams); //no arguments
 }
 
 #endif
