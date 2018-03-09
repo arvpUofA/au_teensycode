@@ -76,7 +76,7 @@ bool fireTorpdeo(uint8_t trp)
         digitalWrite(TORPEDO_0, HIGH);
         launchRequest0 = false;
         fireTimer0.begin(trpControl0, boardConfig[PARAM_INDEX_TORPEDO_PULSE].paramValue*1000); //ms to us
-        Serial.println("Torpedo 0 pulse timer started");
+        //Serial.println("Torpedo 0 pulse timer started");
         return true;
     }
     else if((trp == TORPEDO_1) && !digitalRead(TORPEDO_1) && launchRequest1)
@@ -84,7 +84,7 @@ bool fireTorpdeo(uint8_t trp)
         digitalWrite(TORPEDO_1, HIGH);
         launchRequest1 = false;
         fireTimer1.begin(trpControl1, boardConfig[PARAM_INDEX_TORPEDO_PULSE].paramValue*1000);
-        Serial.println("Torpedo 1 pulse timer started");
+        //Serial.println("Torpedo 1 pulse timer started");
         return true;
     }
     return false;
@@ -166,7 +166,6 @@ void torpedoRoutine()
             {
                 torpedoState0 = READY;
                 Serial.println("Torpedo 0 DISCHARGED");
-                
             }
             break;
         

@@ -10,6 +10,8 @@
 #include <parameter.hpp>
 #include <uavcanNodeIDs.h>
 #include <watchdog.h>
+#include <Cmd.h>
+#include <serialCommand.hpp>
 
 #define BATTERY_VOLTAGE_POOR_VALUE 13.25
 #define BATTERY_VOLTAGE_DANGER_VALUE 12.75
@@ -167,6 +169,9 @@ void setup()
     Serial.begin(9600);
     Serial.println("Setup start");
 
+    cmdInit(&Serial);
+    serialCMDInitCommands();
+
     pwmDriver.begin();
 
     initTorpedos();
@@ -201,6 +206,8 @@ void loop()
     KickDog();
     indicatorRoutine();
     torpedoRoutine();
+
+    cmdPoll();
 
     //--UAVCAN cycles--//
     // wait in cycle
