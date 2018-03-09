@@ -42,7 +42,7 @@ void cyclePublisher()
     equipment::air_data::StaticTemperature temp;
 
     temp.static_temperature = publishTemp();
-    Serial.println(publishTemp());
+    //Serial.println(publishTemp());
 
     const int pres = temperaturePublisher->broadcast(temp);
     if (pres < 0)
@@ -57,7 +57,7 @@ void cyclePublisher()
     equipment::air_data::StaticPressure press;
 
     press.static_pressure = publishPress();
-    Serial.println(publishPress());
+    //Serial.println(publishPress());
 
     const int pres = pressurePublisher->broadcast(press);
     if (pres < 0)

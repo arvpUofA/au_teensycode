@@ -129,7 +129,7 @@ void setup() {
     initLeds();
 
     Serial.begin(9600);
-    delay(5000);
+    delay(2000);
     Serial.println("Setup start");
     
     setupMPL();
@@ -149,21 +149,25 @@ void setup() {
 }
 
 void loop() {
-    hum_measurement_req();
-    Wire.requestFrom(HIH7120ADDRESS, 4);
-    measureHIH7120();
-    Serial.println("Reading");
-    Serial.print("Humidity: ");
-    Serial.println(humidity());
-    Serial.print("Temperature: ");
-    Serial.println(temp());
 
-    //pressure readings
-    readPressureMPL();
-    Serial.print("Pressure value: ");
-    Serial.print(pressure.whole);
-    Serial.print(".");
-    Serial.println(pressure.fractional);
+    if(timer.check() == 1) {
+      cyclePublisher();
+      hum_measurement_req();
+      Wire.requestFrom(HIH7120ADDRESS, 4);
+      measureHIH7120();
+      Serial.println("Reading");
+      Serial.print("Humidity: ");
+      Serial.println(humidity());
+      Serial.print("Temperature: ");
+      Serial.println(temp());
+
+      //pressure readings
+      readPressureMPL();
+      Serial.print("Pressure value: ");
+      Serial.print(pressure.whole);
+      Serial.print(".");
+      Serial.println(pressure.fractional);
+    }
 
     //--UAVCAN cycles--//
     // wait in cycle
@@ -173,9 +177,5 @@ void loop() {
     cycleNode(node);
 
     // toggle heartbeat
-    toggleHeartBeat();
-
-    if(timer.check() == 1) {
-      cyclePublisher();
-    }
+    toggleHeartBeat();   
 }
