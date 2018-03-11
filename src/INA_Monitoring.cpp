@@ -142,6 +142,8 @@ void loop(void)
         power_rails->print(2);       
         Serial.print("12.0V Rail: ");
         power_rails->print(3);
+
+        cyclePublisher();
     }
 
     cycleWait(framerate);

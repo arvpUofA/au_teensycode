@@ -51,7 +51,6 @@ void updatePowerRailInfo(equipment::power::CircuitStatus *powerRail, uint8_t id)
 
 void cyclePublisher()
 {
-    // send a very important log message to everyone
     equipment::power::BatteryInfo *battery;
     equipment::power::CircuitStatus *powerRail;
 
@@ -99,6 +98,5 @@ void cyclePublisher()
         Serial.println("Error while broadcasting third power rail message");
     }
 }
-
 
 #endif
