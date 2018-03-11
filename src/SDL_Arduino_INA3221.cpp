@@ -248,3 +248,8 @@ float SDL_Arduino_INA3221::getPower(int channel) {
   float power = (getCurrent_mA(channel))*(voltage);
   return power/1000.0f;
 }
+
+float SDL_Arduino_INA3221::getAveragePower_W(int channel)
+{
+    return power_buffers[channel - 1].getAveragePower();
+}

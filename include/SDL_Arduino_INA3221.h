@@ -109,7 +109,7 @@ public:
     void tick(int channel);
     void print(int channel);
     float getPower(int channel);
-    float getAveragePower(int channel);
+    float getAveragePower_W(int channel);
 
 private:
     float reductions_[3];

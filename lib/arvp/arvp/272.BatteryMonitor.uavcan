@@ -1,0 +1,4 @@
+float64 busVoltage   # [Volt]
+float64 shuntVoltage # [milliVolt]
+float64 current      # [milliAmpere]
+float64 averagePower # [Watt]
