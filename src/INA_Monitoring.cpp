@@ -96,6 +96,8 @@ void setup(void)
 
     // start up node
     node->setModeOperational();
+
+    initLeds();
 }
 
 void loop(void)
