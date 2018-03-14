@@ -37,6 +37,7 @@ void initPublisher(Node<NodeMemoryPoolSize> *node)
 
 void updateBatteryInfo(equipment::power::BatteryInfo *battery, uint8_t id)
 {
+    (battery + id)->battery_id = id;
     (battery + id)->voltage = getBusVoltage(id);
     (battery + id)->current = getCurrent(id);
     (battery + id)->average_power_10sec = getAveragePower(id);
@@ -45,14 +46,15 @@ void updateBatteryInfo(equipment::power::BatteryInfo *battery, uint8_t id)
 void updatePowerRailInfo(equipment::power::CircuitStatus *powerRail, uint8_t id)
 {
     // the NUM_OF_BATTERIES is used to set the first power rail to index 0
+    (powerRail + id - NUM_OF_BATTERIES)->circuit_id = id - NUM_OF_BATTERIES;
     (powerRail + id - NUM_OF_BATTERIES)->voltage = getBusVoltage(id);
     (powerRail + id - NUM_OF_BATTERIES)->current = getCurrent(id);
 }
 
 void cyclePublisher()
 {
-    equipment::power::BatteryInfo *battery;
-    equipment::power::CircuitStatus *powerRail;
+    equipment::power::BatteryInfo battery[4];
+    equipment::power::CircuitStatus powerRail[3];
 
     updateBatteryInfo(battery, BATTERY_1_ID);
     updateBatteryInfo(battery, BATTERY_2_ID);

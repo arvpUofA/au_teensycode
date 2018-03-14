@@ -37,7 +37,7 @@ static constexpr float framerate = 100;
 
 Metro timer = Metro(1000);
 
-monitorInfo *batteryInfo;
+monitorInfo batteryInfo[7];
 
 void updateMonitorInfo(SDL_Arduino_INA3221* ina, uint8_t id, int channel)
 {
@@ -102,12 +102,12 @@ void setup(void)
 
 void loop(void)
 {
+    battery1_2->tick(1); battery1_2->tick(2);
+    battery3_4->tick(1); battery3_4->tick(2);
+    power_rails->tick(1); power_rails->tick(2); power_rails->tick(3);
+
     if (timer.check() == 1) 
     {
-        battery1_2->tick(1); battery1_2->tick(2);
-        battery3_4->tick(1); battery3_4->tick(2);
-        power_rails->tick(1); power_rails->tick(2); power_rails->tick(3);
-
         // update info recieved from INA 1
         updateMonitorInfo(battery1_2, BATTERY_1_ID, 1);
         updateMonitorInfo(battery1_2, BATTERY_2_ID, 2);
