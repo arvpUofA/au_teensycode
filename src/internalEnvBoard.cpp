@@ -123,6 +123,10 @@ float publishPress() {
     return pressure.whole;
 }
 
+float publishHumidity() {
+    return humidity();
+}
+
 void setup() {
     Wire.begin();
 

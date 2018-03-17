@@ -3,5 +3,6 @@
 
 float publishTemp();
 float publishPress();
+float publishHumidity();
 
 #endif
