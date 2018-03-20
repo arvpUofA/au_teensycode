@@ -38,4 +38,16 @@ voltageState checkVoltages(float lowVolt, float criticalVolt)
     return GOOD;
 }
 
+void displayVoltages()
+{
+    Serial.print("Battery 0:");
+    Serial.println(batteryVoltage[0]);
+    Serial.print("Battery 1:");
+    Serial.println(batteryVoltage[1]);
+    Serial.print("Battery 2:");
+    Serial.println(batteryVoltage[2]);
+    Serial.print("Battery 3:");
+    Serial.println(batteryVoltage[3]);
+}
+
 #endif

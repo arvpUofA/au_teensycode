@@ -5,6 +5,7 @@
 #include <Arduino.h>
 #include <parameter.hpp>
 #include <torpedoControl.hpp>
+#include <batteryStatus.hpp>
 
 void serialArmTorpedo(int arg_cnt, char **args)
 {
@@ -125,6 +126,11 @@ void serialSaveParams(int arg_cnt, char **args)
     saveConfig();
 }
 
+void serialDisplayVoltages(int arg_cnt, char **args)
+{
+    displayVoltages();
+}
+
 void serialCMDInitCommands()
 {
     cmdAdd("arm", serialArmTorpedo); //arm [0 or 1]
@@ -134,6 +140,7 @@ void serialCMDInitCommands()
     cmdAdd("printparam", serialPrintParams); //no arguments
     cmdAdd("restoreparam", serialResetToDefaultParams); //no arguments
     cmdAdd("saveparam", serialSaveParams); //no arguments
+    cmdAdd("displayvoltages", serialDisplayVoltages);
 }
 
 #endif

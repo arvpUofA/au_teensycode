@@ -99,7 +99,7 @@ void indicatorRoutine() //Add this function to loop() to allow for indication of
 {
     if(checkVoltages(BATTERY_VOLTAGE_POOR_VALUE, BATTERY_VOLTAGE_DANGER_VALUE) == POOR)
     {
-        Serial.println("POOR");
+        //Serial.println("POOR");
         disableExternalLEDControl();
         sinWaveTimer.begin(stepSinWave, 2000);
         pwmDriver.setRGB(1, 0, 0, 0, 0.25*sinWave0/sinWaveAmplitude);
@@ -107,7 +107,7 @@ void indicatorRoutine() //Add this function to loop() to allow for indication of
     }
     if(checkVoltages(BATTERY_VOLTAGE_POOR_VALUE, BATTERY_VOLTAGE_DANGER_VALUE) == DANGER)
     {
-        Serial.println("DANGER");
+        //Serial.println("DANGER");
         disableExternalLEDControl();
         sinWaveTimer.begin(stepSinWave, 210);
         pwmDriver.setRGB(1, 0, 0, 0, 0.25*sinWave0/sinWaveAmplitude);
