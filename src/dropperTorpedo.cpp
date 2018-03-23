@@ -97,22 +97,6 @@ void stepSinWave()
 
 void indicatorRoutine() //Add this function to loop() to allow for indication of torpedo and battery status
 {
-    if(checkVoltages(BATTERY_VOLTAGE_POOR_VALUE, BATTERY_VOLTAGE_DANGER_VALUE) == POOR)
-    {
-        //Serial.println("POOR");
-        disableExternalLEDControl();
-        sinWaveTimer.begin(stepSinWave, 2000);
-        pwmDriver.setRGB(1, 0, 0, 0, 0.25*sinWave0/sinWaveAmplitude);
-        return;
-    }
-    if(checkVoltages(BATTERY_VOLTAGE_POOR_VALUE, BATTERY_VOLTAGE_DANGER_VALUE) == DANGER)
-    {
-        //Serial.println("DANGER");
-        disableExternalLEDControl();
-        sinWaveTimer.begin(stepSinWave, 210);
-        pwmDriver.setRGB(1, 0, 0, 0, 0.25*sinWave0/sinWaveAmplitude);
-        return;
-    }
     if((torpedoState0 == FIRING) || (torpedoState1 == FIRING))
     {
         disableExternalLEDControl();
@@ -138,6 +122,22 @@ void indicatorRoutine() //Add this function to loop() to allow for indication of
         disableExternalLEDControl();
         sinWaveTimer.begin(stepSinWave, 1000);
         pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0, 0.1*sinWave180/sinWaveAmplitude, 0, 0.2);
+        return;
+    }
+    if(checkVoltages(BATTERY_VOLTAGE_POOR_VALUE, BATTERY_VOLTAGE_DANGER_VALUE) == POOR)
+    {
+        //Serial.println("POOR");
+        disableExternalLEDControl();
+        sinWaveTimer.begin(stepSinWave, 2000);
+        pwmDriver.setRGB(1, 0, 0, 0, 0.25*sinWave0/sinWaveAmplitude);
+        return;
+    }
+    if(checkVoltages(BATTERY_VOLTAGE_POOR_VALUE, BATTERY_VOLTAGE_DANGER_VALUE) == DANGER)
+    {
+        //Serial.println("DANGER");
+        disableExternalLEDControl();
+        sinWaveTimer.begin(stepSinWave, 210);
+        pwmDriver.setRGB(1, 0, 0, 0, 0.25*sinWave0/sinWaveAmplitude);
         return;
     }
     if((int)boardConfig[PARAM_INDEX_DEMO_MODE].paramValue)
