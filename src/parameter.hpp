@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define NUMBER_OF_PARAMETERS 21
+#define NUMBER_OF_PARAMETERS 22
 #define MAX_NUMBER_OF_PARAMETERS 64 //based on sizeof(genericParam) (32 bytes) and 2048 byte EEPROM capacity in Teensy 3.2
 
 #define PARAM_INDEX_TORPEDO_PULSE 0
@@ -33,6 +33,7 @@
 #define PARAM_INDEX_LIGHT_ID_STRIP_0_STROBE 18
 #define PARAM_INDEX_STROBE_INTERVAL 19
 #define PARAM_INDEX_DEMO_MODE 20
+#define PARAM_INDEX_ENABLE_LOW_VOLT_INDICATOR 1
 
 using namespace uavcan;
 
@@ -63,7 +64,8 @@ const char *defaultParameterArray[NUMBER_OF_PARAMETERS][2] =
     {"lightIDRGBStrip0_strobe", "248"},
     {"strobeInterval", "500"}, // in ms
 
-    {"demoMode", "0"}
+    {"demoMode", "0"},
+    {"enableLowVoltIndicator", "1"}
 };
 //--- Update NUMBER_OF_PARAMETERS when adding new parameters.
 

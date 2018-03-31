@@ -124,7 +124,7 @@ void indicatorRoutine() //Add this function to loop() to allow for indication of
         pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0, 0.1*sinWave180/sinWaveAmplitude, 0, 0.2);
         return;
     }
-    if(checkVoltages(BATTERY_VOLTAGE_POOR_VALUE, BATTERY_VOLTAGE_DANGER_VALUE) == POOR)
+    if(checkVoltages(BATTERY_VOLTAGE_POOR_VALUE, BATTERY_VOLTAGE_DANGER_VALUE) == POOR && (int)boardConfig[PARAM_INDEX_ENABLE_LOW_VOLT_INDICATOR].paramValue)
     {
         //Serial.println("POOR");
         disableExternalLEDControl();
@@ -132,7 +132,7 @@ void indicatorRoutine() //Add this function to loop() to allow for indication of
         pwmDriver.setRGB(1, 0, 0, 0, 0.25*sinWave0/sinWaveAmplitude);
         return;
     }
-    if(checkVoltages(BATTERY_VOLTAGE_POOR_VALUE, BATTERY_VOLTAGE_DANGER_VALUE) == DANGER)
+    if(checkVoltages(BATTERY_VOLTAGE_POOR_VALUE, BATTERY_VOLTAGE_DANGER_VALUE) == DANGER  && (int)boardConfig[PARAM_INDEX_ENABLE_LOW_VOLT_INDICATOR].paramValue)
     {
         //Serial.println("DANGER");
         disableExternalLEDControl();
