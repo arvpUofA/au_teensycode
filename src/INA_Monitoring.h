@@ -4,6 +4,7 @@
 #include <Arduino.h>
 
 #define NUM_OF_BATTERIES 4
+#define NUM_OF_POWER_RAILS 3
 #define BATTERY_1_ID 0
 #define BATTERY_2_ID 1
 #define BATTERY_3_ID 2

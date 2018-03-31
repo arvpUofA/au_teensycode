@@ -1,6 +1,7 @@
 #ifndef	PUBLISHER_HPP
 #define	PUBLISHER_HPP
 
+
 #include <UAVCAN.hpp>
 #include <uavcan/equipment/power/BatteryInfo.hpp>
 #include <uavcan/equipment/power/CircuitStatus.hpp>
@@ -17,22 +18,41 @@ Publisher<equipment::power::CircuitStatus> *powerRailPublisher;
 void initPublisher(Node<NodeMemoryPoolSize> *node)
 {
     // create publishers
-    batteryPublisher = new Publisher<equipment::power::BatteryInfo>(*node);
-    powerRailPublisher = new Publisher<equipment::power::CircuitStatus>(*node);
-
-    // initiliaze publisher
-    if(batteryPublisher->init() < 0)
+    for (int i = 0; i < NUM_OF_BATTERIES; i++)
     {
-        Serial.println("Unable to initialize battery message publisher!");
-    }
-    if(powerRailPublisher->init() < 0)
-    {
-        Serial.println("Unable to initialize power rail message publisher!");
+        batteryPublisher = new Publisher<equipment::power::BatteryInfo>(*node);
+
+        // initiliaze publisher
+        if(batteryPublisher->init() < 0)
+        {
+            Serial.println("Unable to initialize battery message publisher!");
+        }
+
+        // set TX timeout
+        batteryPublisher->setTxTimeout(MonotonicDuration::fromUSec(800));
+
+        batteryPublisher++;
     }
 
-    // set TX timeout
-    batteryPublisher->setTxTimeout(MonotonicDuration::fromUSec(800));
-    powerRailPublisher->setTxTimeout(MonotonicDuration::fromUSec(800));
+    for (int i = 0; i < NUM_OF_POWER_RAILS; i++) 
+    {
+        powerRailPublisher = new Publisher<equipment::power::CircuitStatus>(*node);
+
+        // initiliaze publisher
+        if(powerRailPublisher->init() < 0)
+        {
+            Serial.println("Unable to initialize power rail message publisher!");
+        }
+
+        // set TX timeout
+        powerRailPublisher->setTxTimeout(MonotonicDuration::fromUSec(800));
+
+        powerRailPublisher++;
+    }
+
+    // reset the pointers to the start
+    batteryPublisher -= NUM_OF_BATTERIES;
+    powerRailPublisher -= NUM_OF_POWER_RAILS;
 }
 
 void updateBatteryInfo(equipment::power::BatteryInfo *battery, uint8_t id)
@@ -64,37 +84,37 @@ void cyclePublisher()
     updatePowerRailInfo(powerRail, POWER_RAIL_2_ID);
     updatePowerRailInfo(powerRail, POWER_RAIL_3_ID);
 
-    const int pres1 = batteryPublisher->broadcast(*(battery + BATTERY_1_ID));
+    const int pres1 = (batteryPublisher + BATTERY_1_ID)->broadcast(*(battery + BATTERY_1_ID));
     if (pres1 < 0)
     {
         Serial.println("Error while broadcasting first battery message");
     }
-    const int pres2 = batteryPublisher->broadcast(*(battery + BATTERY_2_ID));
+    const int pres2 = (batteryPublisher + BATTERY_2_ID)->broadcast(*(battery + BATTERY_2_ID));
     if (pres2 < 0)
     {
         Serial.println("Error while broadcasting second battery message");
     }
-    const int pres3 = batteryPublisher->broadcast(*(battery + BATTERY_3_ID));
+    const int pres3 = (batteryPublisher + BATTERY_3_ID)->broadcast(*(battery + BATTERY_3_ID));
     if (pres3 < 0)
     {
         Serial.println("Error while broadcasting third battery message");
     }
-    const int pres4 = batteryPublisher->broadcast(*(battery + BATTERY_4_ID));
+    const int pres4 = (batteryPublisher + BATTERY_4_ID)->broadcast(*(battery + BATTERY_4_ID));
     if (pres4 < 0)
     {
         Serial.println("Error while broadcasting fourth battery message");
     }
-    const int pres5 = powerRailPublisher->broadcast(*(powerRail + POWER_RAIL_1_ID - NUM_OF_BATTERIES));
+    const int pres5 = (powerRailPublisher + POWER_RAIL_1_ID - NUM_OF_BATTERIES)->broadcast(*(powerRail + POWER_RAIL_1_ID - NUM_OF_BATTERIES));
     if (pres5 < 0)
     {
         Serial.println("Error while broadcasting first power rail message");
     }
-    const int pres6 = powerRailPublisher->broadcast(*(powerRail + POWER_RAIL_2_ID - NUM_OF_BATTERIES));
+    const int pres6 = (powerRailPublisher + POWER_RAIL_2_ID - NUM_OF_BATTERIES)->broadcast(*(powerRail + POWER_RAIL_2_ID - NUM_OF_BATTERIES));
     if (pres6 < 0)
     {
         Serial.println("Error while broadcasting second power rail message");
     }
-    const int pres7 = powerRailPublisher->broadcast(*(powerRail + POWER_RAIL_3_ID - NUM_OF_BATTERIES));
+    const int pres7 = (powerRailPublisher + POWER_RAIL_3_ID - NUM_OF_BATTERIES)->broadcast(*(powerRail + POWER_RAIL_3_ID - NUM_OF_BATTERIES));
     if (pres7 < 0)
     {
         Serial.println("Error while broadcasting third power rail message");
