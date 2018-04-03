@@ -8,7 +8,9 @@
 
 #define NUMBER_OF_BATTERIES 4
 
-float batteryVoltage[NUMBER_OF_BATTERIES] = {15, 15, 15, 15}; //default set to 15 volts to avoid 
+#define ENABLE_BATT_DEBUG false
+
+float batteryVoltage[NUMBER_OF_BATTERIES] = {15, 15, 15, 15}; //default set to 15 volts
 
 enum voltageState {GOOD, POOR, DANGER};
 
@@ -16,6 +18,13 @@ enum voltageState {GOOD, POOR, DANGER};
 void storeVoltageInfo(size_t index, float value)
 {
     if(index < NUMBER_OF_BATTERIES) batteryVoltage[index] = value;
+    if(ENABLE_BATT_DEBUG)
+    {
+        Serial.print("Received battery message: ");
+        Serial.print(index);
+        Serial.print(" : ");
+        Serial.println(value);
+    }
 }
 
 //Checks all voltage values in batteryVoltage array and returns state of worst battery
