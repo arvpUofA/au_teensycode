@@ -144,7 +144,7 @@ void indicatorRoutine() //Add this function to loop() to allow for indication of
     {
         disableExternalLEDControl();
         sinWaveTimer.begin(stepSinWave, 2000);
-        pwmDriver.setRGB(3*sinWave0/sinWaveAmplitude, sinWave120/sinWaveAmplitude, sinWave240/sinWaveAmplitude, 0, 0.1);
+        pwmDriver.setRGB(sinWave0/sinWaveAmplitude, sinWave120/sinWaveAmplitude/4, sinWave240/sinWaveAmplitude/6, 0, 0.125);
         return;
     }
     else
