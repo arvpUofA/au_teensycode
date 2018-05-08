@@ -12,6 +12,7 @@
 #include <watchdog.h>
 #include <Cmd.h>
 #include <serialCommand.hpp>
+#include <pressureStatus.hpp>
 
 #define BATTERY_VOLTAGE_POOR_VALUE 13.25
 #define BATTERY_VOLTAGE_DANGER_VALUE 12.75
@@ -97,6 +98,13 @@ void stepSinWave()
 
 void indicatorRoutine() //Add this function to loop() to allow for indication of torpedo and battery status
 {
+    if((pressureState == DROPPING) && (boardConfig[PARAM_INDEX_ENABLE_PRESSURE_ALERT].paramValue))
+    {
+        disableExternalLEDControl();
+        sinWaveTimer.begin(stepSinWave, 210);
+        pwmDriver.setRGB(1, 1, 1, 0, 0.1*sinWave0/sinWaveAmplitude);
+        return;
+    }
     if((torpedoState0 == FIRING) || (torpedoState1 == FIRING))
     {
         disableExternalLEDControl();

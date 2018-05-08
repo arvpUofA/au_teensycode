@@ -9,6 +9,7 @@
 #include <uavcan/equipment/actuator/ArrayCommand.hpp>
 #include <uavcan/equipment/indication/LightsCommand.hpp>
 #include <uavcan/equipment/power/BatteryInfo.hpp>
+#include <uavcan/equipment/air_data/StaticPressure.hpp>
 
 #include <parameter.hpp>
 
@@ -20,6 +21,7 @@
 #include <batteryStatus.hpp>
 #include <servoControl.hpp>
 #include <ledIndicationControl.hpp>
+#include <pressureStatus.hpp>
 
 using namespace uavcan;
 
@@ -27,6 +29,7 @@ using namespace uavcan;
 Subscriber<equipment::actuator::ArrayCommand> *actuatorSubscriber;
 Subscriber<equipment::indication::LightsCommand> *lightsSubscriber;
 Subscriber<equipment::power::BatteryInfo> *batterySubscriber;
+Subscriber<equipment::air_data::StaticPressure> *pressureSubscriber;
 
 bool enableExternalLEDActions = true; //Boolean used for allowing external control of LED strip
 
@@ -161,12 +164,18 @@ void batteryInfoCallback(const uavcan::equipment::power::BatteryInfo& batteryDat
   storeVoltageInfo(batteryData.battery_id, batteryData.voltage);
 }
 
+void pressureInfoCallback(const uavcan::equipment::air_data::StaticPressure& pressureData)
+{
+  checkPressure((double)pressureData.static_pressure);
+}
+
 void initSubscriber(Node<NodeMemoryPoolSize> *node)
 {
   // create subscriber
   actuatorSubscriber = new Subscriber<equipment::actuator::ArrayCommand>(*node);
   lightsSubscriber = new Subscriber<equipment::indication::LightsCommand>(*node);
   batterySubscriber = new Subscriber<equipment::power::BatteryInfo>(*node);
+  pressureSubscriber = new Subscriber<equipment::air_data::StaticPressure>(*node);
 
   // start subscriber  
   if(actuatorSubscriber->start(actuatorControlCallback) < 0)
@@ -180,6 +189,10 @@ void initSubscriber(Node<NodeMemoryPoolSize> *node)
   if(batterySubscriber->start(batteryInfoCallback) < 0)
   {
     Serial.println("Unable to start battery subscriber");
+  }
+  if(pressureSubscriber->start(pressureInfoCallback) < 0)
+  {
+    Serial.println("Unable to start pressure subscriber");
   }
 }
 

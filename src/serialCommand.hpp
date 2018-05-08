@@ -6,6 +6,7 @@
 #include <parameter.hpp>
 #include <torpedoControl.hpp>
 #include <batteryStatus.hpp>
+#include <pressureStatus.hpp>
 
 void serialArmTorpedo(int arg_cnt, char **args)
 {
@@ -157,6 +158,33 @@ void serialEnableLowVoltIndicator(int arg_cnt, char **args)
     }
 }
 
+void serialEnablePressureAlert(int arg_cnt, char **args)
+{
+    int argValue;
+    Stream *s = cmdGetStream();
+    if(arg_cnt > 1)
+    {
+        argValue = cmdStr2Num(args[1], 10);
+        if(argValue == 0)
+        {
+            boardConfig[PARAM_INDEX_ENABLE_PRESSURE_ALERT].paramValue = 0;
+        }
+        else if(argValue == 1)
+        {
+            boardConfig[PARAM_INDEX_ENABLE_PRESSURE_ALERT].paramValue = 1;
+        }
+        else
+        {
+            s->println("Invalid value. Use 0 to disable, 1 to enable.");
+        }
+    }
+    else
+    {
+        s->println("Please specify valid value. Use 0 to disable, 1 to enable.");
+    }
+
+}
+
 void serialCMDInitCommands()
 {
     cmdAdd("arm", serialArmTorpedo); //arm [0 or 1]
@@ -167,7 +195,8 @@ void serialCMDInitCommands()
     cmdAdd("restoreparam", serialResetToDefaultParams); //no arguments
     cmdAdd("saveparam", serialSaveParams); //no arguments
     cmdAdd("displayvoltages", serialDisplayVoltages);
-    cmdAdd("enableLVIndicator", serialEnableLowVoltIndicator); //enable(1) or disable(0)
+    cmdAdd("enablelvindicator", serialEnableLowVoltIndicator); //enable(1) or disable(0)
+    cmdAdd("enablepressurealert", serialEnablePressureAlert); //enable(1) or disable(0)
 }
 
 #endif
