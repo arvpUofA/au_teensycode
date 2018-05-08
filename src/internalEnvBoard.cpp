@@ -6,6 +6,7 @@
 #include <publisher.hpp>
 #include <uavcanNodeIDs.h>
 #include "internalEnvBoard.h"
+#include <watchdog.h>
 
 // UAVCAN Node settings
 static constexpr uint32_t nodeID = UAVCAN_NODE_ID_INTERNAL_SENSOR_BOARD;
@@ -133,7 +134,7 @@ void setup() {
     initLeds();
 
     Serial.begin(9600);
-    delay(2000);
+    delay(1000);
     Serial.println("Setup start");
     
     setupMPL();
@@ -153,7 +154,7 @@ void setup() {
 }
 
 void loop() {
-
+    KickDog();
     if(timer.check() == 1) {
       cyclePublisher();
       hum_measurement_req();
