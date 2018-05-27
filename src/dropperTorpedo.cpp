@@ -176,14 +176,13 @@ void setup()
     KickDog();
     Serial.begin(9600);
     Serial.println("Setup start");
-
+    
     cmdInit(&Serial);
     serialCMDInitCommands();
 
     pwmDriver.begin();
 
     initTorpedos();
-    initServoControl(&pwmDriver);
     initLEDControl(&pwmDriver, &strobeLightTimer);
 
     //--UAVCAN init--//
@@ -204,7 +203,7 @@ void setup()
 
     // start parameter server
     initParameter(node);
-
+    initServoControl(&pwmDriver);
     Serial.println("Setup Complete");
 }
 
