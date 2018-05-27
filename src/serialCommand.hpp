@@ -182,7 +182,32 @@ void serialEnablePressureAlert(int arg_cnt, char **args)
     {
         s->println("Please specify valid value. Use 0 to disable, 1 to enable.");
     }
+}
 
+void serialEnableTorpedoIndicator(int arg_cnt, char **args)
+{
+    int argValue;
+    Stream *s = cmdGetStream();
+    if(arg_cnt > 1)
+    {
+        argValue = cmdStr2Num(args[1], 10);
+        if(argValue == 0)
+        {
+            boardConfig[PARAM_INDEX_ENABLE_TORPEDO_INDICATOR].paramValue = 0;
+        }
+        else if(argValue == 1)
+        {
+            boardConfig[PARAM_INDEX_ENABLE_TORPEDO_INDICATOR].paramValue = 1;
+        }
+        else
+        {
+            s->println("Invalid value. Use 0 to disable, 1 to enable.");
+        }
+    }
+    else
+    {
+        s->println("Please specify valid value. Use 0 to disable, 1 to enable.");
+    }
 }
 
 void serialCMDInitCommands()
@@ -197,6 +222,7 @@ void serialCMDInitCommands()
     cmdAdd("displayvoltages", serialDisplayVoltages);
     cmdAdd("enablelvindicator", serialEnableLowVoltIndicator); //enable(1) or disable(0)
     cmdAdd("enablepressurealert", serialEnablePressureAlert); //enable(1) or disable(0)
+    cmdAdd("enabletorpedoindicator", serialEnableTorpedoIndicator); //enable(1) or disable(0)
 }
 
 #endif

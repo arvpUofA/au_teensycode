@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define NUMBER_OF_PARAMETERS 24
+#define NUMBER_OF_PARAMETERS 26
 #define MAX_NUMBER_OF_PARAMETERS 64 //based on sizeof(genericParam) (32 bytes) and 2048 byte EEPROM capacity in Teensy 3.2
 
 #define PARAM_INDEX_TORPEDO_PULSE 0
@@ -36,6 +36,8 @@
 #define PARAM_INDEX_ENABLE_LOW_VOLT_INDICATOR 21
 #define PARAM_INDEX_LOW_PRESSURE_THRESHOLD 22
 #define PARAM_INDEX_ENABLE_PRESSURE_ALERT 23
+#define PARAM_INDEX_ENABLE_TORPEDO_INDICATOR 24
+#define PARAM_INDEX_SERVO_START_ANGLE 25
 
 using namespace uavcan;
 
@@ -69,7 +71,10 @@ const char *defaultParameterArray[NUMBER_OF_PARAMETERS][2] =
     {"demoMode", "0"},
     {"enableLowVoltIndicator", "1"},
     {"lowPressureThreshold", "20000"}, // in Pascals
-    {"enablePressureAlert", "0"}
+    {"enablePressureAlert", "0"},
+    {"enableTorpedoIndicator", "1"},
+
+    {"servoStartAngle", "-1.5"} //in radians
 };
 //--- Update NUMBER_OF_PARAMETERS when adding new parameters.
 

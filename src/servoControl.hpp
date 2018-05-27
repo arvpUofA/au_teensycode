@@ -12,8 +12,6 @@
 
 #define SERVO_ANGLE_OFFSET 3.14159/2
 
-#define SERVO_START_ANGLE -3.05/2
-
 Adafruit_PWMServoDriver *pwmServo;
 
 //Provides simplified servo control interface for UAVCAN callbacks
@@ -29,7 +27,7 @@ void initServoControl(Adafruit_PWMServoDriver *ptr)
     for(uint8_t i = 0; i < 12; i++)
     {
         //ptr->setServoAngle(i, 0, (uint16_t)boardConfig[PARAM_INDEX_MIN_SERVO_PULSE].paramValue, (uint16_t)boardConfig[PARAM_INDEX_MAX_SERVO_PULSE].paramValue, UNIT_RADIANS);
-        actuateServo(i, SERVO_START_ANGLE);
+        actuateServo(i, boardConfig[PARAM_INDEX_SERVO_START_ANGLE].paramValue);
     }
 }
 

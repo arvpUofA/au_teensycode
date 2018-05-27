@@ -105,33 +105,38 @@ void indicatorRoutine() //Add this function to loop() to allow for indication of
         pwmDriver.setRGB(1, 1, 1, 0, 0.1*sinWave0/sinWaveAmplitude);
         return;
     }
-    if((torpedoState0 == FIRING) || (torpedoState1 == FIRING))
+
+    if(boardConfig[PARAM_INDEX_ENABLE_TORPEDO_INDICATOR].paramValue)
     {
-        disableExternalLEDControl();
-        pwmDriver.setRGB(1, 0, 0, 0, 0.5);
-        return;
+        if((torpedoState0 == FIRING) || (torpedoState1 == FIRING))
+        {
+            disableExternalLEDControl();
+            pwmDriver.setRGB(1, 0, 0, 0, 0.5);
+            return;
+        }
+        if((torpedoState0 == ARMED) && (torpedoState1 == ARMED))
+        {
+            disableExternalLEDControl();
+            sinWaveTimer.begin(stepSinWave, 1000);
+            pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0.1*sinWave180/sinWaveAmplitude, 0.1*sinWave180/sinWaveAmplitude, 0, 0.2);
+            return;
+        }
+        if(torpedoState0 == ARMED)
+        {
+            disableExternalLEDControl();
+            sinWaveTimer.begin(stepSinWave, 1000);
+            pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0.1*sinWave180/sinWaveAmplitude, 0, 0, 0.2);
+            return;
+        }
+        if(torpedoState1 == ARMED)
+        {
+            disableExternalLEDControl();
+            sinWaveTimer.begin(stepSinWave, 1000);
+            pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0, 0.1*sinWave180/sinWaveAmplitude, 0, 0.2);
+            return;
+        }
     }
-    if((torpedoState0 == ARMED) && (torpedoState1 == ARMED))
-    {
-        disableExternalLEDControl();
-        sinWaveTimer.begin(stepSinWave, 1000);
-        pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0.1*sinWave180/sinWaveAmplitude, 0.1*sinWave180/sinWaveAmplitude, 0, 0.2);
-        return;
-    }
-    if(torpedoState0 == ARMED)
-    {
-        disableExternalLEDControl();
-        sinWaveTimer.begin(stepSinWave, 1000);
-        pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0.1*sinWave180/sinWaveAmplitude, 0, 0, 0.2);
-        return;
-    }
-    if(torpedoState1 == ARMED)
-    {
-        disableExternalLEDControl();
-        sinWaveTimer.begin(stepSinWave, 1000);
-        pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0, 0.1*sinWave180/sinWaveAmplitude, 0, 0.2);
-        return;
-    }
+
     if(checkVoltages(BATTERY_VOLTAGE_POOR_VALUE, BATTERY_VOLTAGE_DANGER_VALUE) == DANGER && (int)boardConfig[PARAM_INDEX_ENABLE_LOW_VOLT_INDICATOR].paramValue)
     {
         //Serial.println("POOR");
@@ -148,6 +153,7 @@ void indicatorRoutine() //Add this function to loop() to allow for indication of
         pwmDriver.setRGB(1, 0, 0, 0, 0.25*sinWave0/sinWaveAmplitude);
         return;
     }
+    
     if((int)boardConfig[PARAM_INDEX_DEMO_MODE].paramValue)
     {
         disableExternalLEDControl();
@@ -155,6 +161,7 @@ void indicatorRoutine() //Add this function to loop() to allow for indication of
         pwmDriver.setRGB(sinWave0/sinWaveAmplitude, sinWave120/sinWaveAmplitude/4, sinWave240/sinWaveAmplitude/6, 0, 0.125);
         return;
     }
+
     else
     {
         if(enableExternalLEDControl()) //Only turn off LED if external LED control is disabled
