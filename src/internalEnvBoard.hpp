@@ -1,11 +1,16 @@
+#ifndef	INTERNAL_ENV_BOARD_HPP
+#define INTERNAL_ENV_BOARD_HPP
+
+#ifdef BOARD_SELECT_INTERNAL_ENV_BOARD
+
 #include "Arduino.h"
 #include <Wire.h>
 #include <Metro.h>
 
-#include <teensy_uavcan.hpp>
-#include <publisher.hpp>
+#include <internalEnvBoard/teensy_uavcan.hpp>
+#include <internalEnvBoard/publisher.hpp>
 #include <uavcanNodeIDs.h>
-#include "internalEnvBoard.h"
+//#include "internalEnvBoard.h"
 #include <watchdog.h>
 
 // UAVCAN Node settings
@@ -184,3 +189,7 @@ void loop() {
     // toggle heartbeat
     toggleHeartBeat();   
 }
+
+#endif
+
+#endif
