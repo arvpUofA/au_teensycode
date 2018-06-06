@@ -9,6 +9,7 @@ class Running_Average
 {
   private:
 	   arrayClass buffer[bufferSize];
+     arrayClass isFirstSample = 1;
 
     public:
 	     arrayClass sum = 0;
@@ -28,6 +29,14 @@ Running_Average<arrayClass, bufferSize>::Running_Average(void)
 template <class arrayClass, uint32_t bufferSize>
 void Running_Average<arrayClass, bufferSize>::AddSample(arrayClass val)  //Add new values to buffer
 {
+  if (isFirstSample) // if it's the first sample, fill buffer with value
+  {
+    for (uint32_t i = 0; i < bufferSize; i++)
+    {
+      buffer[i] = val;
+    }
+  }
+
 	for (uint32_t i = bufferSize-1; i>0; --i)
 	{
 		buffer[i] = buffer[i - 1];

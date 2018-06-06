@@ -39,8 +39,6 @@ struct pressure_StructDef {
   uint8_t fractional;
 };
 
-pressure_StructDef pressure;
-
 uint8_t OUT_P_MSB, OUT_P_CSB, OUT_P_LSB;
 
 // calculates humidity from raw data
@@ -91,6 +89,8 @@ void setupMPL(){
 }
 
 pressure_StructDef readPressureMPL() {
+    pressure_StructDef pressure;
+
     Wire.beginTransmission(MPLADDRESS);
     Wire.write(0);
     Wire.requestFrom(MPLADDRESS, 4);
@@ -125,69 +125,12 @@ float publishTemp() {
 }
 
 float publishPress() {
-    readPressureMPL();
+    pressure_StructDef pressure = readPressureMPL();
     return pressure.whole;
 }
 
 float publishHumidity() {
     return humidity();
-}
-
-void setup() {
-    Wire.begin();
-
-    initLeds();
-
-    Serial.begin(9600);
-    delay(1000);
-    Serial.println("Setup start");
-    
-    setupMPL();
-
-    // Create a node
-    systemClock = &getSystemClock();
-    canDriver = &getCanDriver();
-    node = new Node<NodeMemoryPoolSize>(*canDriver, *systemClock);
-    initNode(node, nodeID, nodeName, swVersion, hwVersion);
-
-    // init subscriber
-    initPublisher(node);
-
-    // start up node
-    node->setModeOperational();
-    Serial.println("Setup complete");
-}
-
-void loop() {
-    KickDog();
-    if(timer.check() == 1) {
-      cyclePublisher();
-      hum_measurement_req();
-      Wire.requestFrom(HIH7120ADDRESS, 4);
-      measureHIH7120();
-      Serial.println("Reading");
-      Serial.print("Humidity: ");
-      Serial.println(humidity());
-      Serial.print("Temperature: ");
-      Serial.println(temp());
-
-      //pressure readings
-      readPressureMPL();
-      Serial.print("Pressure value: ");
-      Serial.print(pressure.whole);
-      Serial.print(".");
-      Serial.println(pressure.fractional);
-    }
-
-    //--UAVCAN cycles--//
-    // wait in cycle
-    cycleWait(framerate);
-
-    // do some CAN stuff
-    cycleNode(node);
-
-    // toggle heartbeat
-    toggleHeartBeat();   
 }
 
 #endif
