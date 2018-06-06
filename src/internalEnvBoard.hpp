@@ -12,6 +12,7 @@
 #include <uavcanNodeIDs.h>
 //#include "internalEnvBoard.h"
 #include <watchdog.h>
+#include <running_average.hpp>
 
 // UAVCAN Node settings
 static constexpr uint32_t nodeID = UAVCAN_NODE_ID_INTERNAL_SENSOR_BOARD;
@@ -29,6 +30,9 @@ static constexpr float framerate = 100;
 #define MPLADDRESS 0x60
 unsigned char buf[5];
 unsigned char sta;
+
+// averaging class initialising
+Running_Average<uint32_t, 20> avg_pressure;
 
 // instantiate the timer for publishing message
 Metro timer = Metro(1000);
@@ -126,7 +130,8 @@ float publishTemp() {
 
 float publishPress() {
     pressure_StructDef pressure = readPressureMPL();
-    return pressure.whole;
+    avg_pressure.AddSample(pressure.whole);
+    return avg_pressure.Average();
 }
 
 float publishHumidity() {

@@ -10,13 +10,13 @@ class Running_Average
   private:
 	   arrayClass buffer[bufferSize];
      arrayClass isFirstSample = 1;
+     arrayClass sum = 0;
+     arrayClass average = 0;
 
-    public:
-	     arrayClass sum = 0;
-	     arrayClass average = 0;
-	     arrayClass Average(void); // Member functions declaration
-	     void AddSample(arrayClass);
-	     Running_Average(void);
+  public:
+	   arrayClass Average(void); // Member functions declaration
+	   void AddSample(arrayClass);
+	   Running_Average(void);
 };
 
 template <class arrayClass, uint32_t bufferSize>

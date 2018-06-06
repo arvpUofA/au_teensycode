@@ -51,6 +51,8 @@ void loop() {
       Serial.print(pressure.whole);
       Serial.print(".");
       Serial.println(pressure.fractional);
+      Serial.print("Average pressure value: ");
+      Serial.println(avg_pressure.Average());
     }
 
     //--UAVCAN cycles--//
