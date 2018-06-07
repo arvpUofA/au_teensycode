@@ -5,20 +5,11 @@
 
 #include "Arduino.h"
 #include <Wire.h>
-#include <Metro.h>
 
 #include <internalEnvBoard/teensy_uavcan.hpp>
 #include <internalEnvBoard/publisher.hpp>
-#include <uavcanNodeIDs.h>
-//#include "internalEnvBoard.h"
-#include <watchdog.h>
 #include <running_average.hpp>
 
-// UAVCAN Node settings
-static constexpr uint32_t nodeID = UAVCAN_NODE_ID_INTERNAL_SENSOR_BOARD;
-static constexpr uint8_t swVersion = 1;
-static constexpr uint8_t hwVersion = 1;
-static const char *nodeName = "org.arvp.internalSensor";
 
 // UAVCAN application settings
 static constexpr float framerate = 100;
@@ -28,14 +19,15 @@ static constexpr float framerate = 100;
 
 // pressure/temperature sensor
 #define MPLADDRESS 0x60
-unsigned char buf[5];
-unsigned char sta;
+
+// data buffer for humidity and temperature
+unsigned char HIH_buffer[5];
 
 // averaging class initialising
-Running_Average<uint32_t, 20> avg_pressure;
+Running_Average<uint32_t, 10> avg_pressure;
+Running_Average<float, 10> avg_temperature;
+Running_Average<float, 10> avg_humidity;
 
-// instantiate the timer for publishing message
-Metro timer = Metro(1000);
 
 //use this for reading out pressure data in two parts
 struct pressure_StructDef {
@@ -47,40 +39,39 @@ uint8_t OUT_P_MSB, OUT_P_CSB, OUT_P_LSB;
 
 // calculates humidity from raw data
 float humidity(){
-    float hum = (buf[0] << 8) + buf[1];
+    float hum = (HIH_buffer[0] << 8) + HIH_buffer[1];
     float humidity = float(hum)/16382*100;
     return humidity;
 }
 // calculates temperature from raw data
 float temp(){
-    float temp = (buf[2] << 6) + (buf[3] >> 2);
+    float temp = (HIH_buffer[2] << 6) + (HIH_buffer[3] >> 2);
     float temperature = (temp/16382*165)-40;
     return temperature;
 }
 
-//must be used before to tell the HIH7120 to make a measurement
-//there must be a delay between measurement request and retrieving
-//the measurement from the sensor which is built into the function
-//below
-void hum_measurement_req(){
-    Wire.beginTransmission(HIH7120ADDRESS);
-    Wire.write(HIH7120ADDRESS<<1);
-    Wire.endTransmission();
-    delay(50);
-}
-
 // read humidity and temperature data from HIH7120
+// there must be a delay between measurement request and retrieving
+// the measurement from the sensor which is built into the function
+// below
 void measureHIH7120(){
-    if (Wire.available()==4){
-        for (int i = 0; i <4; i++){
-            buf[i]=Wire.read();
-        }
-        if(!bitRead(buf[0], 7)&&bitRead(buf[0], 6)){
-            Serial.println("Data is stale");
-        }
-    } else {
-        Serial.print("Error in data.\n");
+  Wire.beginTransmission(HIH7120ADDRESS);
+  Wire.write(HIH7120ADDRESS<<1);
+  Wire.endTransmission();
+  delay(50);
+
+  Wire.requestFrom(HIH7120ADDRESS, 4);
+
+  if (Wire.available()==4){
+    for (int i = 0; i <4; i++){
+        HIH_buffer[i]=Wire.read();
     }
+    if(!bitRead(HIH_buffer[0], 7)&&bitRead(HIH_buffer[0], 6)){
+        Serial.println("Data is stale");
+    }
+  } else {
+      Serial.print("Error in data.\n");
+  }
 }
 
 // initialize Mpl sensor based on sample program from data sheet
@@ -124,18 +115,20 @@ pressure_StructDef readPressureMPL() {
     return pressure;
 }
 
-float publishTemp() {
-    return temp();
-}
-
-float publishPress() {
-    pressure_StructDef pressure = readPressureMPL();
-    avg_pressure.AddSample(pressure.whole);
-    return avg_pressure.Average();
-}
-
 float publishHumidity() {
-    return humidity();
+    return avg_humidity.Average();
+}
+
+float publishTemp() {
+    return avg_temperature.Average();
+}
+
+// here's an issue: avg_pressure returns uint32_t, but it thinks its a float
+// do these values match?
+// the older code apparently worked, and it did thinks
+// TODO: make this proper
+float publishPress() {
+    return avg_pressure.Average();
 }
 
 #endif
