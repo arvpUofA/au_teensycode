@@ -35,6 +35,8 @@ void Running_Average<arrayClass, bufferSize>::AddSample(arrayClass val)  //Add n
     {
       buffer[i] = val;
     }
+
+    isFirstSample = 0;
   }
 
 	for (uint32_t i = bufferSize-1; i>0; --i)
