@@ -2,7 +2,6 @@
 #define RUNNING_AVERAGE_HPP
 
 #include <Arduino.h>
-//#include <Serial.h>
 
 template <class arrayClass, uint32_t bufferSize>
 class Running_Average
