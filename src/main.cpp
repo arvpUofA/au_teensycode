@@ -13,8 +13,6 @@ static constexpr uint8_t swVersion = 1;
 static constexpr uint8_t hwVersion = 1;
 static const char *nodeName = "org.arvp.internalSensor";
 
-pressure_StructDef pressure;
-
 // instantiate the timer for reading values/publishing message
 // interval in milliseconds
 Metro timer = Metro(100);
@@ -64,8 +62,8 @@ void loop() {
       avg_temperature.AddSample(temp());
 
       // read pressure
-      pressure = readPressureMPL();
-      avg_pressure.AddSample(pressure.whole);
+      readPressureMPL();
+      avg_pressure.AddSample(pressure());
 
       // publish once every second
       if (timerCounter == 10) {
