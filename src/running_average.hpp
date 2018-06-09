@@ -2,20 +2,20 @@
 #define RUNNING_AVERAGE_HPP
 
 #include <Arduino.h>
-//#include <Serial.h>
 
 template <class arrayClass, uint32_t bufferSize>
 class Running_Average
 {
   private:
 	   arrayClass buffer[bufferSize];
+     arrayClass isFirstSample = 1;
+     arrayClass sum = 0;
+     arrayClass average = 0;
 
-    public:
-	     arrayClass sum = 0;
-	     arrayClass average = 0;
-	     arrayClass Average(void); // Member functions declaration
-	     void AddSample(arrayClass);
-	     Running_Average(void);
+  public:
+	   arrayClass Average(void); // Member functions declaration
+	   void AddSample(arrayClass);
+	   Running_Average(void);
 };
 
 template <class arrayClass, uint32_t bufferSize>
@@ -28,6 +28,16 @@ Running_Average<arrayClass, bufferSize>::Running_Average(void)
 template <class arrayClass, uint32_t bufferSize>
 void Running_Average<arrayClass, bufferSize>::AddSample(arrayClass val)  //Add new values to buffer
 {
+  if (isFirstSample) // if it's the first sample, fill buffer with value
+  {
+    for (uint32_t i = 0; i < bufferSize; i++)
+    {
+      buffer[i] = val;
+    }
+
+    isFirstSample = 0;
+  }
+
 	for (uint32_t i = bufferSize-1; i>0; --i)
 	{
 		buffer[i] = buffer[i - 1];
