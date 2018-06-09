@@ -5,7 +5,7 @@
 #include <uavcan/equipment/air_data/StaticPressure.hpp>
 #include <uavcan/equipment/air_data/StaticTemperature.hpp>
 //#include <arvp/InternalSensor.hpp>
-#include "internalEnvBoard.h"
+#include <sensor_functions.h>
 
 using namespace uavcan;
 
