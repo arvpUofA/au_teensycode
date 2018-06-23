@@ -181,11 +181,11 @@ void Adafruit_PWMServoDriver::setServoPulse(uint8_t n, double pulse) //pulse wid
   double pulselength;
   pulselength = 1000000;   // 1,000,000 us per second
   pulselength /= pwmFreq;   
-  Serial.print(pulselength); Serial.println(" us per period"); 
+  //Serial.print(pulselength); Serial.println(" us per period"); 
   pulselength /= 4096;  // 12 bits of resolution
-  Serial.print(pulselength); Serial.println(" us per bit"); 
+  //Serial.print(pulselength); Serial.println(" us per bit"); 
   pulse /= pulselength;
-  Serial.println(pulse);
+  //Serial.println(pulse);
   this->setPWM(n, 0, pulse);
 }
 
