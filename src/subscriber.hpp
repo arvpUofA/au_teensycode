@@ -154,7 +154,7 @@ void lightsControlCallback(const uavcan::equipment::indication::LightsCommand& l
   }
   else
   {
-    Serial.println("LED external control disabled");
+    //Serial.println("LED external control disabled");
   }
 }
 
