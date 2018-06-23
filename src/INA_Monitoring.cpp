@@ -13,6 +13,10 @@
 #include "SDL_Arduino_INA3221.h"
 #include "running_average.hpp"
 #include <Metro.h>
+#include <teensy_uavcan.hpp>
+#include <publisher.hpp>
+#include <subscriber.hpp>
+#include <parameter.hpp>
 
 #define RATE 100
 #define REDC_5V  (2.1/3.1) //Correction for 5V rail
