@@ -10,10 +10,6 @@
 
 using namespace uavcan;
 
-// publisher
-Publisher<protocol::debug::LogMessage> *logPublisher;
-Publisher<protocol::debug::KeyValue> *keyPublisher;
-
 // battery publishers
 Publisher<equipment::power::BatteryInfo> *battPublisher_0;
 Publisher<equipment::power::BatteryInfo> *battPublisher_1;
@@ -28,10 +24,6 @@ Publisher<equipment::power::CircuitStatus> *pwrRailPublisher_12v;
 
 void initPublisher(Node<NodeMemoryPoolSize> *node)
 {
-  // create publishers
-  logPublisher = new Publisher<protocol::debug::LogMessage>(*node);
-  keyPublisher = new Publisher<protocol::debug::KeyValue>(*node);
-
   // create battery publishers
   battPublisher_0 = new Publisher<equipment::power::BatteryInfo>(*node);
   battPublisher_1 = new Publisher<equipment::power::BatteryInfo>(*node);
@@ -42,16 +34,6 @@ void initPublisher(Node<NodeMemoryPoolSize> *node)
   pwrRailPublisher_3v3 = new Publisher<equipment::power::CircuitStatus>(*node);
   pwrRailPublisher_5v  = new Publisher<equipment::power::CircuitStatus>(*node);
   pwrRailPublisher_12v = new Publisher<equipment::power::CircuitStatus>(*node);
-
-  // initiliaze publishers
-  if(logPublisher->init() < 0)
-  {
-    Serial.println("Unable to initialize log message publisher!");
-  }
-  if(keyPublisher->init() < 0)
-  {
-    Serial.println("Unable to initialize key message publisher!");
-  }
 
   if (battPublisher_0->init() < 0) {
     Serial.println("Unable to initialize battery publisher 0!");
@@ -69,9 +51,17 @@ void initPublisher(Node<NodeMemoryPoolSize> *node)
     Serial.println("Unable to initialize battery publisher 3!");
   }
 
-  // set TX timeout
-  logPublisher->setTxTimeout(MonotonicDuration::fromUSec(800));
-  keyPublisher->setTxTimeout(MonotonicDuration::fromUSec(800));
+  if (pwrRailPublisher_3v3->init() < 0) {
+    Serial.println("Unable to intialize 3v3 power rail publisher!");
+  }
+
+  if (pwrRailPublisher_5v->init() < 0) {
+    Serial.println("Unable to intialize 5v power rail publisher!");
+  }
+
+  if (pwrRailPublisher_12v->init() < 0) {
+    Serial.println("Unable to intialize 12v power rail publisher!");
+  }
 
   battPublisher_0->setTxTimeout(MonotonicDuration::fromUSec(800)); //should these be this?
   battPublisher_1->setTxTimeout(MonotonicDuration::fromUSec(800));
@@ -184,36 +174,6 @@ static void publishPwrRails(void) {
 
 void cyclePublisher()
 {
-  // send a very important log message to everyone
-  {
-    protocol::debug::LogMessage msg;
-
-    msg.level.value = protocol::debug::LogLevel::DEBUG;
-    msg.text = "TUM PHOENIX Robotics is cool";
-    msg.source = "Teensy";
-
-    const int pres = logPublisher->broadcast(msg);
-    if (pres < 0)
-    {
-      Serial.println("Error while broadcasting log message");
-    }
-  }
-
-
-  // send everyone the truth
-  {
-    protocol::debug::KeyValue msg;
-
-    msg.value = 42;
-    msg.key = "Solution to all Problems!";
-
-    const int pres = keyPublisher->broadcast(msg);
-    if (pres < 0)
-    {
-      Serial.println("Error while broadcasting key message");
-    }
-  }
-
   publishBatteries();
   publishPwrRails();
 }
