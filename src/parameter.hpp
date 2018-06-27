@@ -69,7 +69,7 @@ const char *defaultParameterArray[NUMBER_OF_PARAMETERS][2] =
     {"strobeInterval", "500"}, // in ms
 
     {"demoMode", "0"},
-    {"enableLowVoltIndicator", "1"},
+    {"enableLowVoltIndicator", "0"}, //changed to 0 since it's not working right
     {"lowPressureThreshold", "20000"}, // in Pascals
     {"enablePressureAlert", "0"},
     {"enableTorpedoIndicator", "1"},
