@@ -78,6 +78,8 @@ static void publishBatteries(void) {
   {
     equipment::power::BatteryInfo msg;
 
+    msg.model_instance_id = 0;
+    msg.model_name = "ARVP LiPo";
     msg.battery_id = 0;
     msg.voltage = battery_0.volts;
     msg.current = battery_0.current;
@@ -93,6 +95,8 @@ static void publishBatteries(void) {
   {
     equipment::power::BatteryInfo msg;
 
+    msg.model_instance_id = 1;
+    msg.model_name = "ARVP LiPo";
     msg.battery_id = 1;
     msg.voltage = battery_1.volts;
     msg.current = battery_1.current;
@@ -108,6 +112,8 @@ static void publishBatteries(void) {
   {
     equipment::power::BatteryInfo msg;
 
+    msg.model_instance_id = 2;
+    msg.model_name = "ARVP LiPo";
     msg.battery_id = 2;
     msg.voltage = battery_2.volts;
     msg.current = battery_2.current;
@@ -123,6 +129,8 @@ static void publishBatteries(void) {
   {
     equipment::power::BatteryInfo msg;
 
+    msg.model_instance_id = 3;
+    msg.model_name = "ARVP LiPo";
     msg.battery_id = 3;
     msg.voltage = battery_3.volts;
     msg.current = battery_3.current;
