@@ -15,6 +15,7 @@
 #include <subscriber.hpp>
 #include <parameter.hpp>
 #include "INA_functions.hpp"
+#include <watchdog.h>
 
 #include <publisher.hpp>
 
@@ -56,7 +57,7 @@ void printData(struct railInfo railInfo)
 
 void setup(void)
 {
-    delay(3000);
+    KickDog();
     Serial.begin(9600);
     Serial.println("SDA_Arduino_INA3221_Test");
 
@@ -91,6 +92,7 @@ void setup(void)
 
 void loop(void)
 {
+    KickDog();
     if(loopTimer.check())
     {
         timerCounter++;
