@@ -35,7 +35,14 @@ extern Running_Average<float, NUMBER_OF_SAMPLES> avg_pwr_4;
 extern Running_Average<float, NUMBER_OF_SAMPLES> avg_pwr_5;
 extern Running_Average<float, NUMBER_OF_SAMPLES> avg_pwr_6;
 
+// Node settings
+static constexpr uint32_t nodeID = 101;
+static constexpr uint8_t swVersion = 1;
+static constexpr uint8_t hwVersion = 1;
+static const char* nodeName = "org.phoenix.example_node";
 
+// application settings
+static constexpr float framerate = 100;
 
 Metro loopTimer = Metro(10000/NUMBER_OF_SAMPLES);
 uint8_t timerCounter;
@@ -49,7 +56,7 @@ void printData(struct railInfo railInfo)
 
 void setup(void)
 {
-    delay(2000);
+    delay(3000);
     Serial.begin(9600);
     Serial.println("SDA_Arduino_INA3221_Test");
 
@@ -65,6 +72,21 @@ void setup(void)
     battery1_2->begin();
     battery3_4->begin();
     power_rails->begin();
+
+    // init LEDs
+    initLeds();
+
+    // Create a node
+    systemClock = &getSystemClock();
+    canDriver = &getCanDriver();
+    node = new Node<NodeMemoryPoolSize>(*canDriver, *systemClock);
+    initNode(node, nodeID, nodeName, swVersion, hwVersion);
+
+    // init publisher
+    initPublisher(node);
+
+    // start up node
+    node->setModeOperational();
 }
 
 void loop(void)
@@ -109,35 +131,18 @@ void loop(void)
             printData(power_rail_2);
 
             timerCounter = 0;
+
+            // publish messages
+            cyclePublisher();
+
         }
     }
-    //battery1_2->tick(1); battery1_2->tick(2);
-    //battery3_4->tick(1); battery3_4->tick(2);
-    //power_rails->tick(1); power_rails->tick(2); power_rails->tick(3);
+    // wait in cycle
+    cycleWait(framerate);
 
-    /*//INA 1 (Battery Monitoring Board)
-    Serial.print("INA3221_1\n");
-    Serial.print("Battery 1: ");
-    battery1_2->print(1);
-    Serial.print("Battery 2: ");
-    battery1_2->print(2);
+    // do some CAN stuff
+    cycleNode(node);
 
-    //INA 2 (Battery Monitoring Board)
-    Serial.print("Battery 3: ");
-    battery3_4->print(1);
-    Serial.print("Battery 4: ");
-    battery3_4->print(2);
-
-    //INA 4 (Power Monitoring Board)
-
-    Serial.print("INA3221_4\n");
-    Serial.print("3.3V  Rail: ");
-    power_rails->print(1);
-    Serial.print("5.0V  Rail: ");
-    power_rails->print(2);
-    Serial.print("12.0V Rail: ");
-    power_rails->print(3);*/
-
-    // long d = max(rate_delay - (millis() - start), 0);
-    delay(rate_delay);
+    // toggle heartbeat
+    toggleHeartBeat();
 }

@@ -22,12 +22,12 @@ Node<NodeMemoryPoolSize> *node;
 
 // heartbeat LED
 bool heartBeatLed = false;
-int heartBeatLedPin = 16;
+int heartBeatLedPin = 13;
 MonotonicTime lastBeat = MonotonicTime::fromMSec(0);
 int heartBeatFreq = 2;
 
 // traffic (or general purpose) LED
-int trafficLedPin = 17;
+int trafficLedPin = 13;
 bool trafficLed = false;
 
 // teensy LED

@@ -78,6 +78,7 @@ static void publishBatteries(void) {
   {
     equipment::power::BatteryInfo msg;
 
+    msg.battery_id = 0;
     msg.voltage = battery_0.volts;
     msg.current = battery_0.current;
     msg.average_power_10sec = battery_0.power;
@@ -92,6 +93,7 @@ static void publishBatteries(void) {
   {
     equipment::power::BatteryInfo msg;
 
+    msg.battery_id = 1;
     msg.voltage = battery_1.volts;
     msg.current = battery_1.current;
     msg.average_power_10sec = battery_1.power;
@@ -106,6 +108,7 @@ static void publishBatteries(void) {
   {
     equipment::power::BatteryInfo msg;
 
+    msg.battery_id = 2;
     msg.voltage = battery_2.volts;
     msg.current = battery_2.current;
     msg.average_power_10sec = battery_2.power;
@@ -120,6 +123,7 @@ static void publishBatteries(void) {
   {
     equipment::power::BatteryInfo msg;
 
+    msg.battery_id = 3;
     msg.voltage = battery_3.volts;
     msg.current = battery_3.current;
     msg.average_power_10sec = battery_3.power;
@@ -135,7 +139,7 @@ static void publishPwrRails(void) {
   // Publish 3v3 power rail info
   {
     equipment::power::CircuitStatus msg;
-
+    msg.circuit_id = 0;
     msg.voltage = power_rail_0.volts;
     msg.current = power_rail_0.current;
 
@@ -149,6 +153,7 @@ static void publishPwrRails(void) {
   {
     equipment::power::CircuitStatus msg;
 
+    msg.circuit_id = 1;
     msg.voltage = power_rail_1.volts;
     msg.current = power_rail_1.current;
 
@@ -162,6 +167,7 @@ static void publishPwrRails(void) {
   {
     equipment::power::CircuitStatus msg;
 
+    msg.circuit_id = 2;
     msg.voltage = power_rail_2.volts;
     msg.current = power_rail_2.current;
 
