@@ -26,7 +26,7 @@ static constexpr uint8_t hwVersion = 1;
 static const char* nodeName = "org.arvp.dropperTorpedo";
 
 // UAVCAN application settings
-static constexpr float framerate = 100;
+static constexpr float framerate = 1000;
 
 //PCA9685 object, uses default address 0x40
 Adafruit_PWMServoDriver pwmDriver = Adafruit_PWMServoDriver(PCA9685_BASEADDR);
@@ -141,7 +141,7 @@ void indicatorRoutine() //Add this function to loop() to allow for indication of
     {
         //Serial.println("POOR");
         disableExternalLEDControl();
-        sinWaveTimer.begin(stepSinWave, 2000);
+        sinWaveTimer.begin(stepSinWave, 200);
         pwmDriver.setRGB(1, 0, 0, 0, 0.25*sinWave0/sinWaveAmplitude);
         return;
     }
@@ -149,7 +149,7 @@ void indicatorRoutine() //Add this function to loop() to allow for indication of
     {
         //Serial.println("DANGER");
         disableExternalLEDControl();
-        sinWaveTimer.begin(stepSinWave, 210);
+        sinWaveTimer.begin(stepSinWave, 2000);
         pwmDriver.setRGB(1, 0, 0, 0, 0.25*sinWave0/sinWaveAmplitude);
         return;
     }
