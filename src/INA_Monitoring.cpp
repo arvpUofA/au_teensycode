@@ -24,6 +24,8 @@
 #define REDC_5V  (2.1/3.1) //Correction for 5V rail
 #define REDC_12V (1.3/2)   //Correction for 12V rail
 
+#define ENABLE_SERIAL false
+
 extern SDL_Arduino_INA3221 *battery1_2;
 extern SDL_Arduino_INA3221 *battery3_4;
 extern SDL_Arduino_INA3221 *power_rails;
@@ -107,11 +109,14 @@ void loop(void)
         avg_pwr_5.AddSample(power_rails->getPower(2)); //5V
         avg_pwr_6.AddSample(power_rails->getPower(3)); //12V
 
-        if (timerCounter == 10) //10 samples per second
-        {
-            updateBatteries();
-            updatePwrRails();
+        updateBatteries();
+        updatePwrRails();
 
+        // publish messages
+        cyclePublisher();
+
+        if (timerCounter == 10 && ENABLE_SERIAL) //10 samples per second
+        {
             Serial.println("Battery 0:");
             printData(battery_0);
 
@@ -134,10 +139,6 @@ void loop(void)
             printData(power_rail_2);
 
             timerCounter = 0;
-
-            // publish messages
-            cyclePublisher();
-
         }
     }
     // wait in cycle
