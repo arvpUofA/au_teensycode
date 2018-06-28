@@ -49,7 +49,8 @@ static const char* nodeName = "org.arvp.batteryMonitor";
 static constexpr float framerate = 100;
 
 Metro loopTimer = Metro(10000/NUMBER_OF_SAMPLES);
-uint8_t timerCounter;
+uint8_t sampleTimerCounter;
+uint8_t publishTimerCounter;
 
 void printData(struct railInfo railInfo)
 {
@@ -98,7 +99,8 @@ void loop(void)
     KickDog();
     if(loopTimer.check())
     {
-        timerCounter++;
+        sampleTimerCounter++;
+        publishTimerCounter++;
 
         avg_pwr_0.AddSample(battery1_2->getPower(1)); //Horizontal thrusters
         avg_pwr_1.AddSample(battery1_2->getPower(2)); //Vertical thrusters
@@ -112,10 +114,14 @@ void loop(void)
         updateBatteries();
         updatePwrRails();
 
-        // publish messages
-        cyclePublisher();
+        if(publishTimerCounter == 5) //publish every 1/2 second
+        {
+            // publish messages
+            cyclePublisher();
+            publishTimerCounter = 0;
+        }
 
-        if (timerCounter == 10 && ENABLE_SERIAL) //10 samples per second
+        if (sampleTimerCounter == 10 && ENABLE_SERIAL) //10 samples per second
         {
             Serial.println("Battery 0:");
             printData(battery_0);
@@ -138,7 +144,7 @@ void loop(void)
             Serial.println("12V");
             printData(power_rail_2);
 
-            timerCounter = 0;
+            sampleTimerCounter = 0;
         }
     }
     // wait in cycle
