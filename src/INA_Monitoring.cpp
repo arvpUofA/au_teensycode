@@ -16,6 +16,7 @@
 #include <parameter.hpp>
 #include "INA_functions.hpp"
 #include <watchdog.h>
+#include <uavcanNodeIDs.h>
 
 #include <publisher.hpp>
 
@@ -37,10 +38,10 @@ extern Running_Average<float, NUMBER_OF_SAMPLES> avg_pwr_5;
 extern Running_Average<float, NUMBER_OF_SAMPLES> avg_pwr_6;
 
 // Node settings
-static constexpr uint32_t nodeID = 101;
+static constexpr uint32_t nodeID = UAVCAN_NODE_ID_BATTERY_MONITORING_BOARD;
 static constexpr uint8_t swVersion = 1;
 static constexpr uint8_t hwVersion = 1;
-static const char* nodeName = "org.phoenix.example_node";
+static const char* nodeName = "org.arvp.batteryMonitor";
 
 // application settings
 static constexpr float framerate = 100;
