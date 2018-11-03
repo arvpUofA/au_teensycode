@@ -1,20 +1,11 @@
-#include "Arduino.h"
+#define BOARD_SELECT_INTERNAL_ENV_BOARD
 
-#include <teensy_uavcan.hpp>
-#include <publisher.hpp>
-#include <running_average.hpp>
+#include <Arduino.h>
+#include <internalEnvBoard.hpp>
+#include <Metro.h>
+
 #include <uavcanNodeIDs.h>
 #include <watchdog.h>
-#include <Metro.h>
-#include <Wire.h>
-#include <sensor_functions.h>
-
-// UAVCAN application settings
-static constexpr float framerate = 100;
-
-extern Running_Average<uint32_t, SAMPLES_PER_SECOND> avg_pressure;
-extern Running_Average<float, SAMPLES_PER_SECOND> avg_temperature;
-extern Running_Average<float, SAMPLES_PER_SECOND> avg_humidity;
 
 // UAVCAN Node settings
 static constexpr uint32_t nodeID = UAVCAN_NODE_ID_INTERNAL_SENSOR_BOARD;
@@ -24,10 +15,13 @@ static const char *nodeName = "org.arvp.internalSensor";
 
 // instantiate the timer for reading values/publishing message
 // interval in milliseconds
-Metro timer = Metro(1000/SAMPLES_PER_SECOND);
+Metro timer = Metro(100);
 uint8_t timerCounter;
 
-
+// re-instantiate (for code clarity) averaging classes
+extern Running_Average<uint32_t, 10> avg_pressure;
+extern Running_Average<float, 10> avg_temperature;
+extern Running_Average<float, 10> avg_humidity;
 
 void setup() {
     Wire.begin();
@@ -72,7 +66,7 @@ void loop() {
       avg_pressure.AddSample(pressure());
 
       // publish once every second
-      if (timerCounter == SAMPLES_PER_SECOND) {
+      if (timerCounter == 10) {
         cyclePublisher();
         Serial.println("Reading...");
         Serial.print("Humidity: ");
