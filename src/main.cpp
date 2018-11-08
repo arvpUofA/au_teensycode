@@ -7,6 +7,10 @@
 #include <uavcanNodeIDs.h>
 #include <watchdog.h>
 
+#include <batteryStatus.hpp>
+#include <subscriber.hpp>
+#include <teensy_uavcan.hpp>
+
 // UAVCAN Node settings
 static constexpr uint32_t nodeID = UAVCAN_NODE_ID_INTERNAL_SENSOR_BOARD;
 static constexpr uint8_t swVersion = 1;
@@ -43,7 +47,10 @@ void setup() {
     node = new Node<NodeMemoryPoolSize>(*canDriver, *systemClock);
     initNode(node, nodeID, nodeName, swVersion, hwVersion);
 
-    // init subscriber
+	//init subscriber
+	initSubscriber(node);
+	
+    // init publisher
     initPublisher(node);
 
     // start up node
@@ -76,6 +83,15 @@ void loop() {
         Serial.print("Pressure: ");
         Serial.println(avg_pressure.Average());
 
+		Serial.print("Battery 1: ");
+		Serial.println(batteryVoltage[0]);
+		Serial.print("Battery 2: ");
+		Serial.println(batteryVoltage[1]);
+		Serial.print("Battery 3: ");
+		Serial.println(batteryVoltage[2]);
+		Serial.print("Battery 4: ");
+		Serial.println(batteryVoltage[3]);
+		
         timerCounter = 0;
       }
     }
