@@ -83,14 +83,14 @@ void loop() {
         Serial.print("Pressure: ");
         Serial.println(avg_pressure.Average());
 
-		Serial.print("Battery 1: ");
-		Serial.println(batteryVoltage[0]);
-		Serial.print("Battery 2: ");
-		Serial.println(batteryVoltage[1]);
-		Serial.print("Battery 3: ");
-		Serial.println(batteryVoltage[2]);
-		Serial.print("Battery 4: ");
-		Serial.println(batteryVoltage[3]);
+	Serial.print("Battery 1: ");
+	Serial.println(batteryVoltage[0]);
+	Serial.print("Battery 2: ");
+	Serial.println(batteryVoltage[1]);
+	Serial.print("Battery 3: ");
+	Serial.println(batteryVoltage[2]);
+	Serial.print("Battery 4: ");
+	Serial.println(batteryVoltage[3]);
 		
         timerCounter = 0;
       }
