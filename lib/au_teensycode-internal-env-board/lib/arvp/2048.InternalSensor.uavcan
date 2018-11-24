@@ -1,0 +1,3 @@
+float16 temperature
+float16 pressure
+float16 humidity
