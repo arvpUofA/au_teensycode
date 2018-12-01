@@ -1,11 +1,21 @@
-#define BOARD_SELECT_INTERNAL_ENV_BOARD
+#include "Arduino.h"
 
-#include <Arduino.h>
-#include <internalEnvBoard.hpp>
-#include <Metro.h>
-
+#include <teensy_uavcan.hpp>
+#include <publisher.hpp>
+#include <running_average.hpp>
 #include <uavcanNodeIDs.h>
 #include <watchdog.h>
+#include <Metro.h>
+#include <Wire.h>
+#include <sensor_functions.h>
+#include <lcd_functions.h>
+
+// UAVCAN application settings
+static constexpr float framerate = 100;
+
+extern Running_Average<uint32_t, SAMPLES_PER_SECOND> avg_pressure;
+extern Running_Average<float, SAMPLES_PER_SECOND> avg_temperature;
+extern Running_Average<float, SAMPLES_PER_SECOND> avg_humidity;
 
 #include <batteryStatus.hpp>
 #include <subscriber.hpp>
@@ -19,13 +29,11 @@ static const char *nodeName = "org.arvp.internalSensor";
 
 // instantiate the timer for reading values/publishing message
 // interval in milliseconds
-Metro timer = Metro(100);
+Metro timer = Metro(1000/SAMPLES_PER_SECOND);
 uint8_t timerCounter;
+int counterForLcd;
 
-// re-instantiate (for code clarity) averaging classes
-extern Running_Average<uint32_t, 10> avg_pressure;
-extern Running_Average<float, 10> avg_temperature;
-extern Running_Average<float, 10> avg_humidity;
+
 
 void setup() {
     Wire.begin();
@@ -34,12 +42,14 @@ void setup() {
 
     // ensure counter starts at 0
     timerCounter = 0;
+    counterForLcd = 0;
 
     Serial.begin(9600);
     delay(1000);
     Serial.println("Setup start");
 
     setupMPL();
+    setup_lcd();
 
     // Create a node
     systemClock = &getSystemClock();
@@ -62,6 +72,7 @@ void loop() {
     KickDog();
     if(timer.check() == 1) {
       timerCounter++;
+      counterForLcd ++;
 
       // read humidity and temperature
       measureHIH7120();
@@ -73,7 +84,7 @@ void loop() {
       avg_pressure.AddSample(pressure());
 
       // publish once every second
-      if (timerCounter == 10) {
+      if (timerCounter == SAMPLES_PER_SECOND) {
         cyclePublisher();
         Serial.println("Reading...");
         Serial.print("Humidity: ");
@@ -82,16 +93,21 @@ void loop() {
         Serial.println(avg_temperature.Average());
         Serial.print("Pressure: ");
         Serial.println(avg_pressure.Average());
-
-	Serial.print("Battery 1: ");
-	Serial.println(batteryVoltage[0]);
-	Serial.print("Battery 2: ");
-	Serial.println(batteryVoltage[1]);
-	Serial.print("Battery 3: ");
-	Serial.println(batteryVoltage[2]);
-	Serial.print("Battery 4: ");
-	Serial.println(batteryVoltage[3]);
 		
+		//Print out battery voltages
+
+		Serial.print("Battery 1: ");
+		Serial.println(batteryVoltage[0]);
+		Serial.print("Battery 2: ");
+		Serial.println(batteryVoltage[1]);
+		Serial.print("Battery 3: ");
+		Serial.println(batteryVoltage[2]);
+		Serial.print("Battery 4: ");
+		Serial.println(batteryVoltage[3]);
+		
+        //Change what is displayed on the LCD every 5 seconds
+
+
         timerCounter = 0;
       }
     }
