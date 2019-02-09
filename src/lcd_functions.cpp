@@ -16,7 +16,7 @@ void setup_lcd(void){
 }
 
 
-void display_to_lcd(float temp,float hum,float pressure, float volt){
+void display_to_lcd(float temp,float hum,float pressure){
     //0123456789ABCDE
     //T:---   H:--
     //P:--.-

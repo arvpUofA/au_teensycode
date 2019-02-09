@@ -32,6 +32,7 @@ static const char *nodeName = "org.arvp.internalSensor";
 Metro timer = Metro(1000/SAMPLES_PER_SECOND);
 uint8_t timerCounter;
 int counterForLcd;
+bool dispMode = false;
 
 
 
@@ -106,8 +107,18 @@ void loop() {
 		Serial.println(batteryVoltage[3]);
 		
         //Change what is displayed on the LCD every 5 seconds
-
-
+		if(counterForLcd == 5000){
+			dispMode = !dispMode;
+			counterForLcd = 0;
+		}
+		
+		if(dispMode == true){
+			display_to_lcd(avg_temperature.Average(),avg_humidity.Average(),avg_pressure.Average());
+		} 
+			else {
+			display_voltages_to_lcd(batteryVoltage[0],batteryVoltage[1],batteryVoltage[2],batteryVoltage[3]);
+		}
+		
         timerCounter = 0;
       }
     }
