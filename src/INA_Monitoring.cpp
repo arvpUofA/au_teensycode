@@ -11,14 +11,14 @@
 #include <Arduino.h>
 #include <i2c_t3.h>
 #include <Metro.h>
-#include <teensy_uavcan.hpp>
-#include <subscriber.hpp>
-#include <parameter.hpp>
+//#include <teensy_uavcan.hpp>
+//#include <subscriber.hpp>
+//#include <parameter.hpp>
 #include "INA_functions.hpp"
 #include <watchdog.h>
-#include <uavcanNodeIDs.h>
+//#include <uavcanNodeIDs.h>
 
-#include <publisher.hpp>
+//#include <publisher.hpp>
 
 #define RATE 100
 #define REDC_5V  (2.1/3.1) //Correction for 5V rail
@@ -40,13 +40,13 @@ extern Running_Average<float, NUMBER_OF_SAMPLES> avg_pwr_5;
 extern Running_Average<float, NUMBER_OF_SAMPLES> avg_pwr_6;
 
 // Node settings
-static constexpr uint32_t nodeID = UAVCAN_NODE_ID_BATTERY_MONITORING_BOARD;
-static constexpr uint8_t swVersion = 1;
-static constexpr uint8_t hwVersion = 1;
-static const char* nodeName = "org.arvp.batteryMonitor";
+//static constexpr uint32_t nodeID = UAVCAN_NODE_ID_BATTERY_MONITORING_BOARD;
+//static constexpr uint8_t swVersion = 1;
+//static constexpr uint8_t hwVersion = 1;
+//static const char* nodeName = "org.arvp.batteryMonitor";
 
 // application settings
-static constexpr float framerate = 100;
+//static constexpr float framerate = 100;
 
 Metro loopTimer = Metro(10000/NUMBER_OF_SAMPLES);
 uint8_t sampleTimerCounter;
@@ -79,19 +79,19 @@ void setup(void)
     power_rails->begin();
 
     // init LEDs
-    initLeds();
+    //initLeds();
 
     // Create a node
-    systemClock = &getSystemClock();
-    canDriver = &getCanDriver();
-    node = new Node<NodeMemoryPoolSize>(*canDriver, *systemClock);
-    initNode(node, nodeID, nodeName, swVersion, hwVersion);
+    //systemClock = &getSystemClock();
+    //canDriver = &getCanDriver();
+    //node = new Node<NodeMemoryPoolSize>(*canDriver, *systemClock);
+    //initNode(node, nodeID, nodeName, swVersion, hwVersion);
 
     // init publisher
-    initPublisher(node);
+    //initPublisher(node);
 
     // start up node
-    node->setModeOperational();
+    //node->setModeOperational();
 }
 
 void loop(void)
@@ -117,12 +117,12 @@ void loop(void)
         if(publishTimerCounter == 5) //publish every 1/2 second
         {
             // publish messages
-            cyclePublisher();
-            publishTimerCounter = 0;
+            //cyclePublisher();
+            //publishTimerCounter = 0;
         }
 
-        if (sampleTimerCounter == 10 && ENABLE_SERIAL) //10 samples per second
-        {
+        //if (sampleTimerCounter == 10 && ENABLE_SERIAL) //10 samples per second
+        //{
             Serial.println("Battery 0:");
             printData(battery_0);
 
@@ -144,15 +144,15 @@ void loop(void)
             Serial.println("12V");
             printData(power_rail_2);
 
-            sampleTimerCounter = 0;
-        }
+            //sampleTimerCounter = 0;
+        //}
     }
     // wait in cycle
-    cycleWait(framerate);
+    //cycleWait(framerate);
 
     // do some CAN stuff
-    cycleNode(node);
+    //cycleNode(node);
 
     // toggle heartbeat
-    toggleHeartBeat();
+    //toggleHeartBeat();
 }
