@@ -4,10 +4,13 @@ This repository is to be used for Teensy 3.2 firmware development for Auri.
 
 ## Getting Started
 
-To start coding for a Teensy used in a specific board, clone the develop branch and 
-create a new branch with the name of the board. For consistency, use the [Arduino](http://arduino.cc)
-framework. Open the project using [PlatformIO](http://platformio.org). Rename the src/main.cpp file to something
-more relevant and write your main program there.
+To start coding for a Teensy used on a specific board, clone the develop branch and copy the example or the uavcan_example folder, depending on whether UAVCAN is required for your application. Rename the folder to the name of the board. For consistency, use the [Arduino](http://arduino.cc) framework. Open the project using [PlatformIO](http://platformio.org). Rename the src/main.cpp file to something more relevant and write your main program there.
+
+### Build
+
+The code for a particular board is stored in `src/{environment}`. Add new environments in the `platformio.ini` file. Copy the configurations of the example programs and rename the `src_filter` parameter to the name of your source folder. To only build / upload one specific environment use the following command:
+
+`pio run -t upload -e {environment}`   ([more info](http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption-platformio-run-e))
 
 ### PlatformIO Libraries
 
@@ -16,31 +19,24 @@ lib/{library name}/src/codefile.(h, c, hpp, cpp).
 
 ## Libuavcan
 
-To install libuavcan, clone the branch and run `git submodule update --init --remote`.
-Make sure `lib/libuavcan` is on branch `teensy-driver` and updated to have the latest
-implementation of libuavcan.
+### System requirements
+In order to compile libuavcan, PlatformIO needs to run a linux environment such as Ubuntu, Mint, Debian, etc. Native or virtual machine installations are equally acceptable.
 
-Test applications for UAVCAN implementation consist of a `publisher.cpp`
-and a `subscriber.cpp`, one for publishing LogMessages and the other one subscribed to
-them dumping stuff on Serial port, each on their own branches.
+### Examples
+
+The teensy_example UAVCAN implementation program consists of header files called `publisher.cpp`, `subscriber.cpp`, and `parameters.hpp`  for demonstrating publishing and subscribing to a UAVCAN message called LogMessages and dumping stuff on the serial port.
 
 Refer to [uavcan.org](http://uavcan.org) for details on the UAVCAN protocol.
 
 ### Custom UAVCAN Data Types
 
-For creating custom data types for UAVCAN, DSDL files need to be created. These files
-must be placed in the lib/arvp/arvp/ folder. The files must be named like so:
-{data-type-ID}.{Dataname}.uavcan. Note that the first letter of the data name must
-be capitalized. Refer to the [DSDL documentation](http://uavcan.org/Specification/3._Data_structure_description_language/) for details on
-the data structure.
+For creating custom data types for UAVCAN, DSDL files need to be created. These files must be placed in the lib/arvp/arvp/ folder. The files must be named like so:
 
-After creating the DSDL files, run the following command in a terminal at the project
-root to generate the C code: 
-`lib/libuavcan/libuavcan/dsdl_compiler/libuavcan_dsdlc ./lib/arvp/arvp -Olib/arvp/src`
+`{data-type-ID}.{Datatype}.uavcan`
 
-In the project source files, add include statements for the .hpp files for each
-data type required by the Teensy program. ex: `#include <arvp/Test.hpp>`
+Note that the first letter of the data type must be capitalized. The data type ID should be between 20000 and 21000 per the UAVCAN "vendor-specific message type" convention. Refer to the [DSDL documentation](http://uavcan.org/Specification/3._Data_structure_description_language/) for details on the data structure.
 
-## Build
+Place the DSDL files in the folder lib/arvp_msgs. The DSDL compiler scripts bundled in libuavcan automatically generate the .hpp files
+from the DSDL files. In the project source code, add include statements for the .hpp files for each
+data type required by the Teensy program. ex: `#include <arvp_msgs/Test.hpp>`
 
-In PlatformIO just hit the build button and magic happens....

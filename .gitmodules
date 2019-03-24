@@ -1,4 +1,0 @@
-[submodule "lib/drive_teensy_libuavcan"]
-	path = lib/libuavcan
-	url = https://github.com/tum-phoenix/drive_teensy_libuavcan
-	ignore = all
