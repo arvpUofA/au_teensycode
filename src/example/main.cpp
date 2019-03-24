@@ -1,5 +1,5 @@
 #include <Arduino.h>
-
+#include <INA.h>
 #include <watchdog.h>
 
 void setup()
