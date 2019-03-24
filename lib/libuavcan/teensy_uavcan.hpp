@@ -1,5 +1,5 @@
-#ifndef	PHOENIX_CAN_SHIELD_H
-#define	PHOENIX_CAN_SHIELD_H
+#ifndef	TEENSY_UAVCAN_H
+#define	TEENSY_UAVCAN_H
 
 ///////////////////////////////////////
 // UAVCAN SetUp and Common Functions //
