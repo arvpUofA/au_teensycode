@@ -40,3 +40,13 @@ Place the DSDL files in the folder lib/arvp_msgs. The DSDL compiler scripts bund
 from the DSDL files. In the project source code, add include statements for the .hpp files for each
 data type required by the Teensy program. ex: `#include <arvp_msgs/Test.hpp>`
 
+### Notes on Merging Old UAVCAN Project Branches
+
+When integrating existing code into this new framework:
+- Delete the old 'teensy_uavcan.hpp' file in the src/ folder in favour of the one in lib/arvp_uavcan
+- Ensure that .hpp files in the src/ folder are included using "" instead of <>
+- Change all inclusions of <UAVCAN.hpp> to <uavcan/uavcan.hpp> in publisher.hpp, subscriber.hpp, and parameter.hpp
+- In the Setup() function, change `&getSystemClock()` and 
+    `&getCanDriver()` to `&initSystemClock()` and 
+    `&initCanDriver()`
+- In the Setup() function, add the following line:  `configureCanAcceptanceFilters(*node);`. Refer to uavcan_example program.
