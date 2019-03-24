@@ -37,11 +37,7 @@
 #define ALLLED_OFF_L 0xFC
 #define ALLLED_OFF_H 0xFD
 
-#define PWM_FEQUENCY 100 //Hz
-
-//Servo limits in us
-#define SERVOMIN  1000
-#define SERVOMAX  2600
+#define PWM_FEQUENCY 75 //Hz
 
 enum angleUnits {UNIT_RADIANS, UNIT_DEGREES};
 

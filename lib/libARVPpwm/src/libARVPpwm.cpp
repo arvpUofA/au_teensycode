@@ -181,27 +181,29 @@ void Adafruit_PWMServoDriver::setServoPulse(uint8_t n, double pulse) //pulse wid
   double pulselength;
   pulselength = 1000000;   // 1,000,000 us per second
   pulselength /= pwmFreq;   
-  Serial.print(pulselength); Serial.println(" us per period"); 
+  //Serial.print(pulselength); Serial.println(" us per period"); 
   pulselength /= 4096;  // 12 bits of resolution
-  Serial.print(pulselength); Serial.println(" us per bit"); 
+  //Serial.print(pulselength); Serial.println(" us per bit"); 
   pulse /= pulselength;
-  Serial.println(pulse);
+  //Serial.println(pulse);
   this->setPWM(n, 0, pulse);
 }
 
 //Sets angle of servo on selected PCA9685 channel, within min and max pulse length, and using degrees or radians.
 void Adafruit_PWMServoDriver::setServoAngle(uint8_t pwmChannel, float angle, uint16_t minPulse, uint16_t maxPulse, angleUnits angleUnit)
 {
+  uint16_t pulseWidth = minPulse;
   if(angleUnit == UNIT_DEGREES)
   {
-    uint16_t pulseWidth = minPulse  + angle*(maxPulse - minPulse)/180;
-    this->setServoPulse(pwmChannel, pulseWidth);
+    pulseWidth = minPulse  + angle*(maxPulse - minPulse)/180;
   }
   if(angleUnit == UNIT_RADIANS)
   {
-    uint16_t pulseWidth = minPulse  + angle*(maxPulse - minPulse)/3.14159;
-    this->setServoPulse(pwmChannel, pulseWidth);
+    pulseWidth = minPulse  + angle*(maxPulse - minPulse)/3.14159;
   }
+  if(pulseWidth > maxPulse) pulseWidth = maxPulse;
+  if(pulseWidth < minPulse) pulseWidth = minPulse;
+  this->setServoPulse(pwmChannel, pulseWidth);
 }
 
 //Configures PCA9685 channels of RGBW strip
@@ -216,10 +218,10 @@ void Adafruit_PWMServoDriver::setRGBChannels(uint8_t red, uint8_t green, uint8_t
 //Sets brightness of each LED colour channel
 void Adafruit_PWMServoDriver::setRGB(float red, float green, float blue, float white, float brightness)
 {
-  this->setPWM(redChannel, 0, red*brightness*4096);
-  this->setPWM(greenChannel, 0, green*brightness*4096);
-  this->setPWM(blueChannel, 0, blue*brightness*4096);
-  this->setPWM(whiteChannel, 0, white*brightness*4096);
+  this->setPWM(redChannel, 0, red*brightness*4095);
+  this->setPWM(greenChannel, 0, green*brightness*4095);
+  this->setPWM(blueChannel, 0, blue*brightness*4095);
+  this->setPWM(whiteChannel, 0, white*brightness*4095);
 }
 
 
