@@ -40,37 +40,31 @@ Activated when pressure drops below desired threshold set in UAVCAN parameter lo
 Parameters are configurable through UAVCAN node parameter server.
 
 ### List of Parameters and Default Values:
-
 - torpedoPulseInterval = 250[ms]
 - minServoPulse = 900[us]
 - maxServoPulse = 2000[us]
 - actuatorIDTorpedo0 = 0
 - actuatorIDTorpedo1 = 1
-
 - actuatorIDServo0 = 2
 - actuatorIDServo1 = 3
 - actuatorIDServo2 = 4
 - actuatorIDServo3 = 5
 - actuatorIDServo4 = 6
-
 - actuatorIDServo5 = 7
 - actuatorIDServo6 = 8
 - actuatorIDServo7 = 9
 - actuatorIDServo8 = 10
 - actuatorIDServo9 = 11
-
 - actuatorIDServo10 = 12
 - actuatorIDServo11 = 13
 - lightIDRGBStrip0 = 0
 - lightIDRGBStrip0_strobe = 248
 - strobeInterval = 500[ms]
-
 - demoMode = 0
 - enableLowVoltIndicator = 1
 - lowPressureThreshold = 20000[Pa]
 - enablePressureAlert = 0
 - enableTorpedoIndicator = 1
-
 - servoStartAngle = -1.5[rad]
 
 Parameters are saved to Teensy EEPROM when save command is sent.
