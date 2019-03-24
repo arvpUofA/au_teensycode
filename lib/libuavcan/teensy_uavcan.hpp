@@ -1,5 +1,5 @@
-#ifndef	TEENSY_UAVCAN_H
-#define	TEENSY_UAVCAN_H
+#ifndef	TEENSY_UAVCAN_HPP
+#define	TEENSY_UAVCAN_HPP
 
 ///////////////////////////////////////
 // UAVCAN SetUp and Common Functions //
