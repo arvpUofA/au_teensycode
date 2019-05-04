@@ -1,11 +1,14 @@
 #define BOARD_SELECT_INTERNAL_ENV_BOARD
 
 #include <Arduino.h>
+#include <pressure.h>
+#include <sensor_functions.h>
 #include <internalEnvBoard.hpp>
 #include <Metro.h>
 
 #include <uavcanNodeIDs.h>
 #include <watchdog.h>
+
 
 // UAVCAN Node settings
 static constexpr uint32_t nodeID = UAVCAN_NODE_ID_INTERNAL_SENSOR_BOARD;

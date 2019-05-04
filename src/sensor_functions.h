@@ -12,16 +12,16 @@
 #define SAMPLES_PER_SECOND 10
 
 
-extern float humidity(void);
-extern float temp(void);
-extern uint32_t pressure(void);
+float humidity(void);
+float temp(void);
+uint32_t pressure(void);
 
-extern void measureHIH7120(void);
-extern void setupMPL(void);
-extern pressure_StructDef readPressureMPL(void);
+void measureHIH7120(void);
+void setupMPL(void);
+pressure_StructDef readPressureMPL(void);
 
-extern float publishHumidity(void);
-extern float publishTemp(void);
-extern float publishPress(void);
+float publishHumidity(void);
+float publishTemp(void);
+float publishPress(void);
 
 #endif

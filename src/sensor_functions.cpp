@@ -3,6 +3,7 @@
 #include <sensor_functions.h>
 #include <running_average.hpp>
 #include <Wire.h>
+#include "pressure.h"
 
 pressure_StructDef press_value;
 
