@@ -1,6 +1,8 @@
 #ifndef SENSOR_FUNCTIONS_H
 #define SENSOR_FUNCTIONS_H
 
+#include "pressure.h"
+
 // humidity/temperature sensor
 #define HIH7120ADDRESS 0x27
 
@@ -9,11 +11,6 @@
 
 #define SAMPLES_PER_SECOND 10
 
-//use this for reading out pressure data in two parts
-struct pressure_StructDef {
-  uint32_t whole;
-  uint8_t fractional;
-};
 
 extern float humidity(void);
 extern float temp(void);

@@ -9,6 +9,7 @@
 #include <internalEnvBoard/teensy_uavcan.hpp>
 #include <internalEnvBoard/publisher.hpp>
 #include <running_average.hpp>
+#include "pressure.h"
 
 
 // UAVCAN application settings
@@ -22,12 +23,6 @@ static constexpr float framerate = 100;
 
 // data buffer for humidity and temperature
 unsigned char HIH_buffer[5];
-
-//use this for reading out pressure data in two parts
-struct pressure_StructDef {
-  uint32_t whole;
-  uint8_t fractional;
-};
 
 pressure_StructDef press_value;
 
