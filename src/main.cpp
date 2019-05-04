@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <pressure.h>
 #include <sensor_functions.h>
-#include <internalEnvBoard.hpp>
+#include <internalEnvBoard.h>
 #include <Metro.h>
 
 #include <uavcanNodeIDs.h>

@@ -3,17 +3,8 @@
 
 #ifdef BOARD_SELECT_INTERNAL_ENV_BOARD
 
-#include "Arduino.h"
-#include <Wire.h>
-
-#include <internalEnvBoard/teensy_uavcan.hpp>
-#include <internalEnvBoard/publisher.hpp>
-#include <running_average.hpp>
-#include "pressure.h"
 
 
-// UAVCAN application settings
-static constexpr float framerate = 100;
 
 // humidity/temperature sensor
 #define HIH7120ADDRESS 0x27
