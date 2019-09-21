@@ -30,7 +30,6 @@ for root, dirs, files in os.walk(headerdir, topdown=True):
 # Collect all paths that contain .uavcan files
 dirs = list()
 dirs.append(os.path.join(cwd, 'libuavcan', 'dsdl', 'uavcan'))
-dirs.append(os.path.join(cwd, '..', 'arvp_msgs'))
 print("Collect *.uavcan files in: " + str(dirs))
 
 # Run the DSDL compiler on all previously defined directories and put the
