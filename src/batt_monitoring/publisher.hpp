@@ -2,7 +2,6 @@
 #define	PUBLISHER_HPP
 
 
-#include <UAVCAN.hpp>
 #include <uavcan/equipment/power/BatteryInfo.hpp>
 #include <uavcan/equipment/power/CircuitStatus.hpp>
 #include "teensy_uavcan.hpp"

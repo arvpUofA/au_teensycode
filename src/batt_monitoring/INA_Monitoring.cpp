@@ -86,8 +86,8 @@ void setup(void)
     power_rails->begin();
 
     // Create a node
-    systemClock = &getSystemClock();
-    canDriver = &getCanDriver();
+    systemClock = &initSystemClock();
+    canDriver = &initCanDriver();
     node = new Node<NodeMemoryPoolSize>(*canDriver, *systemClock);
     initNode(node, nodeID, nodeName, swVersion, hwVersion);
 

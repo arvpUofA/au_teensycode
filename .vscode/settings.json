@@ -26,5 +26,9 @@
         "streambuf": "cpp",
         "system_error": "cpp",
         "type_traits": "cpp"
+    },
+    "terminal.integrated.env.linux": {
+        "PATH": "/home/david/.platformio/penv/bin:/home/david/.platformio/penv:/home/david/.local/bin:/usr/lib/ccache:/opt/ros/melodic/bin:/home/david/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+        "PLATFORMIO_CALLER": "vscode"
     }
 }
