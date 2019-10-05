@@ -7,6 +7,10 @@
 #define ACTUATOR_ID_TORPEDO_0 0
 #define ACTUATOR_ID_TORPEDO_1 1
 
+
+//Virtual actuator for changing solenoid pulse interval
+#define ACTUATOR_ID_INTERVAL 100
+
 //Servos on torpedo board
 #define ACTUATOR_ID_SERVO_0 2
 #define ACTUATOR_ID_SERVO_1 3
