@@ -28,7 +28,7 @@
         "type_traits": "cpp"
     },
     "terminal.integrated.env.linux": {
-        "PATH": "/home/david/.platformio/penv/bin:/home/david/.platformio/penv:/home/david/.local/bin:/usr/lib/ccache:/opt/ros/melodic/bin:/home/david/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+        "PATH": "/home/david/.platformio/penv/bin:/home/david/.platformio/penv:/home/david/.local/bin:/usr/lib/ccache:/opt/ros/melodic/bin:/home/david/.local/bin:/usr/lib/ccache:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/david/gcc-arm-none-eabi-8-2019-q3-update/bin:/home/david/gcc-arm-none-eabi-8-2019-q3-update/bin",
         "PLATFORMIO_CALLER": "vscode"
     }
 }
