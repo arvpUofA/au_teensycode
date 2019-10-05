@@ -1,7 +1,7 @@
 #include "Arduino.h"
 
-#include <sensor_functions.h>
-#include <running_average.hpp>
+#include "sensor_functions.h"
+#include "running_average.hpp"
 #include <Wire.h>
 
 pressure_StructDef press_value;

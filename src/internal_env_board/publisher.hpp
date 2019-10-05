@@ -1,11 +1,11 @@
 #ifndef	PUBLISHER_HPP
 #define	PUBLISHER_HPP
 
-#include <UAVCAN.hpp>
+#include <uavcan/uavcan.hpp>
 #include <uavcan/equipment/air_data/StaticPressure.hpp>
 #include <uavcan/equipment/air_data/StaticTemperature.hpp>
 //#include <arvp/InternalSensor.hpp>
-#include <sensor_functions.h>
+#include "sensor_functions.h"
 
 using namespace uavcan;
 
