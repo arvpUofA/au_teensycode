@@ -44,7 +44,7 @@ Adafruit_PWMServoDriver::Adafruit_PWMServoDriver(uint8_t addr) {
     @param  addr The 7-bit I2C address to locate this chip, default is 0x40
 */
 /**************************************************************************/
-Adafruit_PWMServoDriver::Adafruit_PWMServoDriver(TwoWire *i2c, uint8_t addr) {
+Adafruit_PWMServoDriver::Adafruit_PWMServoDriver(i2c_t3 *i2c, uint8_t addr) {
   _i2c = i2c;
   _i2caddr = addr;
 }

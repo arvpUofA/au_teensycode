@@ -17,7 +17,8 @@
 #ifndef LIB_ARVP_PWM_H
 #define LIB_ARVP_PWM_H
 
-#include <Wire.h>
+#include <i2c_t3.h>
+#include <stdint.h>
 
 #define PCA9685_BASEADDR 0X40
 #define PCA9685_SUBADDR1 0x1
@@ -57,14 +58,14 @@ class Adafruit_PWMServoDriver {
   uint8_t whiteChannel = 12;
 
   float pwmFreq;
-  TwoWire *_i2c;
+  i2c_t3 *_i2c;
 
   uint8_t read8(uint8_t addr);
   void write8(uint8_t addr, uint8_t d);
 
  public:
   Adafruit_PWMServoDriver(uint8_t addr);
-  Adafruit_PWMServoDriver(TwoWire *I2C, uint8_t addr);
+  Adafruit_PWMServoDriver(i2c_t3 *I2C, uint8_t addr);
   void begin(void);
   void reset(void);
   void setPWMFreq(float freq);
