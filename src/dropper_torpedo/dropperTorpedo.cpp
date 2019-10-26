@@ -220,6 +220,7 @@ void setup()
 //Runs continuously
 void loop() 
 {
+	uint8_t i;
     KickDog();
     indicatorRoutine();
     torpedoRoutine();
@@ -235,4 +236,11 @@ void loop()
 
     // toggle heartbeat
     toggleHeartBeat();
+
+	/* Test Servo Actuation */
+	for (i = 0; i < CONTROL_CHANNELS; i++) {
+		actuateServo(i, 3.1415/4);
+		actuateServo(i, -3.1415/4);
+	}
+
 }
