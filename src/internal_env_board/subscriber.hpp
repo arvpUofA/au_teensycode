@@ -2,12 +2,12 @@
 #define	SUBSCRIBER_HPP
 
 
-#include <uavcan/uavcan.hpp>
+#include <UAVCAN.hpp>
 #include <uavcan/equipment/power/BatteryInfo.hpp>
-//#include <parameter.hpp>
+#include <parameter.hpp>
 #include <Arduino.h>
 #include <libARVPpwm.h>
-#include "batteryStatus.hpp"
+#include <batteryStatus.hpp>
 
 using namespace uavcan;
 

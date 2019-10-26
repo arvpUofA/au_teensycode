@@ -1,6 +1,6 @@
-#ifndef LCD_FUNCTIONS_H 
-    #define LCD_FUNCTIONS_H
-#endif
+#ifndef LCD_FUNCTIONS_H
+#define LCD_FUNCTIONS_H
+
 
 
 extern void setup_lcd(void);

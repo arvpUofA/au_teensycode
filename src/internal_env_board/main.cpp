@@ -1,14 +1,14 @@
 #include "Arduino.h"
 
 #include <teensy_uavcan.hpp>
-#include "publisher.hpp"
-#include "running_average.hpp"
+#include <publisher.hpp>
+#include <running_average.hpp>
 #include <uavcanNodeIDs.h>
 #include <watchdog.h>
 #include <Metro.h>
 #include <Wire.h>
-#include "sensor_functions.h"
-#include "lcd_functions.h"
+#include <sensor_functions.h>
+#include <lcd_functions.h>
 
 // UAVCAN application settings
 static constexpr float framerate = 100;
@@ -17,8 +17,8 @@ extern Running_Average<uint32_t, SAMPLES_PER_SECOND> avg_pressure;
 extern Running_Average<float, SAMPLES_PER_SECOND> avg_temperature;
 extern Running_Average<float, SAMPLES_PER_SECOND> avg_humidity;
 
-#include "batteryStatus.hpp"
-#include "subscriber.hpp"
+#include <batteryStatus.hpp>
+#include <subscriber.hpp>
 #include <teensy_uavcan.hpp>
 
 // UAVCAN Node settings
@@ -53,8 +53,8 @@ void setup() {
     setup_lcd();
 
     // Create a node
-    systemClock = &initSystemClock();
-    canDriver = &initCanDriver();
+    systemClock = &getSystemClock();
+    canDriver = &getCanDriver();
     node = new Node<NodeMemoryPoolSize>(*canDriver, *systemClock);
     initNode(node, nodeID, nodeName, swVersion, hwVersion);
 
@@ -65,9 +65,8 @@ void setup() {
     initPublisher(node);
 
     // start up node
-    configureCanAcceptanceFilters(*node);
     node->setModeOperational();
-    Serial.println("Setup complete"); 
+    Serial.println("Setup complete");
 }
 
 void loop() {
