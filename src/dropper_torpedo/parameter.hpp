@@ -44,84 +44,80 @@ using namespace uavcan;
 // To ease parameter management, all names and default values of parameters are stored in this array as strings.
 const char *defaultParameterArray[NUMBER_OF_PARAMETERS][2] =
 {
-    {"torpedoPulseInterval", "250"}, // in ms
-    {"minServoPulse", "900"}, // in us
-    {"maxServoPulse", "2000"}, // in us
-    {"actuatorIDTorpedo0", "0"},
-    {"actuatorIDTorpedo1", "1"},
+	{"torpedoPulseInterval", "250"}, // in ms
+	{"minServoPulse", "900"}, // in us
+	{"maxServoPulse", "2000"}, // in us
+	{"actuatorIDTorpedo0", "0"},
+	{"actuatorIDTorpedo1", "1"},
 
-    {"actuatorIDServo0", "2"},
-    {"actuatorIDServo1", "3"},
-    {"actuatorIDServo2", "4"},
-    {"actuatorIDServo3", "5"},
-    {"actuatorIDServo4", "6"},
-    
-    {"actuatorIDServo5", "7"},
-    {"actuatorIDServo6", "8"},
-    {"actuatorIDServo7", "9"},
-    {"actuatorIDServo8", "10"},
-    {"actuatorIDServo9", "11"},
+	{"actuatorIDServo0", "2"},
+	{"actuatorIDServo1", "3"},
+	{"actuatorIDServo2", "4"},
+	{"actuatorIDServo3", "5"},
+	{"actuatorIDServo4", "6"},
 
-    {"actuatorIDServo10", "12"},
-    {"actuatorIDServo11", "13"},
-    {"lightIDRGBStrip0", "0"},
-    {"lightIDRGBStrip0_strobe", "248"},
-    {"strobeInterval", "500"}, // in ms
+	{"actuatorIDServo5", "7"},
+	{"actuatorIDServo6", "8"},
+	{"actuatorIDServo7", "9"},
+	{"actuatorIDServo8", "10"},
+	{"actuatorIDServo9", "11"},
 
-    {"demoMode", "0"},
-    {"enableLowVoltIndicator", "1"}, //changed to 0 since it's not working right
-    {"lowPressureThreshold", "20000"}, // in Pascals
-    {"enablePressureAlert", "0"},
-    {"enableTorpedoIndicator", "1"},
+	{"actuatorIDServo10", "12"},
+	{"actuatorIDServo11", "13"},
+	{"lightIDRGBStrip0", "0"},
+	{"lightIDRGBStrip0_strobe", "248"},
+	{"strobeInterval", "500"}, // in ms
 
-    {"servoStartAngle", "-1.5"} //in radians
+	{"demoMode", "0"},
+	{"enableLowVoltIndicator", "1"}, //changed to 0 since it's not working right
+	{"lowPressureThreshold", "20000"}, // in Pascals
+	{"enablePressureAlert", "0"},
+	{"enableTorpedoIndicator", "1"},
+
+	{"servoStartAngle", "-1.5"} //in radians
 };
 //--- Update NUMBER_OF_PARAMETERS when adding new parameters.
 
-struct genericParam
-{
-    char paramName[24]; //Up to 23 characters + 1 null character
-    double paramValue; //Be sure to cast to appropriate type when retreiving this value in main program.
-}
-boardConfig[MAX_NUMBER_OF_PARAMETERS];
+struct genericParam {
+	char paramName[24]; //Up to 23 characters + 1 null character
+	double paramValue; //Be sure to cast to appropriate type when retreiving this value in main program.
+} boardConfig[MAX_NUMBER_OF_PARAMETERS];
 
 //Store default parameter names and values into boardConfig struct array.
 void initParameters()
 {
-    for(uint8_t i = 0; i < NUMBER_OF_PARAMETERS && i < MAX_NUMBER_OF_PARAMETERS; i++)
-    {
-        strcpy(boardConfig[i].paramName, defaultParameterArray[i][0]);
-        boardConfig[i].paramValue = atof(defaultParameterArray[i][1]);
-    }
+	for (uint8_t i = 0; i < NUMBER_OF_PARAMETERS && i < MAX_NUMBER_OF_PARAMETERS; i++) {
+		strcpy(boardConfig[i].paramName, defaultParameterArray[i][0]);
+		boardConfig[i].paramValue = atof(defaultParameterArray[i][1]);
+	}
 }
 
 void printParameters()
 {
-    Serial.println("");
-    Serial.println("--Printing Parameters--");
-    Serial.println("");
-    for(uint8_t i = 0; i < NUMBER_OF_PARAMETERS && i < MAX_NUMBER_OF_PARAMETERS; i++)
-    {   
-        Serial.print(boardConfig[i].paramName);
-        Serial.print(": ");
-        Serial.println(boardConfig[i].paramValue);
-    }
-    Serial.println("");
-    Serial.println("----");
-    Serial.println("");
+	Serial.println("");
+	Serial.println("--Printing Parameters--");
+	Serial.println("");
+	for (uint8_t i = 0; i < NUMBER_OF_PARAMETERS && i < MAX_NUMBER_OF_PARAMETERS; i++) {
+		Serial.print(boardConfig[i].paramName);
+		Serial.print(": ");
+		Serial.println(boardConfig[i].paramValue);
+	}
+	Serial.println("");
+	Serial.println("----");
+	Serial.println("");
 }
 
 void saveConfig()
 {
-    Serial.println("Save parameters to EEPROM");
-    EEPROM.put(0, boardConfig);
+	Serial.println("Save parameters to EEPROM");
+	EEPROM.put(0, boardConfig);
 }
 
 void resetConfig()
 {
-    Serial.println("Reset all params to default values.");
-    initParameters();
-    EEPROM.put(0, boardConfig);
+	Serial.println("Reset all params to default values.");
+	initParameters();
+	EEPROM.put(0, boardConfig);
 }
 
 /*
@@ -130,51 +126,45 @@ void resetConfig()
  */
 class : public uavcan::IParamManager
 {
-    void getParamNameByIndex(Index index, Name& out_name) const override
-    {
-        if(index<NUMBER_OF_PARAMETERS) 
-        {
-            out_name = boardConfig[index].paramName;
-        }
-    }
+	void getParamNameByIndex(Index index, Name& out_name) const override
+	{
+		if (index<NUMBER_OF_PARAMETERS)
+			out_name = boardConfig[index].paramName;
+	}
 
-    void assignParamValue(const Name& name, const Value& value) override
-    {
-        for (uint8_t i = 0; i < NUMBER_OF_PARAMETERS; i++)
-        {
-            if(!strcmp(boardConfig[i].paramName, name.c_str()))
-            {
-                boardConfig[i].paramValue = *value.as<uavcan::protocol::param::Value::Tag::real_value>();
-                return;
-            }
-        }
-        Serial.println("Can't assign parameter!");
-    }
+	void assignParamValue(const Name& name, const Value& value) override
+	{
+		for (uint8_t i = 0; i < NUMBER_OF_PARAMETERS; i++) {
+			if (!strcmp(boardConfig[i].paramName, name.c_str())) {
+				boardConfig[i].paramValue = *value.as<uavcan::protocol::param::Value::Tag::real_value>();
+				return;
+			}
+		}
+		Serial.println("Can't assign parameter!");
+	}
 
-    void readParamValue(const Name& name, Value& out_value) const override
-    {
-        for (uint8_t i = 0; i < NUMBER_OF_PARAMETERS; i++)
-        {
-            if(boardConfig[i].paramName == name)
-            {
-                out_value.to<uavcan::protocol::param::Value::Tag::real_value>() = boardConfig[i].paramValue;
-                return;
-            }
-        }
-        Serial.println("Can't read parameter!");
-    }
+	void readParamValue(const Name& name, Value& out_value) const override
+	{
+		for (uint8_t i = 0; i < NUMBER_OF_PARAMETERS; i++) {
+			if (boardConfig[i].paramName == name) {
+				out_value.to<uavcan::protocol::param::Value::Tag::real_value>() = boardConfig[i].paramValue;
+				return;
+			}
+		}
+		Serial.println("Can't read parameter!");
+	}
 
-    int saveAllParams() override
-    {
-        saveConfig();
-        return 0;     // Zero means that everything is fine.
-    }
+	int saveAllParams() override
+	{
+		saveConfig();
+		return 0;	 // Zero means that everything is fine.
+	}
 
-    int eraseAllParams() override
-    {
-        resetConfig();
-        return 0;
-    }
+	int eraseAllParams() override
+	{
+		resetConfig();
+		return 0;
+	}
 
 } param_manager;
 
@@ -182,20 +172,16 @@ uavcan::ParamServer* server;
 
 void initParameter(Node<NodeMemoryPoolSize> *node)
 {
-    initParameters(); //Prepare boardConfig array
-    //saveConfig(); //Run this here if saving new parameters for first time.
-    EEPROM.get(0, boardConfig); //Load saved array
-    printParameters();
-    server = new uavcan::ParamServer(*node);
-    const int server_start_res = server->start(&param_manager);
-    if (server_start_res < 0)
-    {
-        Serial.println("Failed to start ParamServer!");
-    }
-    else
-    {
-        Serial.println("Started Parameter server successfully!");
-    }
+	initParameters(); //Prepare boardConfig array
+	//saveConfig(); //Run this here if saving new parameters for first time.
+	EEPROM.get(0, boardConfig); //Load saved array
+	printParameters();
+	server = new uavcan::ParamServer(*node);
+	const int server_start_res = server->start(&param_manager);
+	if (server_start_res < 0)
+		Serial.println("Failed to start ParamServer!");
+	else
+		Serial.println("Started Parameter server successfully!");
 }
 
 #endif
