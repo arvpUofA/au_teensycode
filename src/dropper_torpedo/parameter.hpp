@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#define LEN(a) (sizeof(a) / sizeof(*a))
+
 #define NUMBER_OF_PARAMETERS 26
 #define MAX_NUMBER_OF_PARAMETERS 64 //based on sizeof(genericParam) (32 bytes) and 2048 byte EEPROM capacity in Teensy 3.2
 
