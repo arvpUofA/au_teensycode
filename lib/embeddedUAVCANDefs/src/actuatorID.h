@@ -7,6 +7,7 @@
 #define ACTUATOR_ID_TORPEDO_0 0
 #define ACTUATOR_ID_TORPEDO_1 1
 
+
 //Virtual actuator for changing solenoid pulse interval
 #define ACTUATOR_ID_INTERVAL 100
 
@@ -37,7 +38,5 @@
 #define PWM_CHANNEL_SERVO_9 9
 #define PWM_CHANNEL_SERVO_10 10
 #define PWM_CHANNEL_SERVO_11 11
-
-
 
 #endif

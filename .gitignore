@@ -18,9 +18,11 @@ lib/readme.txt
 .vscode/launch.json
 .vscode/settings.json
 
+
 lib/libuavcan/message_header/*
 .vscode/.browse.c_cpp.db*
 
 # pio stuff
 *.o
 .pio/*
+
