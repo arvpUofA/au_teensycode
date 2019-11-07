@@ -1,5 +1,4 @@
 #include "Arduino.h"
-
 #include <teensy_uavcan.hpp>
 #include "publisher.hpp"
 #include "running_average.hpp"
@@ -12,7 +11,6 @@
 
 // UAVCAN application settings
 static constexpr float framerate = 100;
-
 extern Running_Average<uint32_t, SAMPLES_PER_SECOND> avg_pressure;
 extern Running_Average<float, SAMPLES_PER_SECOND> avg_temperature;
 extern Running_Average<float, SAMPLES_PER_SECOND> avg_humidity;
@@ -31,9 +29,8 @@ static const char *nodeName = "org.arvp.internalSensor";
 // interval in milliseconds
 Metro timer = Metro(1000/SAMPLES_PER_SECOND);
 uint8_t timerCounter;
-int counterForLcd;
-bool dispMode = false;
-
+uint16_t lcdCounter = 0;
+boolean lcdMode = false;
 
 
 void setup() {
@@ -43,15 +40,15 @@ void setup() {
 
     // ensure counter starts at 0
     timerCounter = 0;
-    counterForLcd = 0;
 
     Serial.begin(9600);
     delay(1000);
     Serial.println("Setup start");
 
     setupMPL();
-    setup_lcd();
 
+    setup_lcd();
+    
     // Create a node
     systemClock = &initSystemClock();
     canDriver = &initCanDriver();
@@ -68,13 +65,13 @@ void setup() {
     configureCanAcceptanceFilters(*node);
     node->setModeOperational();
     Serial.println("Setup complete"); 
+    
 }
 
 void loop() {
     KickDog();
     if(timer.check() == 1) {
       timerCounter++;
-      counterForLcd ++;
 
       // read humidity and temperature
       measureHIH7120();
@@ -106,20 +103,22 @@ void loop() {
 		Serial.println(batteryVoltage[2]);
 		Serial.print("Battery 4: ");
 		Serial.println(batteryVoltage[3]);
-		
-        //Change what is displayed on the LCD every 5 seconds
-		if(counterForLcd == 5000){
-			dispMode = !dispMode;
-			counterForLcd = 0;
-		}
-		
-		if(dispMode == true){
-			display_to_lcd(avg_temperature.Average(),avg_humidity.Average(),avg_pressure.Average());
-		} 
-			else {
-			display_voltages_to_lcd(batteryVoltage[0],batteryVoltage[1],batteryVoltage[2],batteryVoltage[3]);
-		}
-		
+
+        lcdCounter++;
+
+        if(lcdCounter%6 == 0){
+            lcdMode = !lcdMode;
+        }
+
+        //Alternate data displayed to LCD every six seconds
+        if(lcdMode == true){
+            display_to_lcd(avg_temperature.Average(), avg_humidity.Average(), avg_pressure.Average());
+        } 
+        else {
+            display_voltages_to_lcd(batteryVoltage[0], batteryVoltage[1], batteryVoltage[2], batteryVoltage[3]);
+        }
+
+
         timerCounter = 0;
       }
     }
