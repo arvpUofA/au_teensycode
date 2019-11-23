@@ -18,8 +18,8 @@ Adafruit_PWMServoDriver *pwmServo;
 void actuateServo(uint8_t pwmChannel, float angle)
 {
 	pwmServo->setServoAngle(pwmChannel, angle + SERVO_ANGLE_OFFSET,
-		(uint16_t)boardConfig[PARAM_INDEX_MIN_SERVO_PULSE].paramValue,
-		(uint16_t)boardConfig[PARAM_INDEX_MAX_SERVO_PULSE].paramValue,
+		(uint16_t)boardConfig[MIN_SERVO_PULSE].value,
+		(uint16_t)boardConfig[MAX_SERVO_PULSE].value,
 		UNIT_RADIANS);
 }
 
@@ -28,8 +28,8 @@ void initServoControl(Adafruit_PWMServoDriver *ptr)
 {
 	pwmServo = ptr;
 	for (uint8_t i = 0; i < 12; i++) {
-		//ptr->setServoAngle(i, 0, (uint16_t)boardConfig[PARAM_INDEX_MIN_SERVO_PULSE].paramValue, (uint16_t)boardConfig[PARAM_INDEX_MAX_SERVO_PULSE].paramValue, UNIT_RADIANS);
-		actuateServo(i, boardConfig[PARAM_INDEX_SERVO_START_ANGLE].paramValue);
+		//ptr->setServoAngle(i, 0, (uint16_t)boardConfig[PARAM_INDEX_MIN_SERVO_PULSE].paramValue, (uint16_t)boardConfig[MAX_SERVO_PULSE].paramValue, UNIT_RADIANS);
+		actuateServo(i, boardConfig[SERVO_START_ANGLE].value);
 	}
 }
 

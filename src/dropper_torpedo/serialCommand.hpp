@@ -66,9 +66,9 @@ void serialSetDemo(int arg_cnt, char **args)
 	if (arg_cnt > 1) {
 		argValue = cmdStr2Num(args[1], 10);
 		if (argValue == 0)
-			boardConfig[PARAM_INDEX_DEMO_MODE].paramValue = 0;
+			boardConfig[DEMO_MODE].value = 0;
 		else if (argValue == 1)
-			boardConfig[PARAM_INDEX_DEMO_MODE].paramValue = 1;
+			boardConfig[DEMO_MODE].value = 1;
 		else
 			s->println("Invalid value. Use 0 to disable, 1 to enable.");
 	} else {
@@ -103,9 +103,9 @@ void serialEnableLowVoltIndicator(int arg_cnt, char **args)
 	if (arg_cnt > 1) {
 		argValue = cmdStr2Num(args[1], 10);
 		if (argValue == 0)
-			boardConfig[PARAM_INDEX_ENABLE_LOW_VOLT_INDICATOR].paramValue = 0;
+			boardConfig[ENABLE_LOW_VOLT_INDICATOR].value = 0;
 		else if (argValue == 1)
-			boardConfig[PARAM_INDEX_ENABLE_LOW_VOLT_INDICATOR].paramValue = 1;
+			boardConfig[ENABLE_LOW_VOLT_INDICATOR].value = 1;
 		else
 			s->println("Invalid value. Use 0 to disable, 1 to enable.");
 	} else {
@@ -120,9 +120,9 @@ void serialEnablePressureAlert(int arg_cnt, char **args)
 	if (arg_cnt > 1) {
 		argValue = cmdStr2Num(args[1], 10);
 		if (argValue == 0)
-			boardConfig[PARAM_INDEX_ENABLE_PRESSURE_ALERT].paramValue = 0;
+			boardConfig[ENABLE_PRESSURE_ALERT].value = 0;
 		else if (argValue == 1)
-			boardConfig[PARAM_INDEX_ENABLE_PRESSURE_ALERT].paramValue = 1;
+			boardConfig[ENABLE_PRESSURE_ALERT].value = 1;
 		else
 			s->println("Invalid value. Use 0 to disable, 1 to enable.");
 	} else {
@@ -137,9 +137,9 @@ void serialEnableTorpedoIndicator(int arg_cnt, char **args)
 	if (arg_cnt > 1) {
 		argValue = cmdStr2Num(args[1], 10);
 		if (argValue == 0)
-			boardConfig[PARAM_INDEX_ENABLE_TORPEDO_INDICATOR].paramValue = 0;
+			boardConfig[ENABLE_TORPEDO_INDICATOR].value = 0;
 		else if (argValue == 1)
-			boardConfig[PARAM_INDEX_ENABLE_TORPEDO_INDICATOR].paramValue = 1;
+			boardConfig[ENABLE_TORPEDO_INDICATOR].value = 1;
 		else
 			s->println("Invalid value. Use 0 to disable, 1 to enable.");
 	} else {

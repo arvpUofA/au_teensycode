@@ -59,7 +59,7 @@ void trpControl1()
 void changeInterval(double inter)
 {
 	pulseDuration = inter;
-	pulseLED(0, 0, 0.2, boardConfig[PARAM_INDEX_TORPEDO_PULSE].paramValue);
+	pulseLED(0, 0, 0.2, boardConfig[TORPEDO_PULSE].value);
 }
 
 //Call this function to trigger firing of torpedo. Torpedo must be in ARMED state to fire.
@@ -77,13 +77,13 @@ static bool fireTorpedo(uint8_t trp)
 	if ((trp == TORPEDO_0) && !digitalRead(TORPEDO_0) && launchRequest0) {
 		digitalWrite(TORPEDO_0, HIGH);
 		launchRequest0 = false;
-		fireTimer0.begin(trpControl0, boardConfig[PARAM_INDEX_TORPEDO_PULSE].paramValue*1000); //ms to us
+		fireTimer0.begin(trpControl0, boardConfig[TORPEDO_PULSE].value * 1000); //ms to us
 		//Serial.println("Torpedo 0 pulse timer started");
 		return true;
 	} else if ((trp == TORPEDO_1) && !digitalRead(TORPEDO_1) && launchRequest1) {
 		digitalWrite(TORPEDO_1, HIGH);
 		launchRequest1 = false;
-		fireTimer1.begin(trpControl1, boardConfig[PARAM_INDEX_TORPEDO_PULSE].paramValue*1000);
+		fireTimer1.begin(trpControl1, boardConfig[TORPEDO_PULSE].value * 1000);
 		//Serial.println("Torpedo 1 pulse timer started");
 		return true;
 	}

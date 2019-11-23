@@ -12,7 +12,7 @@ void checkPressure(double pressure)
 	if (!initialPressure) {
 		initialPressure = pressure;
 		return;
-	} else if ((initialPressure - pressure) >= boardConfig[PARAM_INDEX_LOW_PRESSURE_THRESHOLD].paramValue) {
+	} else if ((initialPressure - pressure) >= boardConfig[LOW_PRESSURE_THRESHOLD].value) {
 		pressureState = DROPPING;
 	} else {
 		pressureState = NORMAL;

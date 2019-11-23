@@ -55,7 +55,7 @@ bool enableExternalLEDControl()
 void actuatorControlCallback(const uavcan::equipment::actuator::ArrayCommand& actuatorCommands)
 {
 	for (uint8_t i = 0; i < actuatorCommands.commands.size(); i++) {
-	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[PARAM_INDEX_ACT_ID_TORP_0].paramValue) {
+	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_TORP_0].value) {
 		if (actuatorCommands.commands[i].command_value == TORPEDO_FIRE_ACTUATOR_VALUE)
 			requestLaunch(TORPEDO_0); //Torpedo is fired when command value equals 1
 		else if (actuatorCommands.commands[i].command_value == TORPEDO_ARM_ACTUATOR_VALUE)
@@ -64,7 +64,7 @@ void actuatorControlCallback(const uavcan::equipment::actuator::ArrayCommand& ac
 			disarmTorpedo(TORPEDO_0); //Torpedo is disarmed when command value equals -2
 	}
 
-	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[PARAM_INDEX_ACT_ID_TORP_1].paramValue) {
+	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_TORP_1].value) {
 		if (actuatorCommands.commands[i].command_value == TORPEDO_FIRE_ACTUATOR_VALUE)
 			requestLaunch(TORPEDO_1);
 		else if (actuatorCommands.commands[i].command_value == TORPEDO_ARM_ACTUATOR_VALUE)
@@ -73,40 +73,40 @@ void actuatorControlCallback(const uavcan::equipment::actuator::ArrayCommand& ac
 			disarmTorpedo(TORPEDO_1);
 	}
 
-	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[PARAM_INDEX_ACT_ID_SERVO_0].paramValue)
+	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_SERVO_0].value)
 		actuateServo(PWM_CHANNEL_SERVO_0, actuatorCommands.commands[i].command_value);
 
-	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[PARAM_INDEX_ACT_ID_SERVO_1].paramValue)
+	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_SERVO_1].value)
 		actuateServo(PWM_CHANNEL_SERVO_1, actuatorCommands.commands[i].command_value);
 
-	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[PARAM_INDEX_ACT_ID_SERVO_2].paramValue)
+	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_SERVO_2].value)
 		actuateServo(PWM_CHANNEL_SERVO_2, actuatorCommands.commands[i].command_value);
 
-	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[PARAM_INDEX_ACT_ID_SERVO_3].paramValue)
+	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_SERVO_3].value)
 		actuateServo(PWM_CHANNEL_SERVO_3, actuatorCommands.commands[i].command_value);
 
-	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[PARAM_INDEX_ACT_ID_SERVO_4].paramValue)
+	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_SERVO_4].value)
 		actuateServo(PWM_CHANNEL_SERVO_4, actuatorCommands.commands[i].command_value);
 
-	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[PARAM_INDEX_ACT_ID_SERVO_5].paramValue)
+	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_SERVO_5].value)
 		actuateServo(PWM_CHANNEL_SERVO_5, actuatorCommands.commands[i].command_value);
 
-	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[PARAM_INDEX_ACT_ID_SERVO_6].paramValue)
+	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_SERVO_6].value)
 		actuateServo(PWM_CHANNEL_SERVO_6, actuatorCommands.commands[i].command_value);
 
-	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[PARAM_INDEX_ACT_ID_SERVO_7].paramValue)
+	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_SERVO_7].value)
 		actuateServo(PWM_CHANNEL_SERVO_7, actuatorCommands.commands[i].command_value);
 
-	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[PARAM_INDEX_ACT_ID_SERVO_8].paramValue)
+	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_SERVO_8].value)
 		actuateServo(PWM_CHANNEL_SERVO_8, actuatorCommands.commands[i].command_value);
 
-	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[PARAM_INDEX_ACT_ID_SERVO_9].paramValue)
+	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_SERVO_9].value)
 		actuateServo(PWM_CHANNEL_SERVO_9, actuatorCommands.commands[i].command_value);
 
-	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[PARAM_INDEX_ACT_ID_SERVO_10].paramValue)
+	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_SERVO_10].value)
 		actuateServo(PWM_CHANNEL_SERVO_10, actuatorCommands.commands[i].command_value);
 
-	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[PARAM_INDEX_ACT_ID_SERVO_11].paramValue)
+	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_SERVO_11].value)
 		actuateServo(PWM_CHANNEL_SERVO_11, actuatorCommands.commands[i].command_value);
 	}
 }
@@ -116,10 +116,10 @@ void lightsControlCallback(const uavcan::equipment::indication::LightsCommand& l
 {
 	if (enableExternalLEDActions) {
 		for (uint8_t i = 0; i < lightCommand.commands.size(); i++) {
-			if (lightCommand.commands[i].light_id == (int)boardConfig[PARAM_INDEX_LIGHT_ID_STRIP_0].paramValue)
+			if (lightCommand.commands[i].light_id == (int)boardConfig[LIGHT_ID_STRIP_0].value)
 				setLEDColour(lightCommand.commands[i].color.red, lightCommand.commands[i].color.green, lightCommand.commands[i].color.blue);
-			if (lightCommand.commands[i].light_id == (int)boardConfig[PARAM_INDEX_LIGHT_ID_STRIP_0_STROBE].paramValue)
-				pulseLED(lightCommand.commands[i].color.red, lightCommand.commands[i].color.green, lightCommand.commands[i].color.blue, boardConfig[PARAM_INDEX_STROBE_INTERVAL].paramValue);
+			if (lightCommand.commands[i].light_id == (int)boardConfig[LIGHT_ID_STRIP_0_STROBE].value)
+				pulseLED(lightCommand.commands[i].color.red, lightCommand.commands[i].color.green, lightCommand.commands[i].color.blue, boardConfig[STROBE_INTERVAL].value);
 		}
 	} else {
 		//Serial.println("LED external control disabled");

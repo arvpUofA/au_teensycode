@@ -98,14 +98,14 @@ void stepSinWave()
 
 void indicatorRoutine() //Add this function to loop() to allow for indication of torpedo and battery status
 {
-	if ((pressureState == DROPPING) && (boardConfig[PARAM_INDEX_ENABLE_PRESSURE_ALERT].paramValue)) {
+	if (pressureState == DROPPING && boardConfig[ENABLE_PRESSURE_ALERT].value) {
 		disableExternalLEDControl();
 		sinWaveTimer.begin(stepSinWave, 210);
 		pwmDriver.setRGB(1, 1, 1, 0, 0.1*sinWave0/sinWaveAmplitude);
 		return;
 	}
 
-	if (boardConfig[PARAM_INDEX_ENABLE_TORPEDO_INDICATOR].paramValue) {
+	if (boardConfig[ENABLE_TORPEDO_INDICATOR].value) {
 		if ((torpedoState0 == FIRING) || (torpedoState1 == FIRING)) {
 			disableExternalLEDControl();
 			pwmDriver.setRGB(1, 0, 0, 0, 0.5);
@@ -131,14 +131,14 @@ void indicatorRoutine() //Add this function to loop() to allow for indication of
 		}
 	}
 
-	if (checkVoltages(BATTERY_VOLTAGE_POOR_VALUE, BATTERY_VOLTAGE_DANGER_VALUE) == DANGER && (int)boardConfig[PARAM_INDEX_ENABLE_LOW_VOLT_INDICATOR].paramValue) {
+	if (checkVoltages(BATTERY_VOLTAGE_POOR_VALUE, BATTERY_VOLTAGE_DANGER_VALUE) == DANGER && (int)boardConfig[ENABLE_LOW_VOLT_INDICATOR].value) {
 		//Serial.println("POOR");
 		disableExternalLEDControl();
 		sinWaveTimer.begin(stepSinWave, 200);
 		pwmDriver.setRGB(1, 0, 0, 0, 0.25*sinWave0/sinWaveAmplitude);
 		return;
 	}
-	if (checkVoltages(BATTERY_VOLTAGE_POOR_VALUE, BATTERY_VOLTAGE_DANGER_VALUE) == POOR	&& (int)boardConfig[PARAM_INDEX_ENABLE_LOW_VOLT_INDICATOR].paramValue) {
+	if (checkVoltages(BATTERY_VOLTAGE_POOR_VALUE, BATTERY_VOLTAGE_DANGER_VALUE) == POOR && (int)boardConfig[ENABLE_LOW_VOLT_INDICATOR].value) {
 		//Serial.println("DANGER");
 		disableExternalLEDControl();
 		sinWaveTimer.begin(stepSinWave, 2000);
@@ -146,7 +146,7 @@ void indicatorRoutine() //Add this function to loop() to allow for indication of
 		return;
 	}
 
-	if ((int)boardConfig[PARAM_INDEX_DEMO_MODE].paramValue) {
+	if ((int)boardConfig[DEMO_MODE].value) {
 		disableExternalLEDControl();
 		sinWaveTimer.begin(stepSinWave, 2000);
 		pwmDriver.setRGB(sinWave0/sinWaveAmplitude, sinWave120/sinWaveAmplitude/4, sinWave240/sinWaveAmplitude/6, 0, 0.125);
