@@ -11,12 +11,11 @@
 #include <uavcan/equipment/power/BatteryInfo.hpp>
 #include <uavcan/equipment/air_data/StaticPressure.hpp>
 
-#include "parameter.hpp"
+#include "parameter.h"
 
 #include <Arduino.h>
 #include "torpedoControl.hpp"
 #include <libARVPpwm.h>
-#include <actuatorID.h>
 #include <lightID.h>
 #include "batteryStatus.hpp"
 #include "servoControl.hpp"
@@ -74,40 +73,40 @@ void actuatorControlCallback(const uavcan::equipment::actuator::ArrayCommand& ac
 	}
 
 	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_SERVO_0].value)
-		actuateServo(PWM_CHANNEL_SERVO_0, actuatorCommands.commands[i].command_value);
+		actuateServo(PWM_CHAN_0, actuatorCommands.commands[i].command_value);
 
 	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_SERVO_1].value)
-		actuateServo(PWM_CHANNEL_SERVO_1, actuatorCommands.commands[i].command_value);
+		actuateServo(PWM_CHAN_1, actuatorCommands.commands[i].command_value);
 
 	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_SERVO_2].value)
-		actuateServo(PWM_CHANNEL_SERVO_2, actuatorCommands.commands[i].command_value);
+		actuateServo(PWM_CHAN_2, actuatorCommands.commands[i].command_value);
 
 	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_SERVO_3].value)
-		actuateServo(PWM_CHANNEL_SERVO_3, actuatorCommands.commands[i].command_value);
+		actuateServo(PWM_CHAN_3, actuatorCommands.commands[i].command_value);
 
 	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_SERVO_4].value)
-		actuateServo(PWM_CHANNEL_SERVO_4, actuatorCommands.commands[i].command_value);
+		actuateServo(PWM_CHAN_4, actuatorCommands.commands[i].command_value);
 
 	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_SERVO_5].value)
-		actuateServo(PWM_CHANNEL_SERVO_5, actuatorCommands.commands[i].command_value);
+		actuateServo(PWM_CHAN_5, actuatorCommands.commands[i].command_value);
 
 	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_SERVO_6].value)
-		actuateServo(PWM_CHANNEL_SERVO_6, actuatorCommands.commands[i].command_value);
+		actuateServo(PWM_CHAN_6, actuatorCommands.commands[i].command_value);
 
 	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_SERVO_7].value)
-		actuateServo(PWM_CHANNEL_SERVO_7, actuatorCommands.commands[i].command_value);
+		actuateServo(PWM_CHAN_7, actuatorCommands.commands[i].command_value);
 
 	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_SERVO_8].value)
-		actuateServo(PWM_CHANNEL_SERVO_8, actuatorCommands.commands[i].command_value);
+		actuateServo(PWM_CHAN_8, actuatorCommands.commands[i].command_value);
 
 	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_SERVO_9].value)
-		actuateServo(PWM_CHANNEL_SERVO_9, actuatorCommands.commands[i].command_value);
+		actuateServo(PWM_CHAN_9, actuatorCommands.commands[i].command_value);
 
 	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_SERVO_10].value)
-		actuateServo(PWM_CHANNEL_SERVO_10, actuatorCommands.commands[i].command_value);
+		actuateServo(PWM_CHAN_10, actuatorCommands.commands[i].command_value);
 
 	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_SERVO_11].value)
-		actuateServo(PWM_CHANNEL_SERVO_11, actuatorCommands.commands[i].command_value);
+		actuateServo(PWM_CHAN_11, actuatorCommands.commands[i].command_value);
 	}
 }
 

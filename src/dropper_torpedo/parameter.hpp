@@ -9,45 +9,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define LEN(a) (sizeof(a) / sizeof(*a))
-
-#define MAX_NUMBER_OF_PARAMETERS 64 //based on sizeof(Param) (32 bytes) and 2048 byte EEPROM capacity in Teensy 3.2
-
-enum param_index {
-	TORPEDO_PULSE,
-	MIN_SERVO_PULSE,
-	MAX_SERVO_PULSE,
-	ACT_ID_TORP_0,
-	ACT_ID_TORP_1,
-	ACT_ID_SERVO_0,
-	ACT_ID_SERVO_1,
-	ACT_ID_SERVO_2,
-	ACT_ID_SERVO_3,
-	ACT_ID_SERVO_4,
-	ACT_ID_SERVO_5,
-	ACT_ID_SERVO_6,
-	ACT_ID_SERVO_7,
-	ACT_ID_SERVO_8,
-	ACT_ID_SERVO_9,
-	ACT_ID_SERVO_10,
-	ACT_ID_SERVO_11,
-	LIGHT_ID_STRIP_0,
-	LIGHT_ID_STRIP_0_STROBE,
-	STROBE_INTERVAL,
-	DEMO_MODE,
-	ENABLE_LOW_VOLT_INDICATOR,
-	LOW_PRESSURE_THRESHOLD,
-	ENABLE_PRESSURE_ALERT,
-	ENABLE_TORPEDO_INDICATOR,
-	SERVO_START_ANGLE
-};
+#include "parameter.h"
 
 using namespace uavcan;
 
-struct Param {
-	char name[24];
-	double value;
-} defaultBoardConfig[] = {
+struct Param defaultBoardConfig[] = {
 	[TORPEDO_PULSE]   = {"torpedoPulseInterval", 250}, // in ms
 	[MIN_SERVO_PULSE] = {"minServoPulse", 900}, // in us
 	[MAX_SERVO_PULSE] = {"maxServoPulse", 2000}, // in us

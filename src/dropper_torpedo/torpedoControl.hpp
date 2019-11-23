@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <IntervalTimer.h>
 #include "ledIndicationControl.hpp"
-#include "parameter.hpp"
+#include "parameter.h"
 
 //Pin definitions
 #define TORPEDO_0 16

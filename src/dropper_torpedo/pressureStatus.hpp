@@ -1,7 +1,7 @@
 #ifndef PRESSURE_STATUS_HPP
 #define PRESSURE_STATUS_HPP
 
-#include "parameter.hpp"
+#include "parameter.h"
 
 enum pState {NORMAL, DROPPING} pressureState = NORMAL;
 

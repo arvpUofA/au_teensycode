@@ -2,9 +2,8 @@
 #define SERVO_CONTROL_HPP
 
 #include <libARVPpwm.h>
-#include <actuatorID.h>
 
-#include "parameter.hpp"
+#include "parameter.h"
 
 //Servo limits in us
 #define SERVOMIN	600
@@ -28,7 +27,7 @@ void initServoControl(Adafruit_PWMServoDriver *ptr)
 {
 	pwmServo = ptr;
 	for (uint8_t i = 0; i < 12; i++) {
-		//ptr->setServoAngle(i, 0, (uint16_t)boardConfig[PARAM_INDEX_MIN_SERVO_PULSE].paramValue, (uint16_t)boardConfig[MAX_SERVO_PULSE].paramValue, UNIT_RADIANS);
+		//ptr->setServoAngle(i, 0, (uint16_t)boardConfig[MIN_SERVO_PULSE].paramValue, (uint16_t)boardConfig[MAX_SERVO_PULSE].paramValue, UNIT_RADIANS);
 		actuateServo(i, boardConfig[SERVO_START_ANGLE].value);
 	}
 }
