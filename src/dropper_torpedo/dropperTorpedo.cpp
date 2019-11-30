@@ -106,24 +106,24 @@ void indicatorRoutine() //Add this function to loop() to allow for indication of
 	}
 
 	if (boardConfig[ENABLE_TORPEDO_INDICATOR].value) {
-		if ((torpedoState0 == FIRING) || (torpedoState1 == FIRING)) {
+		if ((torpedoes[0].state == FIRING) || (torpedoes[1].state == FIRING)) {
 			disableExternalLEDControl();
 			pwmDriver.setRGB(1, 0, 0, 0, 0.5);
 			return;
 		}
-		if ((torpedoState0 == ARMED) && (torpedoState1 == ARMED)) {
+		if ((torpedoes[0].state == ARMED) && (torpedoes[1].state == ARMED)) {
 			disableExternalLEDControl();
 			sinWaveTimer.begin(stepSinWave, 1000);
 			pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0.1*sinWave180/sinWaveAmplitude, 0.1*sinWave180/sinWaveAmplitude, 0, 0.2);
 			return;
 		}
-		if (torpedoState0 == ARMED) {
+		if (torpedoes[0].state == ARMED) {
 			disableExternalLEDControl();
 			sinWaveTimer.begin(stepSinWave, 1000);
 			pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0.1*sinWave180/sinWaveAmplitude, 0, 0, 0.2);
 			return;
 		}
-		if (torpedoState1 == ARMED) {
+		if (torpedoes[1].state == ARMED) {
 			disableExternalLEDControl();
 			sinWaveTimer.begin(stepSinWave, 1000);
 			pwmDriver.setRGB(sinWave0/sinWaveAmplitude, 0, 0.1*sinWave180/sinWaveAmplitude, 0, 0.2);

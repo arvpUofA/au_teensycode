@@ -4,10 +4,15 @@
 /* macros */
 #define LEN(a) (sizeof(a) / sizeof(*a))
 
+#if !defined(PI)
+#define PI 3.141592
+#endif
+
 /* PWM Channel definitions for PCA9685 chip on torpedo board */
+#define PWM_CHANNELS 16
 enum pwm_chan {
-	PWM_CHAN_0,
-	PWM_CHAN_1,
+	PWM_CHAN_0, /* dropper servo */
+	PWM_CHAN_1, /* light */
 	PWM_CHAN_2,
 	PWM_CHAN_3,
 	PWM_CHAN_4,
@@ -17,9 +22,15 @@ enum pwm_chan {
 	PWM_CHAN_8,
 	PWM_CHAN_9,
 	PWM_CHAN_10,
-	PWM_CHAN_11
+	PWM_CHAN_11,
+	PWM_CHAN_12,
+	PWM_CHAN_13,
+	PWM_CHAN_14,
+	PWM_CHAN_15
 };
 
+/* based on sizeof(Param) (32 bytes) and 2048 byte EEPROM capacity in Teensy 3.2 */
+#define MAX_NUMBER_OF_PARAMETERS 64
 enum param_index {
 	TORPEDO_PULSE,
 	MIN_SERVO_PULSE,
@@ -54,9 +65,23 @@ struct Param {
 	double value;
 };
 
-/* based on sizeof(Param) (32 bytes) and 2048 byte EEPROM capacity in Teensy 3.2 */
-#define MAX_NUMBER_OF_PARAMETERS 64
-
 extern struct Param boardConfig[MAX_NUMBER_OF_PARAMETERS];
+
+/* servoControl.hpp */
+extern double servoAngle;
+
+/* torpedoControl.hpp */
+#define N_TORPEDOES 2
+
+/* Torpedo state definitions */
+enum torpedoState {READY, ARMED, FIRING, DISCHARGED};
+
+/* Torpedo Structure */
+struct Torpedo {
+	uint8_t pin;
+	torpedoState state;
+	bool launch;
+};
+extern struct Torpedo torpedoes[N_TORPEDOES];
 
 #endif
