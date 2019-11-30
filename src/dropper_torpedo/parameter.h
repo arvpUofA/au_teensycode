@@ -69,6 +69,9 @@ extern struct Param boardConfig[MAX_NUMBER_OF_PARAMETERS];
 
 /* servoControl.hpp */
 extern double servoAngle;
+void actuateServo(uint8_t pwm_chan, float radians);
+void resetServo(uint8_t pwm_chan);
+double getAngle(uint8_t pwm_chan);
 
 /* torpedoControl.hpp */
 #define N_TORPEDOES 2
@@ -84,4 +87,4 @@ struct Torpedo {
 };
 extern struct Torpedo torpedoes[N_TORPEDOES];
 
-#endif
+#endif /* !defined(PARAMETER_H) */
