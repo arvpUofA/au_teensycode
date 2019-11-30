@@ -16,7 +16,6 @@
 #include <Arduino.h>
 #include "torpedoControl.hpp"
 #include <libARVPpwm.h>
-#include <lightID.h>
 #include "batteryStatus.hpp"
 #include "servoControl.hpp"
 #include "ledIndicationControl.hpp"

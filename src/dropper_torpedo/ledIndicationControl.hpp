@@ -1,7 +1,6 @@
 #ifndef LED_INDICATION_CONTROL_HPP
 #define LED_INDICATION_CONTROL_HPP
 
-#include <lightID.h>
 #include <libARVPpwm.h>
 #include <Metro.h>
 
