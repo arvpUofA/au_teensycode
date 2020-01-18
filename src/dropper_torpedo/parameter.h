@@ -4,10 +4,6 @@
 /* macros */
 #define LEN(a) (sizeof(a) / sizeof(*a))
 
-#if !defined(PI)
-#define PI 3.141592
-#endif
-
 /* PWM Channel definitions for PCA9685 chip on torpedo board */
 #define PWM_CHANNELS 16
 enum pwm_chan {

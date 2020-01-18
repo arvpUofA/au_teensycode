@@ -1,6 +1,7 @@
 #ifndef SERVO_CONTROL_HPP
 #define SERVO_CONTROL_HPP
 
+#include <math.h>
 #include <libARVPpwm.h>
 
 #include "parameter.h"
@@ -9,7 +10,7 @@
 #define SERVOMIN	600
 #define SERVOMAX	2600
 
-#define SERVO_ANGLE_OFFSET (PI / 2)
+#define SERVO_ANGLE_OFFSET (M_PI / 2)
 
 Adafruit_PWMServoDriver *pwmServo;
 
@@ -18,8 +19,8 @@ double servoAngle = 0;
 
 void updateAngle(uint8_t pwm_chan, float angle)
 {
-	if ((servoAngle + angle) > (2 * PI))
-		servoAngle = (servoAngle + angle) - (2 * PI);
+	if ((servoAngle + angle) > (2 * M_PI))
+		servoAngle = (servoAngle + angle) - (2 * M_PI);
 	else
 		servoAngle = servoAngle + angle;
 }
