@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <IntervalTimer.h>
 #include "ledIndicationControl.hpp"
-#include "parameter.hpp"
+#include "parameter.h"
 
 //Pin definitions
 #define TORPEDO_0 16
@@ -13,206 +13,144 @@
 //Solenoid pulse duration in us
 double pulseDuration = 250000;
 
-//Set to true when torpedo firing request is initiated
-bool launchRequest0 = false;
-bool launchRequest1 = false;
-
 //Interval timers for solenoid control. Uses ISRs for highly accurate timing control.
 IntervalTimer fireTimer0;
 IntervalTimer fireTimer1;
 
-//Torpedo state definitions
-enum torpedoState {READY, ARMED, FIRING, DISCHARGED};
-
-torpedoState torpedoState0 = READY;
-torpedoState torpedoState1 = READY;
+struct Torpedo torpedoes[N_TORPEDOES] = {
+	{ TORPEDO_0, READY, false },
+	{ TORPEDO_1, READY, false }
+};
 
 //Call this function in setup()
 void initTorpedos()
 {
-    pinMode(TORPEDO_0, OUTPUT);
-    pinMode(TORPEDO_1, OUTPUT);
-    digitalWrite(TORPEDO_0, LOW);
-    digitalWrite(TORPEDO_1, LOW);
+	uint8_t i;
+	for (i = 0; i < LEN(torpedoes); i++) {
+		pinMode(torpedoes[i].pin, OUTPUT);
+		digitalWrite(torpedoes[i].pin, LOW);
+	}
 }
 
 //ISR functions. Can't pass parameters to this type of function, so one unique function per torpedo is required.
 void trpControl0()
 {
-    digitalWrite(TORPEDO_0, LOW);
-    launchRequest0 = false;
+	digitalWrite(TORPEDO_0, LOW);
+	torpedoes[0].launch = false;
 }
 
 void trpControl1()
 {
-    digitalWrite(TORPEDO_1, LOW);
-    launchRequest1 = false;
+	digitalWrite(TORPEDO_1, LOW);
+	torpedoes[1].launch = false;
 }
 
 void changeInterval(double inter)
 {
-    pulseDuration = inter;
-    pulseLED(0, 0, 0.2, boardConfig[PARAM_INDEX_TORPEDO_PULSE].paramValue);
+	pulseDuration = inter;
+	pulseLED(0, 0, 0.2, boardConfig[TORPEDO_PULSE].value);
 }
 
 //Call this function to trigger firing of torpedo. Torpedo must be in ARMED state to fire.
 void requestLaunch(uint8_t trp)
 {
-    if((trp == TORPEDO_0) && !digitalRead(TORPEDO_0) && (torpedoState0 == ARMED))
-    {
-        launchRequest0 = true;
-    }
-    if((trp == TORPEDO_1) && !digitalRead(TORPEDO_1) && (torpedoState1 == ARMED))
-    {
-        launchRequest1 = true;
-    }
+	if ((trp == TORPEDO_0) && !digitalRead(TORPEDO_0) && (torpedoes[0].state == ARMED))
+		torpedoes[0].launch = true;
+	if ((trp == TORPEDO_1) && !digitalRead(TORPEDO_1) && (torpedoes[1].state == ARMED))
+		torpedoes[1].launch = true;
 }
 
 //Fires torpedo and starts interval timer for a selected torpedo according to specified solenoid pulse duration
-bool fireTorpdeo(uint8_t trp)
-{  
-    if((trp == TORPEDO_0) && !digitalRead(TORPEDO_0) && launchRequest0)
-    {
-        digitalWrite(TORPEDO_0, HIGH);
-        launchRequest0 = false;
-        fireTimer0.begin(trpControl0, boardConfig[PARAM_INDEX_TORPEDO_PULSE].paramValue*1000); //ms to us
-        //Serial.println("Torpedo 0 pulse timer started");
-        return true;
-    }
-    else if((trp == TORPEDO_1) && !digitalRead(TORPEDO_1) && launchRequest1)
-    {
-        digitalWrite(TORPEDO_1, HIGH);
-        launchRequest1 = false;
-        fireTimer1.begin(trpControl1, boardConfig[PARAM_INDEX_TORPEDO_PULSE].paramValue*1000);
-        //Serial.println("Torpedo 1 pulse timer started");
-        return true;
-    }
-    return false;
+static bool fireTorpedo(uint8_t trp)
+{
+	if ((trp == TORPEDO_0) && !digitalRead(TORPEDO_0) && torpedoes[0].launch) {
+		digitalWrite(TORPEDO_0, HIGH);
+		torpedoes[0].launch = false;
+		fireTimer0.begin(trpControl0, boardConfig[TORPEDO_PULSE].value * 1000); //ms to us
+		//Serial.println("Torpedo 0 pulse timer started");
+		return true;
+	} else if ((trp == TORPEDO_1) && !digitalRead(TORPEDO_1) && torpedoes[1].launch) {
+		digitalWrite(TORPEDO_1, HIGH);
+		torpedoes[1].launch = false;
+		fireTimer1.begin(trpControl1, boardConfig[TORPEDO_PULSE].value * 1000);
+		//Serial.println("Torpedo 1 pulse timer started");
+		return true;
+	}
+	return false;
 }
 
 //Cleans up interval timers. Up to 4 interval timers may be active at any time on Teensy 3.2
 //Only cleans up when torpedo pins are LOW.
 bool cleanUpTorpedoTimer(uint8_t trp)
 {
-    if((trp == TORPEDO_0) && !digitalRead(TORPEDO_0) && !launchRequest0)
-    {
-      fireTimer0.end();
-      Serial.println("Torpedo 0 pulse timer cleaned up");
-      return true;
-    }
-    else if((trp == TORPEDO_1) && !digitalRead(TORPEDO_1) && !launchRequest1)
-    {
-      fireTimer1.end();
-      Serial.println("Torpedo 1 pulse timer cleaned up");
-      return true;
-    }
-    return false;
+	if ((trp == TORPEDO_0) && !digitalRead(TORPEDO_0) && !torpedoes[0].launch) {
+		fireTimer0.end();
+		Serial.println("Torpedo 0 pulse timer cleaned up");
+		return true;
+	} else if ((trp == TORPEDO_1) && !digitalRead(TORPEDO_1) && !torpedoes[1].launch) {
+		fireTimer1.end();
+		Serial.println("Torpedo 1 pulse timer cleaned up");
+		return true;
+	}
+	return false;
 }
 
 //Torpedos are locked-out after firing and upon power-up until this function is called.
 void armTorpedo(uint8_t trp)
 {
-    if ((trp == TORPEDO_0) && ((torpedoState0 == DISCHARGED) || (torpedoState0 == READY)))
-    {
-        torpedoState0 = ARMED;
-        Serial.println("Torpedo 0 ARMED");
-    }
-    else if ((trp == TORPEDO_1) && ((torpedoState1 == DISCHARGED) || (torpedoState1 == READY)))
-    {
-        torpedoState1 = ARMED;
-        Serial.println("Torpedo 1 ARMED");
-    }
+	if ((trp == TORPEDO_0) && ((torpedoes[0].state == DISCHARGED) || (torpedoes[0].state == READY))) {
+		torpedoes[0].state = ARMED;
+		Serial.println("Torpedo 0 ARMED");
+	} else if ((trp == TORPEDO_1) && ((torpedoes[1].state == DISCHARGED) || (torpedoes[1].state == READY))) {
+		torpedoes[1].state = ARMED;
+		Serial.println("Torpedo 1 ARMED");
+	}
 }
 
 //Sets torpedo state to READY
 void disarmTorpedo(uint8_t trp)
 {
-    if((trp == TORPEDO_0) && (torpedoState0 == ARMED))
-    {
-        torpedoState0 = READY;
-        Serial.println("Torpedo 0 disarmed");
-    }
-    else if((trp == TORPEDO_1) && (torpedoState1 == ARMED))
-    {
-        torpedoState1 = READY;
-        Serial.println("Torpedo 1 disarmed");
-    }
+	if ((trp == TORPEDO_0) && (torpedoes[0].state == ARMED)) {
+		torpedoes[0].state = READY;
+		Serial.println("Torpedo 0 disarmed");
+	} else if ((trp == TORPEDO_1) && (torpedoes[1].state == ARMED)) {
+		torpedoes[1].state = READY;
+		Serial.println("Torpedo 1 disarmed");
+	}
 }
 
 //Call this function in loop() to run torpedo system
 void torpedoRoutine()
 {
-    switch(torpedoState0)
-    {
-        case READY:
-            if(launchRequest0)
-            {
-                Serial.println("Unable to fire. Torpedo 0 not yet ARMED");
-                launchRequest0 = false;
-            }
-            break;
-
-        case ARMED:
-            if(launchRequest0)
-            {
-                fireTorpdeo(TORPEDO_0);
-                Serial.println("Torpedo 0 FIRING");
-                torpedoState0 = FIRING;
-            }
-            break;
-
-        case FIRING:
-            if(cleanUpTorpedoTimer(TORPEDO_0))
-            {
-                torpedoState0 = READY;
-                Serial.println("Torpedo 0 DISCHARGED");
-            }
-            break;
-        
-        case DISCHARGED: //Not really used at the moment, could delete this.
-            if(launchRequest0)
-            {
-                Serial.println("Unable to fire. Torpedo 0 in DISCHARGED state");
-                launchRequest0 = false;
-            }
-            break;
-    }
-
-    switch(torpedoState1)
-    {
-        case READY:
-            if(launchRequest1)
-            {
-                Serial.println("Unable to fire. Torpedo 1 not yet ARMED");
-                launchRequest0 = false;
-            }
-            break;
-
-        case ARMED:
-            if(launchRequest1)
-            {
-                fireTorpdeo(TORPEDO_1);
-                Serial.println("Torpedo 1 FIRING");
-                torpedoState1 = FIRING;
-            }
-            break;
-
-        case FIRING:
-            if(cleanUpTorpedoTimer(TORPEDO_1))
-            {
-                torpedoState1 = READY;
-                Serial.println("Torpedo 1 DISCHARGED");
-            }
-            break;
-        
-        case DISCHARGED:
-            if(launchRequest1)
-            {
-                Serial.println("Unable to fire. Torpedo 1 in DISCHARGED state");
-                launchRequest1 = false;
-            }
-            break;
-    }
+	uint8_t i;
+	for (i = 0; i < LEN(torpedoes); i++) {
+		switch (torpedoes[i].state) {
+		case READY:
+			if (torpedoes[i].launch) {
+				Serial.printf("Torpedo %d: Not ARMED. Unable to fire.\n", i);
+				torpedoes[i].launch = ~torpedoes[i].launch;
+			}
+			continue;
+		case ARMED:
+			if (torpedoes[i].launch) {
+				Serial.printf("Torpedo %d: FIRING\n", i);
+				fireTorpedo(torpedoes[i].pin);
+				torpedoes[i].state = FIRING;
+			}
+			continue;
+		case FIRING:
+			if (cleanUpTorpedoTimer(torpedoes[i].pin)) {
+				Serial.printf("Torpedo %d: DISCHARGED\n", i);
+				torpedoes[i].state = READY;
+			}
+			continue;
+		case DISCHARGED: /* FIXME: unused right now could be deleted */
+			if (torpedoes[i].launch) {
+				Serial.printf("Torpedo %d: Unable to fire. Torpedo in DISCHARGED state.\n", i);
+				torpedoes[i].launch = ~torpedoes[i].launch;
+			}
+		}
+	}
 }
 
 #endif

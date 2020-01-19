@@ -1,3 +1,25 @@
+dropper_torpedo teensy board
+============================
+to make use of these functions include an
+	#include "parameter.h"
+
+PWM Channel Definitions
+-----------------------
+	PWM_CHAN_0     /* dropper servo */
+	PWM_CHAN_1     /* light */
+	/* remaining channels are currently unused */
+
+Available fucntions
+-------------------
+	/* actuates servo attached to pwm_chan a given angle in radians */
+	actuateServo(uint8_t pwm_chan, float radians);
+
+	/* resets servo attached to pwm_chan to its inital position */
+	resetServo(uint8_t pwm_chan);
+
+	/* returns the current of servo attached to pwm_chan in radains */
+	getAngle(uint8_t pwm_chan);
+
 # Notes
 
 ## Torpedoes
@@ -43,22 +65,22 @@ Parameters are configurable through UAVCAN node parameter server.
 - torpedoPulseInterval = 250[ms]
 - minServoPulse = 900[us]
 - maxServoPulse = 2000[us]
-- actuatorIDTorpedo0 = 0
-- actuatorIDTorpedo1 = 1
-- actuatorIDServo0 = 2
-- actuatorIDServo1 = 3
-- actuatorIDServo2 = 4
-- actuatorIDServo3 = 5
-- actuatorIDServo4 = 6
-- actuatorIDServo5 = 7
-- actuatorIDServo6 = 8
-- actuatorIDServo7 = 9
-- actuatorIDServo8 = 10
-- actuatorIDServo9 = 11
-- actuatorIDServo10 = 12
-- actuatorIDServo11 = 13
-- lightIDRGBStrip0 = 0
-- lightIDRGBStrip0_strobe = 248
+- Torpedo0_ID = 0
+- Torpedo1_ID = 1
+- Servo0_ID = 2
+- Servo1_ID = 3
+- Servo2_ID = 4
+- Servo3_ID = 5
+- Servo4_ID = 6
+- Servo5_ID = 7
+- Servo6_ID = 8
+- Servo7_ID = 9
+- Servo8_ID = 10
+- Servo9_ID = 11
+- Servo10_ID = 12
+- Servo11_ID = 13
+- RGBStrip0_ID = 0
+- RGBStrip0_strobe = 248
 - strobeInterval = 500[ms]
 - demoMode = 0
 - enableLowVoltIndicator = 1
@@ -69,7 +91,7 @@ Parameters are configurable through UAVCAN node parameter server.
 
 Parameters are saved to Teensy EEPROM when save command is sent.
 Parameters are reset to default values when erase command is sent.
-Reset and save parameters to default when falshing a new Teensy or hen changing defaultParameterArray to properly initialize EEPROM.
+Reset and save parameters to default when falshing a new Teensy or when changing defaultParameterArray to properly initialize EEPROM.
 
 ## Serial Command Line Interface (CLI)
 
