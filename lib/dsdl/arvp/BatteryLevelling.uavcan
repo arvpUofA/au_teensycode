@@ -1,0 +1,2 @@
+bool ee_batt_state	# Hi (Enabled), Low (Disabled)
+bool motor_batt_state	# Hi (Enabled), Low (Disabled)
