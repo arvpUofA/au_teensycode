@@ -1,16 +1,16 @@
-#include <arvp/BatteryLeveling.hpp>
+#include <arvp/BatteryLevelling.hpp>
 #include <uavcan/equipment/power/BatteryInfo.hpp>
 
 #include <uavcanNodeIDs.h>
 #include <teensy_uavcan.hpp>
 #include <watchdog.h>
 
-#include "batt_leveling.h"
+#include "batt_levelling.h"
 
-static const char *nodename = "org.arvp.batteryleveling";
+static const char *nodename = "org.arvp.batterylevelling";
 
 static Subscriber<equipment::power::BatteryInfo> *batt_subscriber;
-static Publisher<arvp::BatteryLeveling> *batt_level_publisher;
+static Publisher<arvp::BatteryLevelling> *batt_level_publisher;
 
 static int ee_batt_state;
 static int motor_batt_state;
@@ -56,15 +56,15 @@ batt_info_callback(const uavcan::equipment::power::BatteryInfo& batt_data)
 }
 
 static void
-publish_leveling_info(void)
+publish_levelling_info(void)
 {
-	arvp::BatteryLeveling leveling_info;
+	arvp::BatteryLevelling levelling_info;
 
-	leveling_info.ee_batt_state = ee_batt_state;
-	leveling_info.motor_batt_state = motor_batt_state;
+	levelling_info.ee_batt_state = ee_batt_state;
+	levelling_info.motor_batt_state = motor_batt_state;
 
-	if (batt_level_publisher->broadcast(leveling_info) < 0)
-		Serial.println("Failed to publish Battery Leveling info");
+	if (batt_level_publisher->broadcast(levelling_info) < 0)
+		Serial.println("Failed to publish Battery Levelling info");
 }
 
 static void 
@@ -86,10 +86,10 @@ init_subscriber(Node<NodeMemoryPoolSize> *node)
 static void
 init_publisher(Node<NodeMemoryPoolSize> *node)
 {
-	batt_level_publisher = new Publisher<arvp::BatteryLeveling>(*node);
+	batt_level_publisher = new Publisher<arvp::BatteryLevelling>(*node);
 
 	if (batt_level_publisher->init() < 0)
-		Serial.println("Failed to start Battery Leveling publisher");
+		Serial.println("Failed to start Battery Levelling publisher");
 
 	batt_level_publisher->setTxTimeout(MonotonicDuration::fromUSec(800));
 }
@@ -106,7 +106,7 @@ setup(void)
 	systemClock = &initSystemClock();
 	canDriver = &initCanDriver();
 	node = new Node<NodeMemoryPoolSize>(*canDriver, *systemClock);
-	initNode(node, UAVCAN_NODE_ID_BATTERY_LEVELING_BOARD, nodename, SW_VERSION, HW_VERSION);
+	initNode(node, UAVCAN_NODE_ID_BATTERY_LEVELLING_BOARD, nodename, SW_VERSION, HW_VERSION);
 
 	init_subscriber(node);
 	init_publisher(node);
@@ -143,7 +143,7 @@ loop(void)
 
 	delay(500);
 
-	publish_leveling_info();
+	publish_levelling_info();
 
 	if (voltages[0] > EE_MIN_VOLTAGE)
 		return;

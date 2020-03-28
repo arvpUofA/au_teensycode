@@ -1,5 +1,4 @@
-/* batt_leveling firmware info */
-#define ENABLE_BATT_DEBUG 0
+/* batt_levelling firmware info */
 #define SW_VERSION 1
 #define HW_VERSION 1
 
