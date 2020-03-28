@@ -1,3 +1,4 @@
+#include <arvp/BatteryLeveling.hpp>
 #include <uavcan/equipment/power/BatteryInfo.hpp>
 
 #include <uavcanNodeIDs.h>
@@ -9,7 +10,7 @@
 static const char *nodename = "org.arvp.batteryleveling";
 
 static Subscriber<equipment::power::BatteryInfo> *batt_subscriber;
-static Publisher<equipment::power::BatteryInfo> *batt_publisher;
+static Publisher<arvp::BatteryLeveling> *batt_level_publisher;
 
 static int ee_batt_state;
 static int motor_batt_state;
@@ -47,6 +48,18 @@ batt_info_callback(const uavcan::equipment::power::BatteryInfo& batt_data)
 	store_voltage_info(batt_data.battery_id, batt_data.voltage);
 }
 
+static void
+publish_leveling_info(void)
+{
+	arvp::BatteryLeveling leveling_info;
+
+	leveling_info.ee_batt_state = ee_batt_state;
+	leveling_info.motor_batt_state = motor_batt_state;
+
+	if (batt_level_publisher->broadcast(leveling_info) < 0)
+		Serial.println("Failed to publish Battery Leveling info");
+}
+
 static void 
 init_subscriber(Node<NodeMemoryPoolSize> *node)
 {
@@ -66,19 +79,12 @@ init_subscriber(Node<NodeMemoryPoolSize> *node)
 static void
 init_publisher(Node<NodeMemoryPoolSize> *node)
 {
-	int i;
-	Publisher<equipment::power::BatteryInfo> *batt_info = batt_publisher;
+	batt_level_publisher = new Publisher<arvp::BatteryLeveling>(*node);
 
-	for (i = 0; i < NUM_OF_BATTERIES; i++) {
-		batt_info = new Publisher<equipment::power::BatteryInfo>(*node);
+	if (batt_level_publisher->init() < 0)
+		Serial.println("Failed to start Battery Leveling publisher");
 
-        	if (batt_info->init() < 0)
-			Serial.printf("Battery [%d]: failed to start publisher\n", i);
-
-		batt_info->setTxTimeout(MonotonicDuration::fromUSec(800));
-
-		batt_info++;
-	}
+	batt_level_publisher->setTxTimeout(MonotonicDuration::fromUSec(800));
 }
 
 
@@ -126,5 +132,6 @@ loop(void)
 			batt_swap();
 	}
 
+	publish_leveling_info();
 	delay(500);
 }
