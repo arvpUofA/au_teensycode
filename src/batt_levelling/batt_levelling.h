@@ -8,7 +8,7 @@
 #define EE_MIN_VOLTAGE 15
 
 /* Difference in voltage needed to request battery swap */
-#define V_DELTA 0.01
+#define V_DELTA 0.1
 
 /* Pin definitions */
 /* 10 should != 6 this will cause a short */
