@@ -120,6 +120,12 @@ setup(void)
 		digitalWrite(EE_BATT_CONT, ee_batt_state);
 	}
 
+	/* make sure ee batt is starting voltage src */
+	if (!ee_batt_state) {
+		Serial.println("Swapping to EE battery");
+		batt_swap();
+	}
+
 	Serial.println("Setup Complete");
 }
 
@@ -127,11 +133,16 @@ void
 loop(void)
 {
 	int i;
+
+	delay(500);
+
+	publish_leveling_info();
+
+	if (voltages[0] > EE_MIN_VOLTAGE)
+		return;
+
 	for (i = 1; i < NUM_OF_BATTERIES; i++) {
 		if (voltcmp(voltages[0], voltages[i]))
 			batt_swap();
 	}
-
-	publish_leveling_info();
-	delay(500);
 }
