@@ -20,11 +20,18 @@ static float voltages[NUM_OF_BATTERIES];
 static void
 batt_swap(void)
 {
+	switch (ee_batt_state) {
+	case 0:
+		digitalWrite(MOTOR_BATT_CONT, ~motor_batt_state);
+		digitalWrite(EE_BATT_CONT, ~ee_batt_state);
+		break;
+	case 1:
+		digitalWrite(EE_BATT_CONT, ~ee_batt_state);
+		digitalWrite(MOTOR_BATT_CONT, ~motor_batt_state);
+	}
+
 	ee_batt_state = ~ee_batt_state;
 	motor_batt_state = ~motor_batt_state;
-
-	digitalWrite(MOTOR_BATT_CONT, motor_batt_state);
-	digitalWrite(EE_BATT_CONT, ee_batt_state);
 }
 
 /* returns 1 if v_1 src and v_2 src should be swapped */
