@@ -11,20 +11,26 @@ static const char *nodename = "org.arvp.batteryleveling";
 static Subscriber<equipment::power::BatteryInfo> *batt_subscriber;
 static Publisher<equipment::power::BatteryInfo> *batt_publisher;
 
+static int ee_batt_state;
+static int motor_batt_state;
 static float voltages[NUM_OF_BATTERIES];
 
 /* swaps batt src and updates src field */
 static void
-batt_swap(uint8_t id_1, uint8_t id_2)
+batt_swap(void)
 {
-	/* TODO */
+	ee_batt_state = ~ee_batt_state;
+	motor_batt_state = ~motor_batt_state;
+
+	digitalWrite(MOTOR_BATT_CONT, motor_batt_state);
+	digitalWrite(EE_BATT_CONT, ee_batt_state);
 }
 
 /* returns 1 if v_1 src and v_2 src should be swapped */
 static int
 voltcmp(float v_1, float v_2)
 {
-	return abs(v_1 - v_2) > V_DELTA ? 1 : 0;
+	return abs(v_1 - v_2) > V_DELTA;
 }
 
 /* store voltage level in voltage array */
@@ -98,7 +104,16 @@ setup(void)
 	/* start up node */
 	node->setModeOperational();
 
-	/* start parameter server */
+	/* initialize pin states */
+	ee_batt_state = digitalRead(EE_BATT_CONT);
+	motor_batt_state = digitalRead(MOTOR_BATT_CONT);
+
+	/* make sure the pins start out in opposite states */
+	if (ee_batt_state == motor_batt_state) {
+		ee_batt_state = ~motor_batt_state;
+		digitalWrite(EE_BATT_CONT, ee_batt_state);
+	}
+
 	Serial.println("Setup Complete");
 }
 
@@ -108,7 +123,7 @@ loop(void)
 	int i;
 	for (i = 1; i < NUM_OF_BATTERIES; i++) {
 		if (voltcmp(voltages[0], voltages[i]))
-			batt_swap(0, i);
+			batt_swap();
 	}
 
 	delay(500);
