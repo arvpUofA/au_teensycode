@@ -1,7 +1,6 @@
 #include <libARVPpwm.h>
 #include <IntervalTimer.h>
 #include "torpedoControl.hpp"
-#include "batteryStatus.hpp"
 #include "servoControl.hpp"
 #include "ledIndicationControl.hpp"
 #include <Metro.h>
@@ -11,8 +10,6 @@
 #include <uavcanNodeIDs.h>
 #include <watchdog.h>
 #include <Cmd.h>
-#include "serialCommand.hpp"
-#include "pressureStatus.hpp"
 
 #define BATTERY_VOLTAGE_POOR_VALUE 13.25
 #define BATTERY_VOLTAGE_DANGER_VALUE 12.75
@@ -38,8 +35,6 @@ Metro strobeLightTimer = Metro(DEFAULT_STROBE_INTERVAL);
 const int numberOfSinTableEntries = 1000;
 const int sinWaveAmplitude = 4096;
 int baseSinFrq = 1; //Hz
-
-bool demoMode = false;
 
 static const int sinWaveTable[numberOfSinTableEntries] = 
 {
@@ -98,13 +93,6 @@ void stepSinWave()
 
 void indicatorRoutine() //Add this function to loop() to allow for indication of torpedo and battery status
 {
-	if (pressureState == DROPPING && boardConfig[ENABLE_PRESSURE_ALERT].value) {
-		disableExternalLEDControl();
-		sinWaveTimer.begin(stepSinWave, 210);
-		pwmDriver.setRGB(1, 1, 1, 0, 0.1*sinWave0/sinWaveAmplitude);
-		return;
-	}
-
 	if (boardConfig[ENABLE_TORPEDO_INDICATOR].value) {
 		if ((torpedoes[0].state == FIRING) || (torpedoes[1].state == FIRING)) {
 			disableExternalLEDControl();
@@ -131,35 +119,13 @@ void indicatorRoutine() //Add this function to loop() to allow for indication of
 		}
 	}
 
-	if (checkVoltages(BATTERY_VOLTAGE_POOR_VALUE, BATTERY_VOLTAGE_DANGER_VALUE) == DANGER && (int)boardConfig[ENABLE_LOW_VOLT_INDICATOR].value) {
-		//Serial.println("POOR");
-		disableExternalLEDControl();
-		sinWaveTimer.begin(stepSinWave, 200);
-		pwmDriver.setRGB(1, 0, 0, 0, 0.25*sinWave0/sinWaveAmplitude);
-		return;
+	if (enableExternalLEDControl()) {//Only turn off LED if external LED control is disabled
+		pwmDriver.setRGB(0, 0, 0, 0, 0);
+		sinWaveTimer.end();
 	}
-	if (checkVoltages(BATTERY_VOLTAGE_POOR_VALUE, BATTERY_VOLTAGE_DANGER_VALUE) == POOR && (int)boardConfig[ENABLE_LOW_VOLT_INDICATOR].value) {
-		//Serial.println("DANGER");
-		disableExternalLEDControl();
-		sinWaveTimer.begin(stepSinWave, 2000);
-		pwmDriver.setRGB(1, 0, 0, 0, 0.25*sinWave0/sinWaveAmplitude);
-		return;
-	}
-
-	if ((int)boardConfig[DEMO_MODE].value) {
-		disableExternalLEDControl();
-		sinWaveTimer.begin(stepSinWave, 2000);
-		pwmDriver.setRGB(sinWave0/sinWaveAmplitude, sinWave120/sinWaveAmplitude/4, sinWave240/sinWaveAmplitude/6, 0, 0.125);
-		return;
-	} else {
-		if (enableExternalLEDControl()) {//Only turn off LED if external LED control is disabled
-			pwmDriver.setRGB(0, 0, 0, 0, 0);
-			sinWaveTimer.end();
-		}
-		if (strobeActivated && strobeLightTimer.check()) {
-			pwmDriver.setRGB(0, 0, 0, 0, 0);
-			strobeActivated = false;
-		}
+	if (strobeActivated && strobeLightTimer.check()) {
+		pwmDriver.setRGB(0, 0, 0, 0, 0);
+		strobeActivated = false;
 	}
 }
 
@@ -171,7 +137,6 @@ void setup()
 	Serial.println("Setup start");
 
 	cmdInit(&Serial);
-	serialCMDInitCommands();
 
 	pwmDriver.begin();
 

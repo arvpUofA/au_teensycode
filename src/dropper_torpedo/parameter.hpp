@@ -37,11 +37,6 @@ struct Param defaultBoardConfig[] = {
 	[LIGHT_ID_STRIP_0_STROBE] = {"RGBStrip0_strobe", 248},
 	[STROBE_INTERVAL]         = {"strobeInterval", 500}, // in ms
 
-	[DEMO_MODE] = {"demoMode", 0},
-
-	[ENABLE_LOW_VOLT_INDICATOR] = {"enableLowVoltIndicator", 1}, //changed to 0 since it's not working right
-	[LOW_PRESSURE_THRESHOLD]    = {"lowPressureThreshold", 20000}, // in Pascals
-	[ENABLE_PRESSURE_ALERT]     = {"enablePressureAlert", 0},
 	[ENABLE_TORPEDO_INDICATOR]  = {"enableTorpedoIndicator", 1},
 
 	[SERVO_START_ANGLE] = {"servoStartAngle", -1.5} //in radians
