@@ -1,9 +1,9 @@
 #ifndef	SUBSCRIBER_HPP
 #define	SUBSCRIBER_HPP
 
-#define TORPEDO_ARM_ACTUATOR_VALUE -1
-#define TORPEDO_DISARM_ACTUATOR_VALUE -2
-#define TORPEDO_FIRE_ACTUATOR_VALUE 1
+#define TORPEDO_ARM_ACTUATOR_VALUE 0 
+#define TORPEDO_DISARM_ACTUATOR_VALUE 1
+#define TORPEDO_FIRE_ACTUATOR_VALUE 2
 
 #include <uavcan/uavcan.hpp>
 #include <uavcan/equipment/actuator/ArrayCommand.hpp>
@@ -49,28 +49,32 @@ bool enableExternalLEDControl()
 	return true;
 }
 
+// TODO basically every if statement here should be a look up table instead.
+// All the lookup values should just be converted to integers, instead of comparing floats.
+
+struct torpedo_action {
+	void (*fp)(uint8_t);
+};
+
+struct torpedo_action torpedo_action_lut[] = {
+	{.fp = requestLaunch },
+	{ .fp = armTorpedo },
+	{ .fp = disarmTorpedo },
+};
+
 /*Callback function for uavcan actuator command array. Checks all array elements for IDs and executes torpedo or servo functions accordingly.*/
 void actuatorControlCallback(const uavcan::equipment::actuator::ArrayCommand& actuatorCommands)
 {
 	for (uint8_t i = 0; i < actuatorCommands.commands.size(); i++) {
 	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_TORP_0].value) {
-		if (actuatorCommands.commands[i].command_value == TORPEDO_FIRE_ACTUATOR_VALUE)
-			requestLaunch(TORPEDO_0); //Torpedo is fired when command value equals 1
-		else if (actuatorCommands.commands[i].command_value == TORPEDO_ARM_ACTUATOR_VALUE)
-			armTorpedo(TORPEDO_0); //Torpedo is armed when command value equals -1
-		else if (actuatorCommands.commands[i].command_value == TORPEDO_DISARM_ACTUATOR_VALUE)
-			disarmTorpedo(TORPEDO_0); //Torpedo is disarmed when command value equals -2
+		torpedo_action_lut[(uint8_t) actuatorCommands.commands[i].command_value].fp(TORPEDO_0);
 	}
 
 	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_TORP_1].value) {
-		if (actuatorCommands.commands[i].command_value == TORPEDO_FIRE_ACTUATOR_VALUE)
-			requestLaunch(TORPEDO_1);
-		else if (actuatorCommands.commands[i].command_value == TORPEDO_ARM_ACTUATOR_VALUE)
-			armTorpedo(TORPEDO_1);
-		else if (actuatorCommands.commands[i].command_value == TORPEDO_DISARM_ACTUATOR_VALUE)
-			disarmTorpedo(TORPEDO_1);
+		torpedo_action_lut[actuatorCommands.commands[i].command_value].fp(TORPEDO_1);
 	}
 
+	// TODO lookup table here
 	if (actuatorCommands.commands[i].actuator_id == (int)boardConfig[ACT_ID_SERVO_0].value)
 		actuateServo(PWM_CHAN_0, actuatorCommands.commands[i].command_value);
 

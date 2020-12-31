@@ -41,6 +41,7 @@ int baseSinFrq = 1; //Hz
 
 bool demoMode = false;
 
+// Just use <math.h> here
 static const int sinWaveTable[numberOfSinTableEntries] = 
 {
 	2048,2060,2073,2086,2099,2112,2125,2138,2150,2163,2176,2189,2202,2215,2227,2240,2253,2266,2279,2291,2304,2317,2330,2342,2355,2368,2380,
@@ -89,6 +90,7 @@ IntervalTimer sinWaveTimer;
 
 void stepSinWave()
 {
+	// Don't use the sinwave table here, just increment your angle.
 	sinWave0 = sinWaveTable[sinWaveTime]; //0 degree phase shift
 	sinWave120 = sinWaveTable[(sinWaveTime+333)%numberOfSinTableEntries]; //120 degree phase shift
 	sinWave180 = sinWaveTable[(sinWaveTime+500)%numberOfSinTableEntries]; //180 degree phase shift
