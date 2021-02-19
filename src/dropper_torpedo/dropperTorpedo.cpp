@@ -42,30 +42,22 @@ int baseSinFrq = 1; //Hz
 
 bool demoMode = false;
 
-
-
 int theta = 0;
 float sinWave0 = 0;
 float sinWave120 = 0;
 float sinWave180 = 0;
 float sinWave240 = 0;
 
-
 IntervalTimer sinWaveTimer;
 
 void stepSinWave()
 {
-	
 	sinWave0 = 2048*sin(theta)+2048;
 	sinWave120 = 2048*sin(theta + 2*PI/3)+2048;
 	sinWave180 = 2048*sin(theta + PI)+2048;
 	sinWave240 = 2048*sin(theta + 4*PI/3)+2048;
 	theta += (PI/500); //The PI/500 increment matched the preview sinWaveTable
-	
-	
 }
-	
-	
 
 void indicatorRoutine() //Add this function to loop() to allow for indication of torpedo and battery status
 {
