@@ -66,13 +66,6 @@ void stepSinWave()
 }
 	
 	
-/*	// Don't use the sinwave table here, just increment your angle.
-	sinWave0 = sinWaveTable[sinWaveTime]; //0 degree phase shift
-	sinWave120 = sinWaveTable[(sinWaveTime+333)%numberOfSinTableEntries]; //120 degree phase shift
-	sinWave180 = sinWaveTable[(sinWaveTime+500)%numberOfSinTableEntries]; //180 degree phase shift
-	sinWave240 = sinWaveTable[(sinWaveTime+667)%numberOfSinTableEntries]; //240 degree phase shift
-	++sinWaveTime %= numberOfSinTableEntries; //loops from 0 to 1000
-}*/
 
 void indicatorRoutine() //Add this function to loop() to allow for indication of torpedo and battery status
 {
