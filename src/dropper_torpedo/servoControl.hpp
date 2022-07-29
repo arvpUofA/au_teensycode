@@ -39,8 +39,8 @@ double getAngle(uint8_t pwm_chan)
 void actuateServo(uint8_t pwm_chan, float angle)
 {
 	pwmServo->setServoAngle(pwm_chan, angle + SERVO_ANGLE_OFFSET,
-		(uint16_t)boardConfig[MIN_SERVO_PULSE].value,
-		(uint16_t)boardConfig[MAX_SERVO_PULSE].value,
+		900,
+		2000,
 		UNIT_RADIANS);
 	updateAngle(pwm_chan, angle);
 }
@@ -51,7 +51,7 @@ void initServoControl(Adafruit_PWMServoDriver *ptr)
 	pwmServo = ptr;
 	for (uint8_t i = 0; i < PWM_CHANNELS; i++) {
 		//ptr->setServoAngle(i, 0, (uint16_t)boardConfig[MIN_SERVO_PULSE].paramValue, (uint16_t)boardConfig[MAX_SERVO_PULSE].paramValue, UNIT_RADIANS);
-		actuateServo(i, boardConfig[SERVO_START_ANGLE].value);
+		actuateServo(i, 0);
 	}
 }
 
