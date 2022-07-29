@@ -5,6 +5,7 @@
 #include <teensy_uavcan.hpp>
 #include "subscriber.hpp"
 #include <uavcanNodeIDs.h>
+#include <watchdog.h>
 #include <Cmd.h>
 
 // UAVCAN Node settings
@@ -28,6 +29,7 @@ void setup()
 	Serial.println("Setup start");
 
 	pwmDriver.begin();
+	KickDog();
 
 	//--UAVCAN init--//
     initLeds();
@@ -57,21 +59,20 @@ void setup()
 //Runs continuously
 void loop() 
 {
-    Serial.println("loop begin");
+	KickDog();
 	//--UAVCAN cycles--//
 	// wait in cycle
-    delay(500);
+    //delay(500);
+	//Serial.println("afte")
 
 	// do some CAN stuff
-    Serial.println("Node cycle");
 	cycleNode(node);
 
 	// toggle heartbeat
-    Serial.println("Heartbeat");
-	toggleHeartBeat();
+    toggleHeartBeat();
 
     if (millis() - last > 1000) {
-        Serial.println("wbduiawbdwiua");
+        Serial.println("Heartbeat");
         last = millis();
     }
     Serial.println("loop");

@@ -6,6 +6,8 @@
 #include <uavcan/debug.hpp>
 #include <cassert>
 
+#include <Arduino.h>
+
 namespace uavcan
 {
 #if !UAVCAN_TINY
@@ -251,6 +253,7 @@ int Dispatcher::spin(MonotonicTime deadline)
 
 int Dispatcher::spinOnce()
 {
+    Serial.println("speeen");
     int num_frames_processed = 0;
 
     while (true)
